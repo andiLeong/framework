@@ -1,0 +1,17 @@
+{
+    "name": "andileong/framework",
+    "description": "A MVC framework",
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.1",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Andileong\\Framework\\Core\\": "core/",
+            "App\\": "app/"
+        }
+    }
+}
