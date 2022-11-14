@@ -2,21 +2,18 @@
 
 namespace Andileong\Framework\Core\Routing;
 
+use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
 
 class Route
 {
     public static $routes = [];
+    protected Request $request;
 
-    public function __construct(protected Request $request)
+    public function __construct(Container $container)
     {
-        //
+        $this->request = $container['request'];
     }
-
-//    public function getRoutes()
-//    {
-//       return $this->routes;
-//    }
 
     public function get($uri, $action)
     {
@@ -68,9 +65,10 @@ class Route
 
     private function validateUri($uri)
     {
-       if(!str_starts_with($uri,'/')){
-           return '/' . $uri;
-       }
-       return $uri;
+        $uri = rtrim($uri, '/');
+        if (!str_starts_with($uri, '/')) {
+            return '/' . $uri;
+        }
+        return $uri;
     }
 }

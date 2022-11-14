@@ -13,5 +13,10 @@
             "Andileong\\Framework\\Core\\": "core/",
             "App\\": "app/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Andileong\\Framework\\Tests\\": "core/tests/"
+        }
     }
 }
