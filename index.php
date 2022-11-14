@@ -9,11 +9,11 @@ use App\Controller\ContactController;
 require('vendor/autoload.php');
 
 $container = new Container;
-$container->singleton('request', fn() => new Request());
-$container->singleton('router', fn($self) => new Route($self));
+$container->singleton(Request::class, fn() => new Request());
+//$container->singleton('router', fn($self) => new Route($self));
 
-$route = $container['router'];
-//$route = new Route($container);
+//$route = $container['router'];
+$route = new Route($container);
 
 $route->get('',fn() => 'welcome home');
 $route->get('about/', [AboutController::class,'index']);

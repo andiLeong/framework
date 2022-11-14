@@ -102,7 +102,8 @@ class Container implements \ArrayAccess
                 throw new InstantiateException("wec couldn't instantiate for you either dependency is abstract or not instantiable");
             }
 
-            return $this->instantiate($dependency);
+            return $this->get($dependency);
+//            return $this->instantiate($dependency);
 
         },$parameters);
 
