@@ -2,96 +2,171 @@
 
 namespace Andileong\Framework\Core\Routing;
 
-use Andileong\Framework\Core\Container\Container;
-use Andileong\Framework\Core\Request\Request;
-
 class Route
 {
-    public static $routes = [];
-    protected Request $request;
-    private mixed $container;
+    protected $controller;
+    protected $method;
+    protected $isDynamic = false;
+    protected $staticSegments = [];
+    protected $dynamicParamNames = [];
+    protected $dynamicParams = [];
 
-    public function __construct(Container $container)
+    public function __construct(protected $uri, protected $requestMethod, string|array|callable $action)
     {
-        $this->container = $container;
-        $this->request = $container[Request::class];
+        $this->parseAction($action);
+        $this->parseDynamicRoute();
     }
 
-    public function get($uri, $action)
+    private function parseAction($action)
     {
-        $uri = $this->validateUri($uri);
-        self::$routes['GET'][] = [
-            'uri' => $uri,
-            'action' => $action,
-        ];
+        if ($action instanceof \Closure) {
+            $this->controller = $action;
+            return;
+        }
+
+        if (is_string($action)) {
+            $action = [$action];
+        }
+
+        $this->controller = $action[0];
+        $this->method = $action[1] ?? '__invoke';
     }
 
-    public function post($uri, $action)
+    /**
+     * determine if the request path is match the uri
+     * @param $path
+     * @return bool|null
+     */
+    public function matches($path)
     {
-        $uri = $this->validateUri($uri);
-        self::$routes['POST'][] = [
-            'uri' => $uri,
-            'action' => $action,
-        ];
+        if ($path === $this->uri) {
+            return true;
+        }
+
+        if ($this->isDynamic()) {
+            return $this->matchesPattern($path);
+        }
+
+        return false;
     }
 
-    public function run()
+    public function isClosure()
     {
-        $method = $this->request->method();
-        $path = $this->request->path();
+        return $this->controller instanceof \Closure;
+    }
 
-//        dump(self::$routes);
-//        dd($path);
-        $routes = self::$routes[$method];
-        $route = array_values(array_filter($routes, function ($route) use ($path) {
-            return $route['uri'] === $path;
-        }));
+    public function callClosure()
+    {
+        return call_user_func($this->controller);
+    }
 
-        if (count($route) === 0) {
-            throw new \Exception('Route not found exception');
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    private function parseDynamicRoute()
+    {
+//        dd($this->uri);
+        $pattern = "/{[a-z0-9A-Z_\-]+}/";
+        if (preg_match_all($pattern, $this->uri, $matches)) {
+//            dd($matches);
+
+
+            $this->makeStaticSegments($matches[0]);
+            $this->saveDynamicParamName($matches[0]);
+//            dd($staticParams);
+            $this->isDynamic = true;
         }
 
-//        dd($route);
-        if (is_callable($route[0]['action'])) {
-            return call_user_func($route[0]['action']);
+//        dd($this);
+//        $this->makeStaticSegments($matches);
+    }
+
+    public function isDynamic()
+    {
+        return $this->isDynamic;
+    }
+
+    public function buildPattern()
+    {
+        $pattern = '';
+        foreach ($this->staticSegments as $para) {
+            $pattern .= "\/$para\/[1-9,a-z,A-z,\-,_]+";
         }
 
-        $controller = $route[0]['action'][0];
-        $method = $route[0]['action'][1];
-        if(!class_exists($controller)){
-            throw new \Exception("Controller class not found {$controller}");
-        }
+        return "/{$pattern}/";
+    }
 
-        if(!method_exists($controller,$method)){
-            $method = '__invoke';
-        }
+    private function matchesPattern($path)
+    {
+//        dd($this);
+        $pattern = $this->buildPattern();
+        if (preg_match_all($pattern, $path, $matches)) {
+//            dump($this->staticSegments);
+//            dump($this->dynamicParamNames);
+//            dump($this->uri);
+//            dump(array_values(
+//                array_filter(explode('/',$matches[0][0]),function($segment){
+//                    return !in_array($segment,$this->staticSegments,true) && $segment !== '';
+//                }))
+//            );
+//            dump($matches[0][0]);
 
-        $controllerInstance = $this->container->get($controller);
-        $reflector = new \ReflectionMethod($controllerInstance,$method);
-        $reflectionParameters = $reflector->getParameters();
-        if(count($reflectionParameters) > 0) {
+            if($matches[0][0] === $path){
 
-            $lists = [];
-            foreach ($reflectionParameters as $param){
-                if(!is_null($param->getType())){
-                    $typeName = $param->getType()->getName();
-                    $lists[] = $this->container->get($typeName);
-                }else{
-                    //has no type arguments maybe its from dynamic routing
+                $paramValues = array_values(
+                array_filter(explode('/',$matches[0][0]),function($segment){
+                    return !in_array($segment,$this->staticSegments,true) && $segment !== '';
+                }));
+                foreach ($this->dynamicParamNames as $index => $name){
+                    $this->dynamicParams[] = [$name => $paramValues[$index]];
                 }
+//                dd($this->dynamicParams);
+                return true;
             }
-
-            return $controllerInstance->$method(...$lists);
         }
-        return $controllerInstance->$method();
+
+        return false;
     }
 
-    private function validateUri($uri)
+    /**
+     * extract any static params for dynamic route to build the regular expression later
+     * eg /user/1/post/5 ,
+     * use and post will be extracted
+     * @param $matches
+     */
+    protected function makeStaticSegments($matches): void
     {
-        $uri = rtrim($uri, '/');
-        if (!str_starts_with($uri, '/')) {
-            return '/' . $uri;
-        }
-        return $uri;
+        $staticParams = array_reduce($matches, function ($ini, $item) {
+            return str_replace($item, '', $ini);
+        }, $this->uri);
+
+        $staticParams = array_values(array_filter(explode('/', $staticParams)));
+
+        $this->staticSegments = $staticParams;
+    }
+
+    public function getStaticSegments()
+    {
+       return $this->staticSegments;
+    }
+
+
+    public function getDynamicParams()
+    {
+        return $this->dynamicParams;
+    }
+
+    private function saveDynamicParamName($names)
+    {
+        $this->dynamicParamNames = array_map(function($name){
+            return rtrim(ltrim($name, '{'),'}');
+        },$names);
     }
 }
