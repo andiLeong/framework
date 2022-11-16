@@ -20,16 +20,13 @@ class Router
     public function get($uri, $action)
     {
         $uri = $this->validateUri($uri);
-        $this->routes['GET'][] = new Route($uri, 'GET', $action);
+        $this->routes['GET'][] = new Route($uri, $action, $this->container);
     }
 
     public function post($uri, $action)
     {
         $uri = $this->validateUri($uri);
-        $this->routes['POST'][] = [
-            'uri' => $uri,
-            'action' => is_string($action) ? [$action] : $action,
-        ];
+        $this->routes['POST'][] = new Route($uri, $action, $this->container);
     }
 
     public function render($path = null, $method = null)
@@ -37,8 +34,6 @@ class Router
         $method ??= $this->request->method();
         $path ??= $this->request->path();
 
-//        dump(self::$routes);
-//        dd($path);
         $routes = $this->routes[$method];
         $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
         ));
@@ -49,51 +44,7 @@ class Router
 
         $route = $route[0];
 
-//        dd($route);
-        if ($route->isClosure()) {
-            return $route->callClosure();
-        }
-
-        $controller = $route->getController();
-        $method = $route->getMethod();
-        if (!class_exists($controller)) {
-            throw new \Exception("Controller class not found {$controller}");
-        }
-
-        if (!method_exists($controller, $method)) {
-            $method = '__invoke';
-        }
-
-        $controllerInstance = $this->container->get($controller);
-        $reflector = new \ReflectionMethod($controllerInstance, $method);
-        $reflectionParameters = $reflector->getParameters();
-        if (count($reflectionParameters) > 0) {
-
-//            dd($reflectionParameters);
-//            dd($route);
-            $lists = [];
-            foreach ($reflectionParameters as $param) {
-                $name = $param->name;
-
-                $filteredParams = array_values(array_filter($route->getDynamicParams(), fn($param) => isset($param[$name])));
-
-                if (count($filteredParams) > 0) {
-                    $lists[] = $filteredParams[0][$name];
-                    continue;
-                }
-
-                if (!is_null($param->getType())) {
-                    $typeName = $param->getType()->getName();
-                    if (class_exists($typeName)) {
-                        $lists[] = $this->container->get($typeName);
-                    }
-                }
-            }
-//            dd($lists);
-
-            return $controllerInstance->$method(...$lists);
-        }
-        return $controllerInstance->$method();
+        return $route->render();
     }
 
     private function validateUri($uri)

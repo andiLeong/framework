@@ -11,7 +11,7 @@ class Route
     protected $dynamicParamNames = [];
     protected $dynamicParams = [];
 
-    public function __construct(protected $uri, protected $requestMethod, string|array|callable $action)
+    public function __construct(protected $uri, string|array|callable $action, public $container)
     {
         $this->parseAction($action);
         $this->parseDynamicRoute();
@@ -70,29 +70,32 @@ class Route
         return $this->method;
     }
 
+    /**
+     * parse the uri
+     */
     private function parseDynamicRoute()
     {
-//        dd($this->uri);
         $pattern = "/{[a-z0-9A-Z_\-]+}/";
         if (preg_match_all($pattern, $this->uri, $matches)) {
-//            dd($matches);
-
-
             $this->makeStaticSegments($matches[0]);
             $this->saveDynamicParamName($matches[0]);
-//            dd($staticParams);
             $this->isDynamic = true;
         }
-
-//        dd($this);
-//        $this->makeStaticSegments($matches);
     }
 
+    /**
+     * check if the route is dynamic
+     * @return bool|mixed
+     */
     public function isDynamic()
     {
         return $this->isDynamic;
     }
 
+    /**
+     * make a regular expression for matching the dynamic route
+     * @return string
+     */
     public function buildPattern()
     {
         $pattern = '';
@@ -103,31 +106,17 @@ class Route
         return "/{$pattern}/";
     }
 
+    /**
+     * check the request path is matching the dynamic route
+     * @param $path
+     * @return bool
+     */
     private function matchesPattern($path)
     {
-//        dd($this);
         $pattern = $this->buildPattern();
         if (preg_match_all($pattern, $path, $matches)) {
-//            dump($this->staticSegments);
-//            dump($this->dynamicParamNames);
-//            dump($this->uri);
-//            dump(array_values(
-//                array_filter(explode('/',$matches[0][0]),function($segment){
-//                    return !in_array($segment,$this->staticSegments,true) && $segment !== '';
-//                }))
-//            );
-//            dump($matches[0][0]);
-
-            if($matches[0][0] === $path){
-
-                $paramValues = array_values(
-                array_filter(explode('/',$matches[0][0]),function($segment){
-                    return !in_array($segment,$this->staticSegments,true) && $segment !== '';
-                }));
-                foreach ($this->dynamicParamNames as $index => $name){
-                    $this->dynamicParams[] = [$name => $paramValues[$index]];
-                }
-//                dd($this->dynamicParams);
+            if ($matches[0][0] === $path) {
+                $this->buildDynamicParams($path);
                 return true;
             }
         }
@@ -154,7 +143,7 @@ class Route
 
     public function getStaticSegments()
     {
-       return $this->staticSegments;
+        return $this->staticSegments;
     }
 
 
@@ -163,10 +152,56 @@ class Route
         return $this->dynamicParams;
     }
 
+    /**
+     * save the parameter name eg /user/{id}
+     * id will save to the array
+     * @param $names
+     */
     private function saveDynamicParamName($names)
     {
-        $this->dynamicParamNames = array_map(function($name){
-            return rtrim(ltrim($name, '{'),'}');
-        },$names);
+        $this->dynamicParamNames = array_map(function ($name) {
+            return rtrim(ltrim($name, '{'), '}');
+        }, $names);
+    }
+
+    /**
+     * render the controller/closure
+     * @return mixed
+     * @throws \Exception
+     */
+    public function render()
+    {
+        if ($this->isClosure()) {
+            return $this->callClosure();
+        }
+
+        return (new ControllerDispatcher($this))->dispatch();
+    }
+
+    /**
+     * get all dynamic route params and save
+     * eg user/1/post/50 1 and 50 will be saved
+     * @param $matchedPath
+     */
+    protected function buildDynamicParams($matchedPath): void
+    {
+        $paramValues = array_values(
+            $this->notInStaticParams($matchedPath)
+        );
+
+        foreach ($this->dynamicParamNames as $index => $name) {
+            $this->dynamicParams[] = [$name => $paramValues[$index]];
+        }
+    }
+
+    /**
+     * @param $matchedPath
+     * @return string[]
+     */
+    protected function notInStaticParams($matchedPath): array
+    {
+        return array_filter(explode('/', $matchedPath), function ($segment) {
+            return !in_array($segment, $this->staticSegments, true) && $segment !== '';
+        });
     }
 }
