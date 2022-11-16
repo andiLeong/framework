@@ -9,6 +9,9 @@
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
+        "files": [
+            "core/Helpers.php"
+        ],
         "psr-4": {
             "Andileong\\Framework\\Core\\": "core/",
             "App\\": "app/"

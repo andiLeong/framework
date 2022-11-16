@@ -57,7 +57,7 @@ class Route
 
     public function callClosure()
     {
-        return call_user_func($this->controller);
+        return (new FunctionDispatcher($this))->dispatch();
     }
 
     public function getController()

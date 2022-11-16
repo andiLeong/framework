@@ -62,19 +62,18 @@ class RouterRenderContentTest extends testcase
     /** @test */
     public function it_can_render_a_dynamic_route_and_pass_correct_argument_to_closure()
     {
-        $this->markTestSkipped();
         $router = new Router(new Container());
 
-        $router->get('/user/{id}/post/{post_id}', [UserController::class, 'show']);
+        $router->get('/user/{id}/post/{post_id}', fn($id,$post_id,Foo $foo) => [$id,$post_id]);
         $content = $router->render('/user/1/post/23_56', 'GET');
         $this->assertEquals(['1', '23_56'], $content);
 
-        $router->get('/user/{id}', [UserController::class, 'edit']);
+        $router->get('/user/{id}', fn($id, Request $request) => $id);
         $content = $router->render('/user/1', 'GET');
         $this->assertEquals('1', $content);
 
-        $router->get('/user/{id}', [UserController::class, 'index']);
-        $content = $router->render('/user/1', 'GET');
+        $router->get('/user', fn(Request $request) => 1);
+        $content = $router->render('/user', 'GET');
         $this->assertEquals('1', $content);
     }
 }
