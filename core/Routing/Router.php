@@ -40,8 +40,7 @@ class Router
 //        dump(self::$routes);
 //        dd($path);
         $routes = $this->routes[$method];
-        $route = array_values(array_filter($routes, fn (Route $route) =>
-             $route->matches($path)
+        $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
         ));
 
         if (count($route) === 0) {
@@ -70,18 +69,27 @@ class Router
         $reflectionParameters = $reflector->getParameters();
         if (count($reflectionParameters) > 0) {
 
+//            dd($reflectionParameters);
+//            dd($route);
             $lists = [];
             foreach ($reflectionParameters as $param) {
-//                dd($param->name);
+                $name = $param->name;
+
+                $filteredParams = array_values(array_filter($route->getDynamicParams(), fn($param) => isset($param[$name])));
+
+                if (count($filteredParams) > 0) {
+                    $lists[] = $filteredParams[0][$name];
+                    continue;
+                }
+
                 if (!is_null($param->getType())) {
                     $typeName = $param->getType()->getName();
-                    if(class_exists($typeName)){
+                    if (class_exists($typeName)) {
                         $lists[] = $this->container->get($typeName);
                     }
-                } else {
-                    //has no type arguments maybe its from dynamic routing
                 }
             }
+//            dd($lists);
 
             return $controllerInstance->$method(...$lists);
         }

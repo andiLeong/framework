@@ -40,12 +40,19 @@ class RouterRenderContentTest extends testcase
     /** @test */
     public function it_can_render_a_dynamic_route_and_pass_correct_argument_to_controller()
     {
-        $this->markTestSkipped();
-
         $router = new Router(new Container());
+
         $router->get('/user/{id}/post/{post_id}', [UserController::class, 'show']);
         $content = $router->render('/user/1/post/23_56', 'GET');
-//       $this->assertEquals(1,$content);
+        $this->assertEquals(['1', '23_56'], $content);
+
+        $router->get('/user/{id}', [UserController::class, 'edit']);
+        $content = $router->render('/user/1', 'GET');
+        $this->assertEquals('1', $content);
+
+        $router->get('/user/{id}', [UserController::class, 'index']);
+        $content = $router->render('/user/1', 'GET');
+        $this->assertEquals('1', $content);
     }
 }
 
@@ -75,7 +82,17 @@ class Foo
 
 class UserController
 {
-    public function show($id)
+    public function show($id, $post_id)
+    {
+        return [$id, $post_id];
+    }
+
+    public function edit($id)
+    {
+        return $id;
+    }
+
+    public function index(Request $request ,$id)
     {
         return $id;
     }
