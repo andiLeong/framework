@@ -13,13 +13,10 @@ $container->singleton(Request::class, fn() => new Request());
 //$container->singleton('router', fn($self) => new Route($self));
 
 //$route = $container['router'];
-$route = new Router($container);
+$router = new Router($container);
 
-$route->get('',fn() => 'welcome home');
-$route->get('about/', [AboutController::class,'index']);
-$route->get('/contact/{id}', [ContactController::class,'index']);
+$router->get('', fn() => 'welcome home');
+$router->get('about/', [AboutController::class, 'index']);
+$router->get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
 
-$content = $route->render();
-
-echo $content;
-//dd($route::$routes);
+return $router->run();

@@ -2,6 +2,7 @@
 
 
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\View\View;
 
 if (!function_exists('resolveParam')) {
 
@@ -23,6 +24,22 @@ if (!function_exists('resolveParam')) {
             $container ??= new Container();
             return $container->get($typeName);
         }
+    }
+
+}
+
+if (!function_exists('view')) {
+
+    /**
+     * render a view
+     * @param $path
+     * @param array $data
+     * @return object|null
+     */
+    function view($path, $data = [])
+    {
+        $view = new View();
+        return $view->render($path, $data);
     }
 
 }

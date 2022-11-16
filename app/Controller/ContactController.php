@@ -5,8 +5,9 @@ namespace App\Controller;
 class ContactController
 {
 
-    public function index($id)
+    public function index($id, $postId)
     {
-       return 'this is a contact page' . ' id is ' . $id;
+        return view('Contact.index',compact('id','postId'));
+        return [$id,$postId];
     }
 }

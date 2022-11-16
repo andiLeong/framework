@@ -4,6 +4,9 @@ namespace Andileong\Framework\Core\Routing;
 
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\View\View;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Router
 {
@@ -29,6 +32,13 @@ class Router
         $this->routes['POST'][] = new Route($uri, $action, $this->container);
     }
 
+    /**
+     * rendering controller/closure
+     * @param $path
+     * @param $method
+     * @return mixed
+     * @throws \Exception
+     */
     public function render($path = null, $method = null)
     {
         $method ??= $this->request->method();
@@ -45,6 +55,36 @@ class Router
         $route = $route[0];
 
         return $route->render();
+    }
+
+    /**
+     * return whatever the controller/closure return to the frontend
+     * @return JsonResponse|Response|void
+     * @throws \Exception
+     */
+    public function run()
+    {
+        $content = $this->render();
+
+        if (is_array($content)) {
+            $response = new JsonResponse($content);
+            return $response->send();
+        }
+
+        if ($content instanceof View) {
+            $response = new Response();
+            $response->headers->set('Content-Type', 'text/html');
+
+            return $response->send();
+        }
+
+        if (is_string($content)) {
+            $response = new Response($content,);
+            $response->headers->set('Content-Type', 'text/plain');
+
+            return $response->send();
+        }
+
     }
 
     private function validateUri($uri)
