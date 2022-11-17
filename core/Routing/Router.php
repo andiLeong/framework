@@ -74,6 +74,7 @@ class Router
         if ($content instanceof View) {
             $response = new Response();
             $response->headers->set('Content-Type', 'text/html');
+//            $response->setContent($content->getContent());
 
             return $response->send();
         }

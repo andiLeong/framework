@@ -3,7 +3,8 @@
     "description": "A MVC framework",
     "require": {
         "php": "^8.0",
-        "symfony/http-foundation": "^6.1"
+        "symfony/http-foundation": "^6.1",
+        "symfony/finder": "^6.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.1",

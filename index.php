@@ -1,5 +1,6 @@
 <?php
 
+use Andileong\Framework\Core\Boostrap\LoadConfiguration;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
@@ -9,10 +10,13 @@ use App\Controller\ContactController;
 require('vendor/autoload.php');
 
 $container = new Container;
+$container->singleton('app_path', __DIR__);
 $container->singleton(Request::class, fn() => new Request());
-//$container->singleton('router', fn($self) => new Route($self));
+$container->bind(LoadConfiguration::class, fn($container) => new LoadConfiguration($container));
 
-//$route = $container['router'];
+$configurationLoader = $container->get(LoadConfiguration::class);
+$configurationLoader->boostrap();
+
 $router = new Router($container);
 
 $router->get('', fn() => 'welcome home');
