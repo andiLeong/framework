@@ -2,6 +2,7 @@
 
 
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\View\View;
 
 if (!function_exists('resolveParam')) {
@@ -40,6 +41,21 @@ if (!function_exists('view')) {
     {
         $view = new View();
         return $view->render($path, $data);
+    }
+
+}
+
+if (!function_exists('env')) {
+
+    /**
+     * get an env from env array
+     * @param $key
+     * @param null $default
+     * @return object|null
+     */
+    function env($key, $default = null)
+    {
+        return Arr::get($_ENV,$key,$default);
     }
 
 }

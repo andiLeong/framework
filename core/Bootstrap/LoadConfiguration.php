@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\Boostrap;
+namespace Andileong\Framework\Core\Bootstrap;
 
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
@@ -9,14 +9,12 @@ use Symfony\Component\Finder\Finder;
 class LoadConfiguration
 {
 
-    public function __construct(protected Container $container)
-    {
-        //
-    }
+    private Container $container;
 
-
-    public function boostrap()
+    public function bootstrap(Container $container)
     {
+        $this->container = $container;
+        
         $config = new Config();
         foreach ($this->fetchConfigFiles() as $file) {
 
@@ -27,7 +25,7 @@ class LoadConfiguration
             $config->set($key, $content);
         }
 
-        $this->container->singleton(Config::class,$config);
+        $container->singleton(Config::class,$config);
     }
 
     protected function configPath()
