@@ -1,6 +1,7 @@
 <?php
 
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\View\View;
@@ -10,11 +11,10 @@ if (!function_exists('resolveParam')) {
     /**
      * try to resolve a object out of an argument
      * @param ReflectionParameter $param
-     * @param Container|null $container
+     * @param Application|Container|null $app
      * @return mixed|object|string|null
-     * @throws Exception
      */
-    function resolveParam(ReflectionParameter $param, Container $container = null)
+    function resolveParam(ReflectionParameter $param, Application|Container $app = null)
     {
         if (is_null($param->getType())) {
             return;
@@ -22,8 +22,8 @@ if (!function_exists('resolveParam')) {
 
         $typeName = $param->getType()->getName();
         if (class_exists($typeName)) {
-            $container ??= new Container();
-            return $container->get($typeName);
+            $app ??= app();
+            return $app->get($typeName);
         }
     }
 
@@ -55,7 +55,26 @@ if (!function_exists('env')) {
      */
     function env($key, $default = null)
     {
-        return Arr::get($_ENV,$key,$default);
+        return Arr::get($_ENV, $key, $default);
+    }
+
+}
+
+if (!function_exists('app')) {
+
+    /**
+     * get an app from app array
+     * @param null $key
+     * @return object|null
+     */
+    function app($key = null)
+    {
+        $app = Container::getInstance();
+        if(is_null($key)){
+            return $app;
+        }
+
+        return $app->get($key);
     }
 
 }

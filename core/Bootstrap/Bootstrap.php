@@ -2,7 +2,7 @@
 
 namespace Andileong\Framework\Core\Bootstrap;
 
-use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Application;
 
 class Bootstrap
 {
@@ -12,7 +12,7 @@ class Bootstrap
     ];
 
 
-    public function __construct(public Container $container)
+    public function __construct(public Application $app)
     {
         //
     }
@@ -20,8 +20,8 @@ class Bootstrap
     public function boot()
     {
         foreach ($this->bootstrapers as $bootstraper) {
-            $instance = $this->container->get($bootstraper);
-            $instance->bootstrap($this->container);
+            $instance = $this->app->get($bootstraper);
+            $instance->bootstrap($this->app);
         }
     }
 }

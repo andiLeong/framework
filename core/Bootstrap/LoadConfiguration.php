@@ -2,19 +2,18 @@
 
 namespace Andileong\Framework\Core\Bootstrap;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Config\Config;
-use Andileong\Framework\Core\Container\Container;
 use Symfony\Component\Finder\Finder;
 
 class LoadConfiguration
 {
+    private Application $app;
 
-    private Container $container;
-
-    public function bootstrap(Container $container)
+    public function bootstrap(Application $app)
     {
-        $this->container = $container;
-        
+        $this->app = $app;
+
         $config = new Config();
         foreach ($this->fetchConfigFiles() as $file) {
 
@@ -25,12 +24,12 @@ class LoadConfiguration
             $config->set($key, $content);
         }
 
-        $container->singleton(Config::class,$config);
+        $app->singleton(Config::class, $config);
     }
 
     protected function configPath()
     {
-        return $this->container->get('app_path') . '/config';
+        return $this->app->get('app_path') . '/config';
     }
 
     protected function fetchConfigFiles()

@@ -14,8 +14,9 @@ class Router
     protected Request $request;
     private mixed $container;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container = null)
     {
+        $container ??= app();
         $this->container = $container;
         $this->request = $container[Request::class];
     }

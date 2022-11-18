@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\Container;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Container\Exception\InstantiateException;
 use Closure;
 
@@ -9,6 +10,7 @@ class Container implements \ArrayAccess
 {
     protected $bindings = [];
     protected $singletons = [];
+    static protected $instance;
 
     public function bind($key, $concrete, $share = false)
     {
@@ -109,6 +111,17 @@ class Container implements \ArrayAccess
 
         return $reflector->newInstanceArgs($dependencies);
 
+    }
+
+    public static function getInstance()
+    {
+       return self::$instance;
+    }
+
+    public function setInstance(Application $instance)
+    {
+         self::$instance = $instance;
+         return $this;
     }
 
     public function offsetExists(mixed $offset) :Bool
