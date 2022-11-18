@@ -3,6 +3,7 @@
 namespace Andileong\Framework\Core\tests;
 
 use Andileong\Framework\Core\Config\Config;
+use Andileong\Framework\Core\Facades\Config as ConfigFacades;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Finder;
 
@@ -26,5 +27,12 @@ class LoadConfigurationTest extends testcase
         }
 
         $this->assertEquals('mysql',$config->get('database.driver'));
+    }
+
+    /** @test */
+    public function it_get_a_single_config_value_from_helper_and_facades()
+    {
+        $this->assertEquals('mysql',config('database.driver'));
+        $this->assertEquals('mysql',ConfigFacades::get('database.driver'));
     }
 }

@@ -2,7 +2,16 @@
 
 namespace Andileong\Framework\Core\Facades;
 
-interface Facades
+abstract class Facades
 {
-    public function instance();
+    abstract public function instance();
+
+    public static function __callStatic(string $name, array $arguments)
+    {
+        $instance = (new static)->instance();
+        return [
+            $instance,
+            $name
+        ](...$arguments);
+    }
 }

@@ -2,7 +2,9 @@
 
 
 use Andileong\Framework\Core\Application;
+use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\View\View;
 
@@ -63,18 +65,64 @@ if (!function_exists('env')) {
 if (!function_exists('app')) {
 
     /**
-     * get an app from app array
+     * get global app instance or resolve it
      * @param null $key
      * @return object|null
      */
     function app($key = null)
     {
         $app = Container::getInstance();
-        if(is_null($key)){
+        if (is_null($key)) {
             return $app;
         }
 
         return $app->get($key);
     }
 
+}
+
+
+if (!function_exists('config')) {
+
+    /**
+     * get an config item from container
+     * @param null $key
+     * @return object|null
+     */
+    function config($key, $default = null)
+    {
+        return app(Config::class)->get($key,$default);
+    }
+
+}
+
+if (!function_exists('request')) {
+
+    /**
+     * resolve request singleton from container
+     * @param null $key
+     * @return object|null
+     */
+    function request($key = null, $default = null)
+    {
+        $request = app(Request::class);
+        if($key === null){
+            return $request;
+        }
+
+        return $request->get($key,$default);
+    }
+
+}
+
+if (!function_exists('resolve')) {
+    /**
+     * resolve a thing from the container
+     * @param null $key
+     * @return object|null
+     */
+    function resolve($key)
+    {
+        return app($key);
+    }
 }

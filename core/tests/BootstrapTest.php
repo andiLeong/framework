@@ -1,5 +1,9 @@
 <?php
 
+use Andileong\Framework\Core\Application;
+
 require('././vendor/autoload.php');
 
-$_SERVER['DOCUMENT_ROOT'] = realpath(dirname('././'));
+$appPath = realpath(dirname('././'));
+$container = new Application($appPath);
+$_SERVER['DOCUMENT_ROOT'] = $appPath;
