@@ -26,13 +26,13 @@ class LoadConfigurationTest extends testcase
             $config->set($key, $content);
         }
 
-        $this->assertEquals('mysql',$config->get('database.driver'));
+        $this->assertEquals('mysql',$config->get('database.default'));
     }
 
     /** @test */
     public function it_get_a_single_config_value_from_helper_and_facades()
     {
-        $this->assertEquals('mysql',config('database.driver'));
-        $this->assertEquals('mysql',ConfigFacades::get('database.driver'));
+        $this->assertEquals('mysql',config('database.default'));
+        $this->assertEquals('mysql',ConfigFacades::get('database.default'));
     }
 }
