@@ -10,6 +10,7 @@ class Container implements \ArrayAccess
 {
     protected $bindings = [];
     protected $singletons = [];
+    protected $alias = [];
     static protected $instance;
 
     public function bind($key, $concrete, $share = false)
@@ -32,6 +33,8 @@ class Container implements \ArrayAccess
 
     public function get($key)
     {
+        $key = $this->getAlias($key);
+
         if (!$this->has($key)) {
 
             if (class_exists($key)) {
@@ -47,17 +50,28 @@ class Container implements \ArrayAccess
 
         $bind = $this->bindings[$key];
 
-        if ($bind['concrete'] instanceof Closure) {
 
-            $concrete = $bind['concrete']($this);
-            if ($this->isSingleton($key)) {
-                $this->singletons[$key] = $concrete;
-            }
+        $concrete = $bind['concrete'] instanceof Closure
+            ? $bind['concrete']($this)
+            : $bind['concrete'];
 
-            return $concrete;
+        return $this->savedToSingleton(
+            $key,
+            $concrete
+        );
+    }
+
+    /**
+     * try to save to the singleton cache and return
+     * @param $key
+     * @param $concrete
+     */
+    public function savedToSingleton($key, $concrete)
+    {
+        if ($this->isSingleton($key)) {
+            $this->singletons[$key] = $concrete;
         }
-
-        return $bind['concrete'];
+        return $concrete;
     }
 
     public function has($key)
@@ -82,7 +96,7 @@ class Container implements \ArrayAccess
 
         $parameters = $constructor->getParameters();
 
-        $dependencies = array_map(function($param){
+        $dependencies = array_map(function ($param) {
 
             if ($param->isDefaultValueAvailable()) {
                 return $param->getDefaultValue();
@@ -107,39 +121,44 @@ class Container implements \ArrayAccess
             return $this->get($dependency);
 //            return $this->instantiate($dependency);
 
-        },$parameters);
+        }, $parameters);
 
         return $reflector->newInstanceArgs($dependencies);
 
     }
 
+    public function getAlias($key)
+    {
+        return $this->alias[$key] ?? $key;
+    }
+
     public static function getInstance()
     {
-       return self::$instance;
+        return self::$instance;
     }
 
     public function setInstance(Application $instance)
     {
-         self::$instance = $instance;
-         return $this;
+        self::$instance = $instance;
+        return $this;
     }
 
-    public function offsetExists(mixed $offset) :Bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
-    public function offsetGet(mixed $offset) :mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    public function offsetSet(mixed $offset, mixed $value) :void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->bind($offset,$value);
+        $this->bind($offset, $value);
     }
 
-    public function offsetUnset(mixed $offset) :void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->bindings[$offset]);
     }

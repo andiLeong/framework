@@ -11,6 +11,6 @@ class Route extends Facades
 {
     public function instance()
     {
-        return app()[Router::class];
+        return app('router');
     }
 }

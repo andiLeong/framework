@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Request\Request;
 
 class AboutController
@@ -12,11 +13,13 @@ class AboutController
         //
     }
 
-//    public function index(Foo $foo, Bar $bar)
-//    {
-//        dump($this->request);
-//        return 'this is a about page';
-//    }
+    public function index(Config $config)
+    {
+//        dump(request()->get('foo'));
+//        dump(config('database'));
+//        dd(app());
+        return 'this is a about page';
+    }
 }
 
 class Foo

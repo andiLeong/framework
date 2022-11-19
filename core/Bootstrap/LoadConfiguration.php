@@ -24,7 +24,7 @@ class LoadConfiguration
             $config->set($key, $content);
         }
 
-        $app->singleton(Config::class, $config);
+        $app->singleton($app->getAlias(Config::class), $config);
     }
 
     protected function configPath()

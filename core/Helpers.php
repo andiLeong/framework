@@ -1,10 +1,7 @@
 <?php
 
-
 use Andileong\Framework\Core\Application;
-use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
-use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\View\View;
 
@@ -89,9 +86,12 @@ if (!function_exists('config')) {
      * @param null $key
      * @return object|null
      */
-    function config($key, $default = null)
+    function config($key = null, $default = null)
     {
-        return app(Config::class)->get($key,$default);
+        if($key === null){
+            return app('config');
+        }
+        return app('config')->get($key, $default);
     }
 
 }
@@ -105,12 +105,12 @@ if (!function_exists('request')) {
      */
     function request($key = null, $default = null)
     {
-        $request = app(Request::class);
-        if($key === null){
+        $request = app('request');
+        if ($key === null) {
             return $request;
         }
 
-        return $request->get($key,$default);
+        return $request->get($key, $default);
     }
 
 }

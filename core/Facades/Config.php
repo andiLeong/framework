@@ -8,6 +8,6 @@ class Config extends Facades
 {
     public function instance()
     {
-        return app()[ConfigRepository::class];
+        return app('config');
     }
 }
