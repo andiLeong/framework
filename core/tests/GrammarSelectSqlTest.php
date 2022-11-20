@@ -166,4 +166,20 @@ class GrammarSelectSqlTest extends testcase
         $statement = User::whereId('>=',30)->limit(1)->toSelectSql();
         $this->assertEquals($expected, $statement);
     }
+
+    /** @test */
+    public function it_can_convert_order()
+    {
+        $expected = "select * from `users` order by `id` asc";
+        $statement = User::orderBy('id')->toSelectSql();
+        $this->assertEquals($expected, $statement);
+
+        $expected = "select * from `users` order by `id` desc";
+        $statement = User::orderBy('id','desc')->toSelectSql();
+        $this->assertEquals($expected, $statement);
+
+        $expected = "select * from `users` order by `id` desc , `email` asc";
+        $statement = User::orderBy('id','desc')->orderBy('email')->toSelectSql();
+        $this->assertEquals($expected, $statement);
+    }
 }

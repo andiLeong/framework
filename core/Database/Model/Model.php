@@ -10,6 +10,7 @@ abstract class Model
     protected $table = null;
     protected $attributes = [];
     protected $existed = false;
+    protected $primaryKey = 'id';
 
     public function __construct($attributes = [])
     {
@@ -24,6 +25,14 @@ abstract class Model
     public function setTable($table)
     {
         $this->table = $table;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrimaryKey(): string
+    {
+        return $this->primaryKey;
     }
 
     public function setAttributes($attributes)
@@ -83,4 +92,5 @@ abstract class Model
             $name
         ](...$arguments);
     }
+
 }

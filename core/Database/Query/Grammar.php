@@ -11,6 +11,7 @@ class Grammar
             'columns' => $this->compileSelectColumns($builder->columns),
             'from' => $this->compileFrom($builder->from),
             'wheres' => $this->compileWheres($builder->wheres),
+            'orders' => $this->compileOrders($builder->orders),
             'limit' => $this->compileLimit($builder->limit),
         ];
 
@@ -156,5 +157,18 @@ class Grammar
         }
 
         return "limit $limit";
+    }
+
+    private function compileOrders(mixed $orders)
+    {
+        if(empty($orders)){
+           return ;
+        }
+        //order by `id` desc amd `name` asc
+        $orders = array_map(function($order){
+            return ', ' . $this->wrap($order['column']) .' '. $order['direction'];
+        },$orders);
+
+        return 'order by ' . ltrim(implode(' ',$orders),', ');
     }
 }

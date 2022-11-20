@@ -6,12 +6,14 @@ use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Database\Model\Model;
 use Andileong\Framework\Core\Support\Arr;
 use Closure;
+use InvalidArgumentException;
 
 class QueryBuilder
 {
 
     public $columns = [];
     public $wheres = [];
+    public $orders = [];
     public $bindings = [
         'select' => [],
         'from' => [],
@@ -46,6 +48,16 @@ class QueryBuilder
     public function from($table)
     {
         $this->from = $table;
+        return $this;
+    }
+
+    public function orderBy($column, $direction = 'asc')
+    {
+        if (! in_array($direction, ['asc', 'desc'], true)) {
+            throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
+        }
+
+        $this->orders[] = compact('column','direction');
         return $this;
     }
 
@@ -136,7 +148,7 @@ class QueryBuilder
 
     public function limit($value)
     {
-        if($value <= 0 ){
+        if ($value <= 0) {
             throw new \InvalidArgumentException('the amount of data cant be less than 1');
         }
 
@@ -152,16 +164,17 @@ class QueryBuilder
 
     public function all()
     {
-       return $this->get();
+        return $this->get();
     }
 
-    public function find($id, $columns = ['*'])
+    public function find($id, $columns = [])
     {
+        $key = $this->model->getPrimaryKey();
         if (is_array($id)) {
-            return $this->whereIn('id', $id)->get($columns);
+            return $this->whereIn($key, $id)->get($columns);
         }
 
-        return $this->where('id', $id)->get($columns)->first();
+        return $this->where($key, $id)->first();
     }
 
     public function insert(array $values, $sequence = null)
@@ -195,7 +208,7 @@ class QueryBuilder
     public function get($columns = null)
     {
         $columns = is_array($columns) ? $columns : func_get_args();
-        if(!empty($columns) && empty($this->columns)){
+        if (!empty($columns) && empty($this->columns)) {
             $this->columns = $columns;
         }
 
@@ -203,9 +216,8 @@ class QueryBuilder
         $selectedResults = $this->connection->runSelect($query, $this->bindings['where']);
 //        dump($selectedResults);
 
-        $hydrated = array_map( fn($result) =>
-            $this->model->newInstance((array) $result)
-        ,$selectedResults);
+        $hydrated = array_map(fn($result) => $this->model->newInstance((array)$result)
+            , $selectedResults);
 //        dump($hydrated);
 
         return $hydrated;
