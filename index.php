@@ -2,17 +2,19 @@
 
 use Andileong\Framework\Core\Application;
 use App\Models\User;
-
 require('vendor/autoload.php');
 
 $container = new Application(__DIR__);
 
 
-//$all = User::all();
-//$first = User::whereName('andi')->where('id', '>' , 3)->get();
-//$first = User::select('email','id')->whereName('andi')->where('id', '>' , 3);
-//$second = User::whereName('andi');
-//dump($second);
+//$first = User::
+//     whereBetween('id',[1,9])
+//    whereId('>=',10)
+//    ->take('10')
+//    ->whereNotNull('created_at')
+//    ->where('location' , 'guangzhou')
+//    ->first(['id','email']);
+//all();
 //dd($first);
 
 require_once './routes/routes.php';

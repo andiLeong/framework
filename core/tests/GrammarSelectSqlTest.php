@@ -150,4 +150,20 @@ class GrammarSelectSqlTest extends testcase
         $statement = User::where('is_admin', 1)->whereNotNull('id')->toSelectSql();
         $this->assertEquals($expected, $statement);
     }
+
+    /** @test */
+    public function it_can_convert_limit()
+    {
+        $expected = "select * from `users` limit 1";
+        $statement = User::limit(1)->toSelectSql();
+        $this->assertEquals($expected, $statement);
+    }
+
+    /** @test */
+    public function it_can_convert_limit_with_where()
+    {
+        $expected = "select * from `users` where `id` >= ? limit 1";
+        $statement = User::whereId('>=',30)->limit(1)->toSelectSql();
+        $this->assertEquals($expected, $statement);
+    }
 }

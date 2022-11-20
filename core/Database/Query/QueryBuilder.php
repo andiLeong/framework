@@ -1,7 +1,9 @@
 <?php
 
-namespace Andileong\Framework\Core\Models;
+namespace Andileong\Framework\Core\Database\Query;
 
+use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Database\Model\Model;
 use Andileong\Framework\Core\Support\Arr;
 use Closure;
 
@@ -25,7 +27,7 @@ class QueryBuilder
     public $limit;
     public $from;
 
-    public function __construct(protected $connection, protected $grammar, protected $model)
+    public function __construct(protected Connection $connection, protected Grammar $grammar, protected Model $model)
     {
         $this->from = $model->getTable();
     }
@@ -126,10 +128,31 @@ class QueryBuilder
         return $this;
     }
 
-    public function first($columns = ['*'])
+    public function first($columns = [])
     {
-        $this->limit = 1;
-        return $this->get($columns)->first();
+        $this->limit(1);
+        return $this->get($columns)[0];
+    }
+
+    public function limit($value)
+    {
+        if($value <= 0 ){
+            throw new \InvalidArgumentException('the amount of data cant be less than 1');
+        }
+
+        $this->limit = $value;
+        return $this;
+    }
+
+    public function take($value)
+    {
+        $this->limit($value);
+        return $this;
+    }
+
+    public function all()
+    {
+       return $this->get();
     }
 
     public function find($id, $columns = ['*'])
@@ -169,24 +192,23 @@ class QueryBuilder
 //        );
     }
 
-    public function get($columns = ['*'])
+    public function get($columns = null)
     {
-        if (count($this->columns) > 0) {
-            $columns = $this->columns;
-        } else {
-            $columns = Arr::wrap($columns);
+        $columns = is_array($columns) ? $columns : func_get_args();
+        if(!empty($columns) && empty($this->columns)){
+            $this->columns = $columns;
         }
-        $this->columns = $columns;
 
-        dump($this->getSql());
-        dd($this);
-//        dd($this->tosQl());
-//        $res = $this->connection->select(
-//            $this->toSql(),
-//            Arr::flatten($this->bindings)
-//        );
-//        dd($res);
-//        return collect($res);
+        $query = $this->toSelectSql();
+        $selectedResults = $this->connection->runSelect($query, $this->bindings['where']);
+//        dump($selectedResults);
+
+        $hydrated = array_map( fn($result) =>
+            $this->model->newInstance((array) $result)
+        ,$selectedResults);
+//        dump($hydrated);
+
+        return $hydrated;
     }
 
     public function toSelectSql()

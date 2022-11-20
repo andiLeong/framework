@@ -126,3 +126,17 @@ if (!function_exists('resolve')) {
         return app($key);
     }
 }
+
+if (!function_exists('classBaseName')) {
+    /**
+     * get classBaseName
+     * @param $class
+     * @return string
+     * @throws ReflectionException
+     */
+    function classBaseName($class)
+    {
+        $reflector = new ReflectionClass($class);
+        return $reflector->getShortName();
+    }
+}

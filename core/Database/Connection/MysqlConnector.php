@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\Database;
+namespace Andileong\Framework\Core\Database\Connection;
 
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
@@ -14,6 +14,7 @@ class MysqlConnector
     protected $username;
     protected $password;
     protected $database;
+    protected $fetchMode = PDO::FETCH_OBJ;
 
     public function __construct(Container $container = null)
     {
@@ -30,6 +31,7 @@ class MysqlConnector
         try {
             $conn = new PDO("mysql:host=$this->host;dbname=$this->database", $this->username, $this->password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, $this->fetchMode);
 
             return $conn;
         } catch (PDOException $e) {

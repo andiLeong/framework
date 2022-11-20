@@ -1,22 +1,20 @@
 <?php
 
-namespace Andileong\Framework\Core\Database;
-
-use Andileong\Framework\Core\Models\QueryBuilder;
+namespace Andileong\Framework\Core\Database\Query;
 
 class Grammar
 {
 
     public function toSelect(QueryBuilder $builder)
     {
-//        dd($builder);
         $sqlArray = [
             'columns' => $this->compileSelectColumns($builder->columns),
             'from' => $this->compileFrom($builder->from),
             'wheres' => $this->compileWheres($builder->wheres),
+            'limit' => $this->compileLimit($builder->limit),
         ];
 
-        $sql = rtrim(implode(' ', $sqlArray), ' ');
+        $sql = implode(' ', array_filter($sqlArray,fn($value) => $value != ''));
 //        dump($sqlArray);
 //        dump($sql);
 //        dd($builder);
@@ -149,5 +147,14 @@ class Grammar
     {
         $type = $where['type'];
         return $where['boolean'] . ' ' . $this->wrap($where['column']) . " is $type";
+    }
+
+    private function compileLimit(mixed $limit)
+    {
+        if(is_null($limit)){
+           return ;
+        }
+
+        return "limit $limit";
     }
 }
