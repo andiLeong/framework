@@ -86,7 +86,7 @@ class QueryBuilder
 
     public function whereIn($column, $values, $boolean = 'and', $not = false)
     {
-        $type = $not ? 'NotIn' : 'In';
+        $type = $not ? 'not in' : 'in';
         $this->wheres[] = compact('column', 'boolean', 'type', 'values');
         return $this
             ->assignBindings($values);
@@ -94,16 +94,26 @@ class QueryBuilder
 
     public function whereBetween($column, iterable $values, $boolean = 'and', $not = false)
     {
-        $type = 'between';
+        $type = $not ? 'not between' : 'between';
         $this->wheres[] = compact('column', 'boolean', 'type', 'values');
         return $this
             ->assignBindings($values);
     }
 
 
+    public function whereNotBetween($column, iterable $values, $boolean = 'and')
+    {
+        return $this->whereBetween($column, $values, $boolean, true);
+    }
+
+    public function whereNotNull($columns, $boolean = 'and')
+    {
+        return $this->whereNull($columns, $boolean, true);
+    }
+
     public function whereNull($columns, $boolean = 'and', $not = false)
     {
-        $type = $not ? 'NotNull' : 'Null';
+        $type = $not ? 'not null' : 'null';
 
         foreach (Arr::wrap($columns) as $column) {
             $this->wheres[] = [
