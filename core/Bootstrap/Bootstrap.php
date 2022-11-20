@@ -7,8 +7,8 @@ use Andileong\Framework\Core\Application;
 class Bootstrap
 {
     protected $bootstrapers = [
+        SetEnvironmentVariable::class,
         LoadConfiguration::class,
-        SetEnvironmentVariable::class
     ];
 
 
