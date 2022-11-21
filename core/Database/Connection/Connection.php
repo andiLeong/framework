@@ -81,8 +81,10 @@ class Connection
         dump($bindings);
 
         $stmt = $this->getPdo()->prepare($query);
-        return $bindings
+        $bindings
             ? $stmt->execute($bindings)
             : $stmt->execute();
+
+        return $stmt->rowCount() > 0;
     }
 }

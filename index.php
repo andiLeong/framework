@@ -7,11 +7,24 @@ require('vendor/autoload.php');
 $container = new Application(__DIR__);
 
 
-//$first = User::
-//     whereBetween('id',[254,255])
-//    ->delete(253);
-//
-//
+//$data = [
+//    'email' => 'sdsdsd@x.caaabbbbbb',
+//    'username' => 'aaaaaaabb',
+//    'name' => 'aaaaa',
+//    'password' => 'aaaaa@@@@',
+//];
+
+//$res =  User::where('id',250)->update(['password' => 'newwwwww']);
+//dd($res);
+
+//$first = User::whereId(248)->delete();
+//$first = new User();
+//$first->email = 'saveemail@email.comnew';
+//$first->username = 'save usernam@email.comss';
+//$first->name = 'saveemail@email.com';
+
+//dd($first);
+//dump($first->delete());
 //dd($first);
 
 require_once './routes/routes.php';
