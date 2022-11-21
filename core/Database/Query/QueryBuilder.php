@@ -14,6 +14,7 @@ class QueryBuilder
     public $columns = [];
     public $wheres = [];
     public $orders = [];
+    public $inserts = [];
     public $bindings = [
         'select' => [],
         'from' => [],
@@ -179,30 +180,38 @@ class QueryBuilder
 
     public function insert(array $values, $sequence = null)
     {
-//        $sql = $this->grammar->compileInsertGetId($this, $values, $sequence);
-//        $values = array_values($values);
-//        return $this->processor->processInsertGetId($this, $sql, $values, $sequence);
+        $this->inserts = $values;
+
+        $id = $this->connection->runInsert(
+            $this->toInsertSql(),
+            array_values($values)
+        );
+
+        $this->inserts = [];
+        return $id;
     }
 
     public function update(array $values)
     {
-//        $sql = $this->grammar->compileUpdate($this, $values);
-//        $values = $this->grammar->prepareBindingsForUpdate($this->bindings, $values);
-//        return $this->connection->update($sql, $values);
-
+        $result = $this->connection->runUpdate(
+            $this->toUpdateSql($values),
+            array_values(array_merge($values,$this->bindings['where'])),
+        );
+        return $result;
     }
 
     public function delete($id = null)
     {
-//        if (!is_null($id)) {
-//            $this->where($this->from . '.id', '=', $id);
-//        }
-//
-//
-//        return $this->connection->delete(
-//            $this->grammar->compileDelete($this),
-//            $this->grammar->prepareBindingsForDelete($this->bindings)
-//        );
+        if ($id !== null) {
+            $this->wheres = [];
+            $this->bindings = [];
+            $this->where($this->model->getPrimaryKey(),$id);
+        }
+
+        return $this->connection->runDelete(
+            $this->toDeleteSql(),
+            $this->bindings['where']
+        );
     }
 
     public function get($columns = null)
@@ -226,6 +235,21 @@ class QueryBuilder
     public function toSelectSql()
     {
         return $this->grammar->toSelect($this);
+    }
+
+    public function toInsertSql()
+    {
+        return $this->grammar->toInsert($this);
+    }
+
+    public function toUpdateSql($values)
+    {
+        return $this->grammar->toUpdate($this,$values);
+    }
+
+    public function toDeleteSql()
+    {
+        return $this->grammar->toDelete($this);
     }
 
     /**

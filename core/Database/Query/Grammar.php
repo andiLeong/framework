@@ -5,6 +5,26 @@ namespace Andileong\Framework\Core\Database\Query;
 class Grammar
 {
 
+    public function toInsert(QueryBuilder $builder)
+    {
+        $columnsArray = array_keys($builder->inserts);
+        $columns = $this->getInsertColumns($columnsArray);
+        $table = $this->table($builder->from);
+        $placeholder = $this->getInsertPlaceholders(count($columnsArray));
+
+        return "INSERT INTO {$table} $columns VALUES {$placeholder}";
+    }
+
+    protected function getInsertPlaceholders($amount)
+    {
+        return '(' . rtrim(str_repeat('?, ', $amount), ', ') . ')';
+    }
+
+    protected function getInsertColumns($columnArray)
+    {
+        return '(' . trim(implode(', ', $columnArray)) . ')';
+    }
+
     public function toSelect(QueryBuilder $builder)
     {
         $sqlArray = [
@@ -15,7 +35,7 @@ class Grammar
             'limit' => $this->compileLimit($builder->limit),
         ];
 
-        $sql = implode(' ', array_filter($sqlArray,fn($value) => $value != ''));
+        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
 //        dump($sqlArray);
 //        dump($sql);
 //        dd($builder);
@@ -43,7 +63,12 @@ class Grammar
 
     private function compileFrom($from)
     {
-        return 'from ' . $this->wrap($from);
+        return 'from ' . $this->table($from);
+    }
+
+    protected function table($table)
+    {
+        return $this->wrap($table);
     }
 
     /**
@@ -57,9 +82,8 @@ class Grammar
             return;
         }
 
-        $wheresArray = array_map(fn($where) =>
-            $this->compileWhere($where)
-        , $wheres);
+        $wheresArray = array_map(fn($where) => $this->compileWhere($where)
+            , $wheres);
 
         return 'where' . ltrim(implode(' ', $wheresArray), 'and');
     }
@@ -152,8 +176,8 @@ class Grammar
 
     private function compileLimit(mixed $limit)
     {
-        if(is_null($limit)){
-           return ;
+        if (is_null($limit)) {
+            return;
         }
 
         return "limit $limit";
@@ -161,14 +185,43 @@ class Grammar
 
     private function compileOrders(mixed $orders)
     {
-        if(empty($orders)){
-           return ;
+        if (empty($orders)) {
+            return;
         }
         //order by `id` desc amd `name` asc
-        $orders = array_map(function($order){
-            return ', ' . $this->wrap($order['column']) .' '. $order['direction'];
-        },$orders);
+        $orders = array_map(function ($order) {
+            return ', ' . $this->wrap($order['column']) . ' ' . $order['direction'];
+        }, $orders);
 
-        return 'order by ' . ltrim(implode(' ',$orders),', ');
+        return 'order by ' . ltrim(implode(' ', $orders), ', ');
+    }
+
+    public function toUpdate(QueryBuilder $builder, $values)
+    {
+        $sqlArray = [
+            'update' => "UPDATE {$this->table($builder->from)}",
+            'set' => $this->compileUpdate($values),
+            'wheres' => $this->compileWheres($builder->wheres),
+        ];
+
+        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
+        return $sql;
+    }
+
+    private function compileUpdate($values)
+    {
+        $keys = array_keys($values);
+        return 'SET ' . implode(' = ?, ', $keys) . ' = ?';
+    }
+
+    public function toDelete(QueryBuilder $builder)
+    {
+        $sqlArray = [
+            'delete' => "DELETE FROM {$this->table($builder->from)}",
+            'wheres' => $this->compileWheres($builder->wheres),
+        ];
+
+        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
+        return $sql;
     }
 }

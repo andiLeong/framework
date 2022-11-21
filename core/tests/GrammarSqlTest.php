@@ -5,7 +5,7 @@ namespace Andileong\Framework\Core\tests;
 use App\Models\User;
 use PHPUnit\Framework\TestCase;
 
-class GrammarSelectSqlTest extends testcase
+class GrammarSqlTest extends testcase
 {
     /** @test */
     public function it_can_convert_multiple_columns()
@@ -163,7 +163,7 @@ class GrammarSelectSqlTest extends testcase
     public function it_can_convert_limit_with_where()
     {
         $expected = "select * from `users` where `id` >= ? limit 1";
-        $statement = User::whereId('>=',30)->limit(1)->toSelectSql();
+        $statement = User::whereId('>=', 30)->limit(1)->toSelectSql();
         $this->assertEquals($expected, $statement);
     }
 
@@ -175,11 +175,56 @@ class GrammarSelectSqlTest extends testcase
         $this->assertEquals($expected, $statement);
 
         $expected = "select * from `users` order by `id` desc";
-        $statement = User::orderBy('id','desc')->toSelectSql();
+        $statement = User::orderBy('id', 'desc')->toSelectSql();
         $this->assertEquals($expected, $statement);
 
         $expected = "select * from `users` order by `id` desc , `email` asc";
-        $statement = User::orderBy('id','desc')->orderBy('email')->toSelectSql();
+        $statement = User::orderBy('id', 'desc')->orderBy('email')->toSelectSql();
+        $this->assertEquals($expected, $statement);
+    }
+
+    /** @test */
+    public function it_can_convert_insert_statement()
+    {
+        $data = [
+            'username' => 'foo',
+            'email' => 'foo',
+            'password' => 'foo',
+        ];
+
+        $expected = "INSERT INTO `users` (username, email, password) VALUES (?, ?, ?)";
+        $query = User::query();
+        $query->inserts = $data;
+        $statement = $query->toInsertSql();
+        $this->assertEquals($expected, $statement);
+    }
+
+    /** @test */
+    public function it_can_convert_update_statement()
+    {
+        $data = [
+            'name' => 'foo',
+            'username' => 'foo',
+        ];
+
+        $expected = "UPDATE `users` SET name = ?, username = ? where `id` = ?";
+        $statement = User::where('id',3)->toUpdateSql($data);
+        $this->assertEquals($expected, $statement);
+
+        $expected = "UPDATE `users` SET name = ?, username = ? where `id` in (?,?,?) and `name` = ?";
+        $statement = User::whereIn('id',[1,2,3])->whereName('an')->toUpdateSql($data);
+        $this->assertEquals($expected, $statement);
+    }
+
+    /** @test */
+    public function it_can_convert_delete_statement()
+    {
+        $expected = "DELETE FROM `users` where `id` = ?";
+        $statement = User::where('id',3)->toDeleteSql();
+        $this->assertEquals($expected, $statement);
+
+        $expected = "DELETE FROM `users` where `id` < ? and `email` = ?";
+        $statement = User::where('id','<',3)->whereEmail('hi')->toDeleteSql();
         $this->assertEquals($expected, $statement);
     }
 }

@@ -83,6 +83,12 @@ abstract class Model
         return $new;
     }
 
+    public static function query()
+    {
+        $instance = self::modelInstance();
+        return $instance->getBuilder();
+    }
+
     public static function __callStatic(string $name, array $arguments)
     {
         $instance = self::modelInstance();

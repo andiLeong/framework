@@ -47,8 +47,8 @@ class Connection
 
     public function runSelect($query, $bindings = [])
     {
-        dump($query);
-        dump($bindings);
+//        dump($query);
+//        dump($bindings);
 
         $stmt = $this->getPdo()->prepare($query);
 
@@ -57,5 +57,32 @@ class Connection
             : $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function runInsert($query, array $bindings)
+    {
+//        dump($query);
+//        dump($bindings);
+        $pdo = $this->getPdo();
+        $pdo->prepare($query)->execute($bindings);
+        return $pdo->lastInsertId();
+    }
+
+    public function runUpdate(string $query, array $bindings)
+    {
+//        dump($query);
+//        dump($bindings);
+        return $this->getPdo()->prepare($query)->execute($bindings);
+    }
+
+    public function runDelete(string $query, array $bindings)
+    {
+        dump($query);
+        dump($bindings);
+
+        $stmt = $this->getPdo()->prepare($query);
+        return $bindings
+            ? $stmt->execute($bindings)
+            : $stmt->execute();
     }
 }

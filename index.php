@@ -8,15 +8,10 @@ $container = new Application(__DIR__);
 
 
 //$first = User::
-//     whereBetween('id',[1,50])
-//    ->orderBy('name')
-//    ->orderBy('id','desc')
-//    whereId('>=',10)
-//    ->take('10')
-//    ->whereNotNull('created_at')
-//    ->where('location' , 'guangzhou')
-//    ->first(['id','email']);
-//->get();
+//     whereBetween('id',[254,255])
+//    ->delete(253);
+//
+//
 //dd($first);
 
 require_once './routes/routes.php';
