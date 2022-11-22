@@ -14,8 +14,15 @@ $container = new Application(__DIR__);
 //    'password' => 'aaaaa@@@@',
 //];
 
-//$res =  User::where('id',250)->update(['password' => 'newwwwww']);
-//dd($res);
+$user = new User();
+$user->password = 'new ppp';
+$user->email = 'new ppp2';
+$user->username = 'new dppp';
+$user->name = 'new ppp333';
+
+dump($user);
+dump($user->save());
+dd($user);
 
 //$first = User::whereId(248)->delete();
 //$first = new User();

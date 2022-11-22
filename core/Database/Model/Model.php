@@ -6,9 +6,13 @@ use Andileong\Framework\Core\Database\Connection\Connection;
 
 abstract class Model
 {
+    use HasAttributes;
+
     protected $connection = null;
     protected $table = null;
     protected $attributes = [];
+    protected $originals = [];
+    protected $changes = [];
     protected $existed = false;
     protected $primaryKey = 'id';
 
@@ -33,12 +37,6 @@ abstract class Model
     public function getPrimaryKey(): string
     {
         return $this->primaryKey;
-    }
-
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
-        return $this;
     }
 
     public function getBuilder()
@@ -71,9 +69,8 @@ abstract class Model
      */
     public function newInstance($attributes = [], $existed = true)
     {
-        //todo keep tract of original data set
         $new = new static;
-        $new->setAttributes($attributes);
+        $new->setRawAttributes($attributes);
         $new->setConnection(
             $this->connection
         );
@@ -81,6 +78,7 @@ abstract class Model
             $this->getTable()
         );
         $new->existed = $existed;
+        $new->syncOriginals();
 
         return $new;
     }
@@ -112,17 +110,24 @@ abstract class Model
 
     private function toUpdate()
     {
-        $newAttributes = $this->attributes;
-        $res = $this->getBuilder()->update(
-            //todo get the difference attributes then update
-            array_filter($this->attributes,fn($attribute,$key) => $key !== $this->getPrimaryKey(),ARRAY_FILTER_USE_BOTH)
-        );
+        $newAttributes = $this->getDirty();
+        if(empty($newAttributes)){
+            return false;
+        }
 
+        $res = $this->toUpdateSql()->update($newAttributes);
         if($res){
-            $this->setAttributes($newAttributes);
+            $this->syncOriginals();
+            $this->syncChanges($newAttributes);
         }
 
         return $res;
+    }
+
+    protected function toUpdateSql()
+    {
+        $key = $this->getPrimaryKey();
+        return $this->getBuilder()->where($key,$this->attributes[$key]);
     }
 
     private function toSave()
@@ -130,11 +135,8 @@ abstract class Model
         $id = $this->getBuilder()->insert($this->attributes);
         $this->existed = true;
 
-        $this->setAttributes(
-            array_merge([
-                $this->getPrimaryKey() => $id
-            ], $this->attributes)
-        );
+        $this->setAttribute($this->getPrimaryKey(),$id);
+        $this->syncOriginals();
         return true;
     }
 
@@ -146,9 +148,7 @@ abstract class Model
 
         $res = $this->getBuilder()->delete($this->attributes[$this->getPrimaryKey()]);
         if($res){
-            $this->setAttributes([]);
             $this->existed = false;
-
             return $res;
         }
 
@@ -157,9 +157,8 @@ abstract class Model
 
     public function __set(string $name, $value): void
     {
-        $this->attributes[$name] = $value;
+        $this->setAttribute($name,$value);
     }
-
 
     public static function __callStatic(string $name, array $arguments)
     {
