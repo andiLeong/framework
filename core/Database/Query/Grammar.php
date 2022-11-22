@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Database\Query;
 
 class Grammar
 {
+    public $aggregate = ['count','sum'];
 
     public function toInsert(QueryBuilder $builder)
     {
@@ -45,15 +46,34 @@ class Grammar
     private function compileSelectColumns(mixed $columns)
     {
         if (!empty($columns)) {
-            $columnsArray = array_map(function ($column) {
-                return ' ' . $this->wrap($column);
-            }, $columns);
-            $column = implode(',', $columnsArray);
+            $column = $this->compileColumns($columns);
         } else {
             $column = ' *';
         }
 
         return 'select' . $column;
+    }
+
+    public function compileColumns($columns)
+    {
+        $columnsArray = array_map(function ($column) {
+            if ($this->isAggregateColumn($column)) {
+                return ' ' . $column;
+            }
+            return ' ' . $this->wrap($column);
+        }, $columns);
+        return implode(',', $columnsArray);
+    }
+
+    protected function isAggregateColumn($column) :bool
+    {
+        foreach ($this->aggregate as $ag){
+             if(str_contains($column,$ag)){
+                 return true;
+             }
+        }
+
+        return false;
     }
 
     public function wrap($value)

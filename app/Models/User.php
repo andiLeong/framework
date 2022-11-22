@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-
 use Andileong\Framework\Core\Database\Model\Model;
 
 class User extends Model
 {
-//    protected $table = 'users';
+    public function setPasswordAttribute($value)
+    {
+       $this->attributes['password'] = md5($value);
+    }
 }

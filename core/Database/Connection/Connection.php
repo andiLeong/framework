@@ -10,7 +10,6 @@ use PDO;
 class Connection
 {
     protected ?QueryBuilder $builder = null;
-//    protected $fetchMode = PDO::FETCH_OBJ;
     protected static PDO|null $pdo = null;
 
     public function __construct()
@@ -51,12 +50,19 @@ class Connection
 //        dump($bindings);
 
         $stmt = $this->getPdo()->prepare($query);
-
-        $bindings
-            ? $stmt->execute($bindings)
-            : $stmt->execute();
+        $stmt->execute($bindings);
 
         return $stmt->fetchAll();
+    }
+
+    public function runAggregate($query, $bindings = [])
+    {
+//        dump($query);
+//        dump($bindings);
+        $stmt = $this->getPdo()->prepare($query);
+
+        $stmt->execute($bindings);
+        return $stmt->fetchColumn();
     }
 
     public function runInsert($query, array $bindings)
@@ -77,8 +83,8 @@ class Connection
 
     public function runDelete(string $query, array $bindings)
     {
-        dump($query);
-        dump($bindings);
+//        dump($query);
+//        dump($bindings);
 
         $stmt = $this->getPdo()->prepare($query);
         $bindings

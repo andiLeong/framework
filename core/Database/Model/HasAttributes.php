@@ -2,8 +2,32 @@
 
 namespace Andileong\Framework\Core\Database\Model;
 
+use Andileong\Framework\Core\Support\Str;
+
 trait HasAttributes
 {
+    public function callMutator($mutator,$value)
+    {
+        return $this->$mutator($value);
+    }
+
+    public function getMutator($key)
+    {
+        $method = 'set'. Str::camel($key) . 'Attribute';
+        if(method_exists($this,$method)){
+            return $method;
+        }
+    }
+
+    protected function getOriginal()
+    {
+        return $this->originals;
+    }
+
+    protected function getAttributes()
+    {
+        return $this->attributes;
+    }
 
     protected function getDirty()
     {
@@ -12,6 +36,11 @@ trait HasAttributes
 
     protected function setAttribute($key, $value)
     {
+        if ($mutator = $this->getMutator($key)) {
+            $this->callMutator($mutator,$value);
+            return $this;
+        }
+
         $this->attributes[$key] = $value;
         return $this;
     }

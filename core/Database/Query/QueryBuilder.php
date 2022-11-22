@@ -54,11 +54,11 @@ class QueryBuilder
 
     public function orderBy($column, $direction = 'asc')
     {
-        if (! in_array($direction, ['asc', 'desc'], true)) {
+        if (!in_array($direction, ['asc', 'desc'], true)) {
             throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
         }
 
-        $this->orders[] = compact('column','direction');
+        $this->orders[] = compact('column', 'direction');
         return $this;
     }
 
@@ -195,7 +195,7 @@ class QueryBuilder
     {
         $result = $this->connection->runUpdate(
             $this->toUpdateSql($values),
-            array_values(array_merge($values,$this->bindings['where'])),
+            array_values(array_merge($values, $this->bindings['where'])),
         );
         return $result;
     }
@@ -205,11 +205,35 @@ class QueryBuilder
         if ($id !== null) {
             $this->wheres = [];
             $this->bindings = [];
-            $this->where($this->model->getPrimaryKey(),$id);
+            $this->where($this->model->getPrimaryKey(), $id);
         }
 
         return $this->connection->runDelete(
             $this->toDeleteSql(),
+            $this->bindings['where']
+        );
+    }
+
+    public function count()
+    {
+        $this->columns[] = 'count(*)';
+        return $this->connection->runAggregate(
+            $this->toSelectSql(),
+            $this->bindings['where']
+        );
+    }
+
+    public function sum($column, $as = null)
+    {
+        $this->columns = [];
+
+        $column = is_null($as)
+            ? "sum($column)"
+            : "sum($column) as \"$as\"";
+
+        $this->columns[] = $column;
+        return $this->connection->runAggregate(
+            $this->toSelectSql(),
             $this->bindings['where']
         );
     }
@@ -244,7 +268,7 @@ class QueryBuilder
 
     public function toUpdateSql($values)
     {
-        return $this->grammar->toUpdate($this,$values);
+        return $this->grammar->toUpdate($this, $values);
     }
 
     public function toDeleteSql()
