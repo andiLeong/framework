@@ -6,17 +6,26 @@ use Andileong\Framework\Core\Support\Str;
 
 trait HasAttributes
 {
-    public function callMutator($mutator,$value)
+    public function callAccessor($accessor, $value)
+    {
+        return $this->$accessor($value);
+    }
+
+    public function getAccessor($key)
+    {
+        $method = 'get' . Str::camel($key) . 'Attribute';
+        return hasMethodDefined($this,$method);
+    }
+
+    public function callMutator($mutator, $value)
     {
         return $this->$mutator($value);
     }
 
     public function getMutator($key)
     {
-        $method = 'set'. Str::camel($key) . 'Attribute';
-        if(method_exists($this,$method)){
-            return $method;
-        }
+        $method = 'set' . Str::camel($key) . 'Attribute';
+        return hasMethodDefined($this,$method);
     }
 
     protected function getOriginal()
@@ -29,6 +38,15 @@ trait HasAttributes
         return $this->attributes;
     }
 
+    protected function getAttribute($name)
+    {
+        $value = $this->attributes[$name];
+        if ($accessor = $this->getAccessor($name)) {
+            return $this->callAccessor($accessor,$value);
+        }
+        return $value;
+    }
+
     protected function getDirty()
     {
         return array_diff_assoc($this->attributes, $this->originals);
@@ -37,7 +55,7 @@ trait HasAttributes
     protected function setAttribute($key, $value)
     {
         if ($mutator = $this->getMutator($key)) {
-            $this->callMutator($mutator,$value);
+            $this->callMutator($mutator, $value);
             return $this;
         }
 

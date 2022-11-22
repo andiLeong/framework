@@ -167,6 +167,11 @@ abstract class Model
         $this->setAttribute($name,$value);
     }
 
+    public function __get(string $name)
+    {
+        return $this->getAttribute($name);
+    }
+
     public static function __callStatic(string $name, array $arguments)
     {
         $instance = self::modelInstance();

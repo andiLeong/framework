@@ -14,9 +14,9 @@ $container = new Application(__DIR__);
 //    'password' => 'aaaaa@@@@',
 //];
 
-$count = User::whereBetween('id',[10,20])->sum('id', 'sum_id');
+//$count = User::whereBetween('id',[10,20])->sum('id', 'sum_id');
 //$count = User::whereIn('id',[3,4,5])->count();
-dd($count);
+//dd($count);
 //$user = User::create($data);
 $user = new User();
 $user->password = 'new ppp new222';
@@ -27,6 +27,7 @@ $user->password = 'new ppp new222';
 //dump($user);
 //dump($user->save());
 //dump($user->update(['name' => 'facking']));
+dump($user->password);
 dd($user);
 
 //$first = User::whereId(248)->delete();

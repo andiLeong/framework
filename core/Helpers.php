@@ -88,7 +88,7 @@ if (!function_exists('config')) {
      */
     function config($key = null, $default = null)
     {
-        if($key === null){
+        if ($key === null) {
             return app('config');
         }
         return app('config')->get($key, $default);
@@ -138,5 +138,21 @@ if (!function_exists('classBaseName')) {
     {
         $reflector = new ReflectionClass($class);
         return $reflector->getShortName();
+    }
+}
+
+if (!function_exists('hasMethodDefined')) {
+    /**
+     * check an object have a custom method defined
+     * @string|object $class
+     * @return string
+     */
+    function hasMethodDefined($class, $method, $default = null)
+    {
+        $object = is_string($class) ? app($class) : $class;
+        if (method_exists($object, $method)) {
+            return $method;
+        }
+        return $default;
     }
 }
