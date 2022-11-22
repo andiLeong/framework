@@ -8,21 +8,23 @@ $container = new Application(__DIR__);
 
 
 //$data = [
-//    'email' => 'sdsdsd@x.caaabbbbbb',
-//    'username' => 'aaaaaaabb',
+//    'email' => 'sdsdsd@x.caaabbbbbbaaaw',
+//    'username' => 'aaaaaaabbxcxccc',
 //    'name' => 'aaaaa',
 //    'password' => 'aaaaa@@@@',
 //];
 
-$user = new User();
-$user->password = 'new ppp';
-$user->email = 'new ppp2';
-$user->username = 'new dppp';
-$user->name = 'new ppp333';
+//$user = User::create($data);
+//$user = new User();
+//$user->password = 'new ppp new222';
+//$user->email = 'new ppp2iiiii';
+//$user->username = 'new dpppaaa';
+//$user->name = 'new ppp333';
 
-dump($user);
-dump($user->save());
-dd($user);
+//dump($user);
+//dump($user->save());
+//dump($user->update(['name' => 'facking']));
+//dd($user);
 
 //$first = User::whereId(248)->delete();
 //$first = new User();

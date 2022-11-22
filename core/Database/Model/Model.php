@@ -99,19 +99,26 @@ abstract class Model
         ], $attributes));
     }
 
-    public function save()
+    public function update(array $attributes)
     {
-        if ($this->existed) {
-            return $this->toUpdate();
+        foreach ($attributes as $name => $value){
+            $this->setAttribute($name,$value);
         }
 
-        return $this->toSave();
+        return $this->toUpdate();
+    }
+
+    public function save()
+    {
+        return $this->existed
+            ? $this->toUpdate()
+            : $this->toSave();
     }
 
     private function toUpdate()
     {
         $newAttributes = $this->getDirty();
-        if(empty($newAttributes)){
+        if(empty($newAttributes) || $this->existed === false){
             return false;
         }
 
