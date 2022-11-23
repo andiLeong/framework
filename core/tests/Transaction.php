@@ -2,7 +2,7 @@
 
 namespace Andileong\Framework\Core\tests;
 
-trait useTransaction
+trait Transaction
 {
     public static $connection;
 

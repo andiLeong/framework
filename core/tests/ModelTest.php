@@ -2,13 +2,14 @@
 
 namespace Andileong\Framework\Core\tests;
 
-use Andileong\Framework\Core\Database\Model\Model;
 use Andileong\Framework\Core\Support\Str;
+use Andileong\Framework\Core\tests\stubs\User;
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends testcase
 {
-    use useTransaction;
+    use Transaction;
+    use CreateUser;
 
     /** @test */
     public function it_has_mutator_feature()
@@ -74,8 +75,6 @@ class ModelTest extends testcase
     /** @test */
     public function it_can_be_created_using_create_method()
     {
-
-
         $user = $this->createUser();
         $this->assertTrue($user->isExisted());
         $count = User::where(['id' => $user->id])->count();
@@ -128,7 +127,7 @@ class ModelTest extends testcase
     }
 
     /** @test */
-    public function it_can_a_collection_of_records()
+    public function it_can_get_a_collection_of_records()
     {
         $user = $this->createUser();
         $users = User::orderBy('id', 'desc')->get();
@@ -138,53 +137,65 @@ class ModelTest extends testcase
     }
 
     /** @test */
+    public function it_can_get_a_collection_of_records_with_certain_columns()
+    {
+        $users = User::select('id', 'email')->get();
+        $attributes = $users[0]->getAttributes();
+        $this->assertArrayHasKey('email', $attributes);
+        $this->assertArrayNotHasKey('name', $attributes);
+
+        $users = User::get('id', 'name');
+        $attributes = $users[0]->getAttributes();
+        $this->assertArrayHasKey('name', $attributes);
+        $this->assertArrayNotHasKey('email', $attributes);
+    }
+
+    /** @test */
     public function it_can_get_a_single_record()
     {
         $user = $this->createUser();
         $latest = User::latest()->first();
-
         $this->assertEquals($user->id, $latest->id);
+
+        $user = User::where('name', 'fake')->first();
+        $this->assertNull($user);
     }
 
-    public function createUser($attributes = [])
+    /** @test */
+    public function it_can_get_a_single_record_with_columns()
     {
-        return User::create($this->baseAttribute($attributes));
+        $this->createUser();
+        $user = User::latest()->first(['id', 'name']);
+        $attributes = $user->getAttributes();
+        $this->assertArrayNotHasKey('email', $attributes);
+        $this->assertArrayHasKey('name', $attributes);
+
     }
 
-    public function baseAttribute($overwrite = [])
+    /** @test */
+    public function it_can_find_record_by_primary_ids()
     {
-        return array_merge([
-            'email' => Str::random(5) . '@asd.com',
-            'password' => 'mysdsdsd@asd.com',
-            'username' => Str::random(),
-            'name' => 'mysdsdsd@asd.com',
-        ], $overwrite);
+        $user = $this->createUser();
+        $latest = User::find($user->id);
+        $this->assertEquals($user->id, $latest->id);
+
+        $user1 = $this->createUser();
+        $user2 = $this->createUser();
+        $users = User::find([$user1->id, $user2->id]);
+        $this->assertEquals($user1->id, $users[0]->id);
+
+        $user = User::find('fake');
+        $this->assertNull($user);
     }
 
-    public function saveUser($username = null, $password = null, $email = null, $name = null)
+    /** @test */
+    public function it_can_find_record_by_primary_ids_with_desire_columns()
     {
-        $user = new User();
-        $user->username = $username ?? Str::random(4);
-        $user->password = $password ?? Str::random();
-        $user->email = $email ?? Str::random();
-        $user->name = $name ?? Str::random(4);
+        $user = $this->createUser();
+        $latestUser = User::find($user->id,['id','email']);
 
-        $result = $user->save();
-        return [$user, $result];
+        $attributes = $latestUser->getAttributes();
+        $this->assertArrayNotHasKey('name', $attributes);
+        $this->assertArrayHasKey('email', $attributes);
     }
-}
-
-
-class User extends Model
-{
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = md5($value);
-    }
-
-    public function getPasswordAttribute($value)
-    {
-        return 'access_' . $value;
-    }
-
 }

@@ -149,7 +149,11 @@ class QueryBuilder
     public function first($columns = [])
     {
         $this->limit(1);
-        return $this->get($columns)[0];
+        $records = $this->get($columns);
+        if(empty($records)){
+            return null;
+        }
+        return $records[0];
     }
 
     public function limit($value)
@@ -180,7 +184,7 @@ class QueryBuilder
             return $this->whereIn($key, $id)->get($columns);
         }
 
-        return $this->where($key, $id)->first();
+        return $this->where($key, $id)->first($columns);
     }
 
     public function insert(array $values, $sequence = null)
@@ -343,10 +347,5 @@ class QueryBuilder
         if (str_starts_with($method, 'where')) {
             return $this->dynamicWheres($parameters, $method);
         }
-    }
-
-    private function selectAll()
-    {
-        return $this->columns[0] === '*';
     }
 }

@@ -56,6 +56,11 @@ class Connection
         return self::$pdo;
     }
 
+    public function setPdo($pdo = null)
+    {
+        self::$pdo = $pdo;
+    }
+
     public function getDriver()
     {
         $driver = ucfirst(config('database.default')) . 'Connector';
