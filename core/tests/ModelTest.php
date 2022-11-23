@@ -13,7 +13,41 @@ class ModelTest extends testcase
     {
         $user = new User();
         $user->password = 'password';
+        $this->assertEquals($user->getAttributes()['password'], md5('password'));
+    }
 
+    /** @test */
+    public function it_can_update_model_using_the_mutator_value()
+    {
+        $user = $this->createUser(['password' => 'wwww']);
+        $user->update(['password' => 'password']);
+        $this->assertEquals($user->getAttributes()['password'], md5('password'));
+    }
+
+    /** @test */
+    public function it_can_mutate_attribute_when_new_up_a_model()
+    {
+        $user = new User(['password' => 'password']);
+        $this->assertEquals($user->getAttributes()['password'], md5('password'));
+    }
+
+    /** @test */
+    public function it_can_use_mutator_when_creating_model()
+    {
+        $user = $this->createUser(['password' => 'password']);
+        $this->assertEquals($user->getAttributes()['password'], md5('password'));
+    }
+
+    /** @test */
+    public function it_can_save_a_model_using_mutator_value()
+    {
+        [$user] = $this->saveUser(null, 'password');
+        $this->assertEquals($user->getAttributes()['password'], md5('password'));
+
+        $user = $this->createUser(['password' => 'wwww']);
+        $this->assertEquals($user->getAttributes()['password'], md5('wwww'));
+        $user->password = 'password';
+        $user->save();
         $this->assertEquals($user->getAttributes()['password'], md5('password'));
     }
 
@@ -22,7 +56,16 @@ class ModelTest extends testcase
     {
         $user = new User();
         $user->password = 'password';
+        $this->assertEquals($user->password, 'access_' . md5('password'));
 
+        $user = new User(['password' => 'password']);
+        $this->assertEquals($user->password, 'access_' . md5('password'));
+    }
+
+    /** @test */
+    public function it_can_has_accessor_if_model_retrieve_from_db()
+    {
+        $user = $this->createUser(['password' => 'password']);
         $this->assertEquals($user->password, 'access_' . md5('password'));
     }
 
@@ -50,13 +93,7 @@ class ModelTest extends testcase
     /** @test */
     public function it_can_be_created_by_using_save_method()
     {
-        $user = new User();
-        $user->username = Str::random(4);
-        $user->password = Str::random();
-        $user->email = Str::random();
-        $user->name = Str::random(4);
-
-        $res = $user->save();
+        [$user, $res] = $this->saveUser();
 
         $this->assertTrue($res);
         $count = User::where(['id' => $user->id])->count();
@@ -89,7 +126,7 @@ class ModelTest extends testcase
     public function it_can_a_collection_of_records()
     {
         $user = $this->createUser();
-        $users = User::orderBy('id','desc')->get();
+        $users = User::orderBy('id', 'desc')->get();
 
         $this->assertIsArray($users);
         $this->assertEquals($user->id, $users[0]->id);
@@ -104,15 +141,31 @@ class ModelTest extends testcase
         $this->assertEquals($user->id, $latest->id);
     }
 
-    public function createUser()
+    public function createUser($attributes = [])
     {
-        $data = [
+        return User::create($this->baseAttribute($attributes));
+    }
+
+    public function baseAttribute($overwrite = [])
+    {
+        return array_merge([
             'email' => Str::random(5) . '@asd.com',
             'password' => 'mysdsdsd@asd.com',
             'username' => Str::random(),
             'name' => 'mysdsdsd@asd.com',
-        ];
-        return User::create($data);
+        ], $overwrite);
+    }
+
+    public function saveUser($username = null, $password = null, $email = null, $name = null)
+    {
+        $user = new User();
+        $user->username = $username ?? Str::random(4);
+        $user->password = $password ?? Str::random();
+        $user->email = $email ?? Str::random();
+        $user->name = $name ?? Str::random(4);
+
+        $result = $user->save();
+        return [$user, $result];
     }
 }
 

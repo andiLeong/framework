@@ -18,7 +18,7 @@ abstract class Model
 
     public function __construct($attributes = [])
     {
-        $this->attributes = $attributes;
+        $this->setAttributes($attributes);
     }
 
     /**
@@ -100,11 +100,12 @@ abstract class Model
     public static function create(array $attributes)
     {
         $instance = self::modelInstance();
-        $id = $instance->query()->insert($attributes);
+        $instance->setAttributes($attributes);
+        $id = $instance->query()->insert($instance->attributes);
 
         return $instance->newInstance(array_merge([
             $instance->getPrimaryKey() => $id
-        ], $attributes));
+        ], $instance->attributes));
     }
 
     public function update(array $attributes)

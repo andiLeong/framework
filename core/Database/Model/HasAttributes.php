@@ -14,7 +14,7 @@ trait HasAttributes
     public function getAccessor($key)
     {
         $method = 'get' . Str::camel($key) . 'Attribute';
-        return hasMethodDefined($this,$method);
+        return hasMethodDefined($this, $method);
     }
 
     public function callMutator($mutator, $value)
@@ -25,7 +25,7 @@ trait HasAttributes
     public function getMutator($key)
     {
         $method = 'set' . Str::camel($key) . 'Attribute';
-        return hasMethodDefined($this,$method);
+        return hasMethodDefined($this, $method);
     }
 
     protected function getOriginal()
@@ -42,7 +42,7 @@ trait HasAttributes
     {
         $value = $this->attributes[$name];
         if ($accessor = $this->getAccessor($name)) {
-            return $this->callAccessor($accessor,$value);
+            return $this->callAccessor($accessor, $value);
         }
         return $value;
     }
@@ -66,6 +66,13 @@ trait HasAttributes
     protected function setRawAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+    }
+
+    protected function setAttributes(array $attributes)
+    {
+        foreach ($attributes as $key => $attr) {
+            $this->setAttribute($key, $attr);
+        }
     }
 
     protected function syncOriginals(array $values = null)
