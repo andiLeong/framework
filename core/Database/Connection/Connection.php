@@ -17,6 +17,35 @@ class Connection
         //
     }
 
+    public function transaction(callable $fn)
+    {
+        $pdo = $this->getPdo();
+        try {
+            $pdo->beginTransaction();
+            $result = $fn();
+            $pdo->commit();
+            return $result;
+        } catch (\PDOException $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public function beginTransaction()
+    {
+        $this->getPdo()->beginTransaction();
+    }
+
+    public function rollback()
+    {
+        $this->getPdo()->rollBack();
+    }
+
+    public function commit()
+    {
+        $this->getPdo()->commit();
+    }
+
     public function getPdo()
     {
         if (self::$pdo === null) {
@@ -70,6 +99,7 @@ class Connection
 //        dump($query);
 //        dump($bindings);
         $pdo = $this->getPdo();
+//        dump($pdo);
         $pdo->prepare($query)->execute($bindings);
         return $pdo->lastInsertId();
     }

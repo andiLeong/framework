@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class ModelTest extends testcase
 {
+    use useTransaction;
+
     /** @test */
     public function it_has_mutator_feature()
     {
@@ -70,12 +72,15 @@ class ModelTest extends testcase
     }
 
     /** @test */
-    public function it_can_be_created()
+    public function it_can_be_created_using_create_method()
     {
+
+
         $user = $this->createUser();
         $this->assertTrue($user->isExisted());
         $count = User::where(['id' => $user->id])->count();
         $this->assertEquals(1, $count);
+
     }
 
     /** @test */
