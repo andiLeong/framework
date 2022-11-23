@@ -33,7 +33,7 @@ trait HasAttributes
         return $this->originals;
     }
 
-    protected function getAttributes()
+    public function getAttributes()
     {
         return $this->attributes;
     }

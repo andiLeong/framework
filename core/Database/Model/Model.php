@@ -21,6 +21,14 @@ abstract class Model
         $this->attributes = $attributes;
     }
 
+    /**
+     * @return bool
+     */
+    public function isExisted(): bool
+    {
+        return $this->existed;
+    }
+
     public function getTable()
     {
         return $this->table ?? strtolower(classBaseName($this) . 's');
@@ -181,5 +189,6 @@ abstract class Model
             $name
         ](...$arguments);
     }
+
 
 }

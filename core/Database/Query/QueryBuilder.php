@@ -62,6 +62,11 @@ class QueryBuilder
         return $this;
     }
 
+    public function latest($column = 'id')
+    {
+        return $this->orderBy($column,'desc');
+    }
+
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
         if (is_array($column)) {
