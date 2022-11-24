@@ -149,7 +149,10 @@ if (!function_exists('hasMethodDefined')) {
      */
     function hasMethodDefined($class, $method, $default = null)
     {
-        $object = is_string($class) ? app($class) : $class;
+        $object = is_object($class)
+            ? $class
+            : app($class);
+
         if (method_exists($object, $method)) {
             return $method;
         }

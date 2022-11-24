@@ -8,6 +8,7 @@ use JsonSerializable;
 abstract class Model implements JsonSerializable
 {
     use HasAttributes;
+    use HasScope;
 
     protected $connection = null;
     protected $table = null;
@@ -66,7 +67,7 @@ abstract class Model implements JsonSerializable
         return $this;
     }
 
-    public static function modelInstance()
+    public static function modelInstance(): Model
     {
         return new static;
     }
@@ -190,10 +191,16 @@ abstract class Model implements JsonSerializable
 
     public static function __callStatic(string $name, array $arguments)
     {
-        $instance = self::modelInstance();
+        $model = self::modelInstance();
+        $builderInstance = $model->getBuilder();
+
+        if ($model->getScopeMethod($name)) {
+             $model->applyScope($model->getScopeMethod($name), $builderInstance, $arguments);
+             return $builderInstance;
+        }
 
         return [
-            $instance->getBuilder(),
+            $builderInstance,
             $name
         ](...$arguments);
     }

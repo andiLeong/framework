@@ -347,5 +347,7 @@ class QueryBuilder
         if (str_starts_with($method, 'where')) {
             return $this->dynamicWheres($parameters, $method);
         }
+
+        throw new InvalidArgumentException('Method '. $method . ' does not existed');
     }
 }

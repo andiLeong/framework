@@ -2,7 +2,6 @@
 
 namespace Andileong\Framework\Core\tests;
 
-use Andileong\Framework\Core\Routing\Router;
 use Andileong\Framework\Core\Support\Str;
 use Andileong\Framework\Core\tests\stubs\User;
 use PHPUnit\Framework\TestCase;
@@ -210,5 +209,25 @@ class ModelTest extends testcase
         $this->assertTrue(str_starts_with($user->password, 'access_'));
         $this->assertEquals('bar', $user->foo_bar);
         $this->assertFalse(property_exists($user, 'no_appends'));
+    }
+
+    /** @test */
+    public function it_can_use_scopes()
+    {
+        $this->createUser(['location' => 'usa']);
+        $this->createUser(['location' => 'uk']);
+
+        $users = User::country('usa')->get();
+        $usa = array_filter($users, fn($user) => $user->location === 'usa');
+        $uk = array_filter($users, fn($user) => $user->location === 'uk');
+        $this->assertCount(1, $usa);
+        $this->assertCount(0, $uk);
+
+        $users = User::country('uk')->get();
+        $usa = array_filter($users, fn($user) => $user->location === 'usa');
+        $uk = array_filter($users, fn($user) => $user->location === 'uk');
+        $this->assertCount(0, $usa);
+        $this->assertCount(1, $uk);
+
     }
 }

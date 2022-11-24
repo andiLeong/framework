@@ -25,4 +25,9 @@ class User extends Model
     {
         return 'access_' . $value;
     }
+
+    public function scopeCountry($builder, $name)
+    {
+        $builder->where('location', $name);
+    }
 }
