@@ -3,13 +3,15 @@
 namespace Andileong\Framework\Core\Database\Model;
 
 use Andileong\Framework\Core\Database\Connection\Connection;
+use JsonSerializable;
 
-abstract class Model
+abstract class Model implements JsonSerializable
 {
     use HasAttributes;
 
     protected $connection = null;
     protected $table = null;
+    protected $appends = [];
     protected $attributes = [];
     protected $originals = [];
     protected $changes = [];
@@ -110,8 +112,8 @@ abstract class Model
 
     public function update(array $attributes)
     {
-        foreach ($attributes as $name => $value){
-            $this->setAttribute($name,$value);
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
         }
 
         return $this->toUpdate();
@@ -127,12 +129,12 @@ abstract class Model
     private function toUpdate()
     {
         $newAttributes = $this->getDirty();
-        if(empty($newAttributes) || $this->existed === false){
+        if (empty($newAttributes) || $this->existed === false) {
             return false;
         }
 
         $res = $this->toUpdateSql()->update($newAttributes);
-        if($res){
+        if ($res) {
             $this->syncOriginals();
             $this->syncChanges($newAttributes);
         }
@@ -143,7 +145,7 @@ abstract class Model
     protected function toUpdateSql()
     {
         $key = $this->getPrimaryKey();
-        return $this->getBuilder()->where($key,$this->attributes[$key]);
+        return $this->getBuilder()->where($key, $this->attributes[$key]);
     }
 
     private function toSave()
@@ -151,19 +153,19 @@ abstract class Model
         $id = $this->getBuilder()->insert($this->attributes);
         $this->existed = true;
 
-        $this->setAttribute($this->getPrimaryKey(),$id);
+        $this->setAttribute($this->getPrimaryKey(), $id);
         $this->syncOriginals();
         return true;
     }
 
     public function delete()
     {
-        if($this->existed === false){
+        if ($this->existed === false) {
             throw new \LogicException('Model does not existed');
         }
 
         $res = $this->getBuilder()->delete($this->attributes[$this->getPrimaryKey()]);
-        if($res){
+        if ($res) {
             $this->existed = false;
             return $res;
         }
@@ -171,9 +173,14 @@ abstract class Model
         return false;
     }
 
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
+    }
+
     public function __set(string $name, $value): void
     {
-        $this->setAttribute($name,$value);
+        $this->setAttribute($name, $value);
     }
 
     public function __get(string $name)

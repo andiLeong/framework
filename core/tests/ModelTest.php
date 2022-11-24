@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\tests;
 
+use Andileong\Framework\Core\Routing\Router;
 use Andileong\Framework\Core\Support\Str;
 use Andileong\Framework\Core\tests\stubs\User;
 use PHPUnit\Framework\TestCase;
@@ -192,10 +193,22 @@ class ModelTest extends testcase
     public function it_can_find_record_by_primary_ids_with_desire_columns()
     {
         $user = $this->createUser();
-        $latestUser = User::find($user->id,['id','email']);
+        $latestUser = User::find($user->id, ['id', 'email']);
 
         $attributes = $latestUser->getAttributes();
         $this->assertArrayNotHasKey('name', $attributes);
         $this->assertArrayHasKey('email', $attributes);
+    }
+
+    /** @test */
+    public function it_can_be_json_serialized_properly_with_appends_and_accessors()
+    {
+        $user = $this->createUser();
+        $userInJson = json_encode($user);
+        $user = json_decode($userInJson);
+
+        $this->assertTrue(str_starts_with($user->password, 'access_'));
+        $this->assertEquals('bar', $user->foo_bar);
+        $this->assertFalse(property_exists($user, 'no_appends'));
     }
 }

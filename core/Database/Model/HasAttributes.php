@@ -85,4 +85,26 @@ trait HasAttributes
     {
         $this->changes = $changes;
     }
+
+    protected function toArray()
+    {
+        $attributes = [];
+
+        foreach ($this->attributes as $key => $value) {
+            $attributes[$key] = $this->getAttribute($key);
+        }
+
+        foreach ($this->getAppends() as $value) {
+            if ($accessor = $this->getAccessor($value)) {
+                $attributes[$value] = $this->callAccessor($accessor, $value);
+            }
+        }
+
+        return $attributes;
+    }
+
+    protected function getAppends()
+    {
+        return $this->appends;
+    }
 }

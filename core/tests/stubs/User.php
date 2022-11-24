@@ -6,6 +6,16 @@ use Andileong\Framework\Core\Database\Model\Model;
 
 class User extends Model
 {
+    protected $appends = [
+        'foo_bar',
+        'no_appends',
+    ];
+
+    public function getFooBarAttribute($value)
+    {
+        return 'bar';
+    }
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = md5($value);

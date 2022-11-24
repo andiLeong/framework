@@ -63,11 +63,11 @@ class Router
      * @return JsonResponse|Response|void
      * @throws \Exception
      */
-    public function run()
+    public function run($path = null, $method = null)
     {
-        $content = $this->render();
+        $content = $this->render($path,$method);
 
-        if (is_array($content)) {
+        if (is_array($content) || $content instanceof \JsonSerializable) {
             $response = new JsonResponse($content);
             return $response->send();
         }
