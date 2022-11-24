@@ -5,6 +5,7 @@ namespace Andileong\Framework\Core\Routing;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -58,14 +59,42 @@ class Router
         return $route->render();
     }
 
+    public function getContentFromRender($path = null, $method = null)
+    {
+        try {
+            $content = $this->render($path, $method);
+        } catch (Exception $e) {
+            if($e instanceof \InvalidArgumentException){
+                return new JsonResponse(['message' => 'handle it differently'],Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            if (false) {
+                $exception = [
+                    'message' => 'internal server error'
+                ];
+            } else {
+
+                $exception = [
+                    'message' => $e->getMessage(),
+                    'exception' => get_class($e),
+                    'file' => $e->getFile(),
+                    'trace' => $e->getTrace(),
+                ];
+            }
+
+            return new JsonResponse($exception,Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $content;
+    }
+
     /**
      * return whatever the controller/closure return to the frontend
-     * @return JsonResponse|Response|void
+     * @return JsonResponse|Response
      * @throws \Exception
      */
     public function run($path = null, $method = null)
     {
-        $content = $this->render($path,$method);
+        $content = $this->getContentFromRender($path, $method);
 
         if (is_array($content) || $content instanceof \JsonSerializable) {
             $response = new JsonResponse($content);
@@ -75,18 +104,16 @@ class Router
         if ($content instanceof View) {
             $response = new Response();
             $response->headers->set('Content-Type', 'text/html');
-//            $response->setContent($content->getContent());
-
             return $response->send();
         }
 
-        if (is_string($content)) {
-            $response = new Response($content,);
-            $response->headers->set('Content-Type', 'text/plain');
-
-            return $response->send();
+        if ($content instanceof Response) {
+            return $content->send();
         }
 
+        $response = new Response($content);
+        $response->headers->set('Content-Type', 'text/plain');
+        return $response->send();
     }
 
     private function validateUri($uri)
