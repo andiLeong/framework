@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Database\Query;
 
 use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Database\Model\Model;
+use Andileong\Framework\Core\Database\Model\Paginator;
 use Andileong\Framework\Core\Support\Arr;
 use Closure;
 use InvalidArgumentException;
@@ -28,6 +29,7 @@ class QueryBuilder
     ];
 
     public $limit;
+    public $offset;
     public $from;
 
     public function __construct(protected Connection $connection, protected Grammar $grammar, protected Model $model)
@@ -64,7 +66,7 @@ class QueryBuilder
 
     public function latest($column = 'id')
     {
-        return $this->orderBy($column,'desc');
+        return $this->orderBy($column, 'desc');
     }
 
     public function where($column, $operator = null, $value = null, $boolean = 'and')
@@ -150,7 +152,7 @@ class QueryBuilder
     {
         $this->limit(1);
         $records = $this->get($columns);
-        if(empty($records)){
+        if (empty($records)) {
             return null;
         }
         return $records[0];
@@ -163,6 +165,12 @@ class QueryBuilder
         }
 
         $this->limit = $value;
+        return $this;
+    }
+
+    public function offset($value)
+    {
+        $this->offset = $value;
         return $this;
     }
 
@@ -247,6 +255,26 @@ class QueryBuilder
         );
     }
 
+    public function paginate($perPage = null, $pageName = 'page')
+    {
+        $requestedColumns = $this->columns ;
+        $this->columns = [];
+        $total = $this->count();
+
+        $this->columns = $requestedColumns;
+
+        $perPage ??= $this->model->getPerPage();
+        $page = request()->has($pageName) ? request()->get($pageName) : 1;
+        if (!is_numeric($page)) {
+            $page = 1;
+        }
+        $page = (int) max($page, 1);
+
+        $offset = $perPage * $page - $perPage;
+        $records = $this->limit($perPage)->offset($offset)->get();
+        return new Paginator($records, $perPage, $total, $page, $pageName);
+    }
+
     public function get($columns = null)
     {
         $columns = is_array($columns) ? $columns : func_get_args();
@@ -258,7 +286,7 @@ class QueryBuilder
         $selectedResults = $this->connection->runSelect($query, $this->bindings['where']);
 //        dump($selectedResults);
 
-        $hydrated = array_map(fn($result) => $this->model->newInstance((array)$result)
+        $hydrated = array_map(fn($result) => $this->model->newInstance((array) $result)
             , $selectedResults);
 //        dump($hydrated);
 
@@ -348,6 +376,6 @@ class QueryBuilder
             return $this->dynamicWheres($parameters, $method);
         }
 
-        throw new InvalidArgumentException('Method '. $method . ' does not existed');
+        throw new InvalidArgumentException('Method ' . $method . ' does not existed');
     }
 }

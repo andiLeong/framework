@@ -8,4 +8,5 @@ use App\Controller\UserController;
 Route::get('', fn() => 'welcome home');
 Route::get('about/', [AboutController::class, 'index']);
 Route::get('user/{id}', [UserController::class, 'show']);
+Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);

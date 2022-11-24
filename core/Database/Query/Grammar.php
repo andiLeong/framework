@@ -34,6 +34,7 @@ class Grammar
             'wheres' => $this->compileWheres($builder->wheres),
             'orders' => $this->compileOrders($builder->orders),
             'limit' => $this->compileLimit($builder->limit),
+            'offset' => $this->compileOffset($builder->offset),
         ];
 
         $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
@@ -196,11 +197,16 @@ class Grammar
 
     private function compileLimit(mixed $limit)
     {
-        if (is_null($limit)) {
-            return;
+        if (!is_null($limit)) {
+            return "limit $limit";
         }
+    }
 
-        return "limit $limit";
+    private function compileOffset($offset)
+    {
+        if (!is_null($offset)) {
+            return "offset $offset";
+        }
     }
 
     private function compileOrders(mixed $orders)
@@ -244,4 +250,5 @@ class Grammar
         $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
         return $sql;
     }
+
 }

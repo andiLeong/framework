@@ -18,6 +18,7 @@ abstract class Model implements JsonSerializable
     protected $changes = [];
     protected $existed = false;
     protected $primaryKey = 'id';
+    protected $perPage = 10;
 
     public function __construct($attributes = [])
     {
@@ -30,6 +31,14 @@ abstract class Model implements JsonSerializable
     public function isExisted(): bool
     {
         return $this->existed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPerPage(): int
+    {
+        return $this->perPage;
     }
 
     public function getTable()
@@ -195,8 +204,8 @@ abstract class Model implements JsonSerializable
         $builderInstance = $model->getBuilder();
 
         if ($model->getScopeMethod($name)) {
-             $model->applyScope($model->getScopeMethod($name), $builderInstance, $arguments);
-             return $builderInstance;
+            $model->applyScope($model->getScopeMethod($name), $builderInstance, $arguments);
+            return $builderInstance;
         }
 
         return [
@@ -204,6 +213,4 @@ abstract class Model implements JsonSerializable
             $name
         ](...$arguments);
     }
-
-
 }
