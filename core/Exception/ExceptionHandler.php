@@ -20,11 +20,19 @@ class ExceptionHandler
 
     public function handle(): Response
     {
-        $e = $this->e;
-        $registeredExceptions = $this->app->get(AppException::class)->getRegisteredException();
+        // first we will check if the exception is registered by developer
+        // if yes trigger, then we check if exception is framework exception
+        // finally we handle the exception in a default way.
 
-        if (array_key_exists(get_class($e), $registeredExceptions)) {
-            return $registeredExceptions[get_class($e)]($e);
+        $e = $this->e;
+        $appException = new AppException;
+
+        if ($appException->hasRegistered($e)) {
+            return $appException->triggerRegisterException($e);
+        }
+
+        if ($appException->isCoreException($e)) {
+            return $appException->triggerCoreException($e);
         }
 
         return $this->handleDefaultException($e);

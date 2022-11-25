@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Database\Connection;
 
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Exception\MysqlConnectionException;
 use Exception;
 use PDO;
 use PDOException;
@@ -35,7 +36,7 @@ class MysqlConnector
 
             return $conn;
         } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
+            throw new MysqlConnectionException($e->getMessage());
         }
     }
 }
