@@ -127,6 +127,17 @@ if (!function_exists('resolve')) {
     }
 }
 
+if (!function_exists('appPath')) {
+    /**
+     * retrieve document root
+     * @return object|null
+     */
+    function appPath()
+    {
+        return app('app_path');
+    }
+}
+
 if (!function_exists('classBaseName')) {
     /**
      * get classBaseName

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class Router
 {
     public $routes = [];
-    protected Request $request;
+    public Request $request;
 
     public function __construct(private Container $container)
     {
@@ -34,15 +34,13 @@ class Router
 
     /**
      * rendering controller/closure
-     * @param $path
-     * @param $method
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function render($path = null, $method = null)
+    public function render()
     {
-        $method ??= $this->request->method();
-        $path ??= $this->request->path();
+        $method = $this->request->method();
+        $path = $this->request->path();
 
         $routes = $this->routes[$method];
         $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
@@ -57,10 +55,10 @@ class Router
         return $route->render();
     }
 
-    public function getContentFromRender($path = null, $method = null)
+    public function getContentFromRender()
     {
         try {
-            $content = $this->render($path, $method);
+            $content = $this->render();
         } catch (Exception $e) {
             $handler = app('exception.handler',[$e]);
             return $handler->handle();
@@ -74,9 +72,9 @@ class Router
      * @return JsonResponse|Response
      * @throws \Exception
      */
-    public function run($path = null, $method = null)
+    public function run()
     {
-        $content = $this->getContentFromRender($path, $method);
+        $content = $this->getContentFromRender();
 
         if (is_array($content) || $content instanceof \JsonSerializable) {
             $response = new JsonResponse($content);

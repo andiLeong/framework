@@ -43,6 +43,18 @@ class Request
     }
 
     /**
+     * @param array $query
+     * @param array $payload
+     * @param array $server
+     */
+    public static function setTest($query = [], $payload = [], $server = [])
+    {
+        self::$test = true;
+        $instance = new static($query, $payload, $server);
+        return $instance;
+    }
+
+    /**
      * get a http method
      * @return mixed
      */

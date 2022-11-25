@@ -1,8 +1,6 @@
 <?php
 
 use Andileong\Framework\Core\Application;
-use Andileong\Framework\Core\Support\Str;
-use App\Models\User;
 
 require('vendor/autoload.php');
 

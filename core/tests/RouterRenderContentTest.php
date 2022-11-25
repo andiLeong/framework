@@ -9,71 +9,86 @@ use PHPUnit\Framework\TestCase;
 
 class RouterRenderContentTest extends testcase
 {
-    private Router $router;
-
-    public function setUp() :void
-    {
-        $this->router = new Router(new Application($_SERVER['DOCUMENT_ROOT']));
-    }
-
     /** @test */
     public function it_can_render_a_controller_that_has_constructor_method_injection()
     {
-        $this->router->get('/about', [AboutController::class, 'index']);
-        $content = $this->router->render('/about', 'GET');
+        $router = $this->getRouter('/about');
+        $router->get('/about', [AboutController::class, 'index']);
+        $content = $router->render();
         $this->assertEquals('about', $content);
     }
 
     /** @test */
     public function it_can_render_a_closure()
     {
-        $this->router->get('/about', fn() => 'closure');
-        $content = $this->router->render('/about', 'GET');
+        $router = $this->getRouter('/about');
+        $router->get('/about', fn() => 'closure');
+        $content = $router->render();
         $this->assertEquals('closure', $content);
     }
 
     /** @test */
     public function it_can_render_a_controller_invoke_method_if_no_method_specify()
     {
-        $this->router->get('/about', AboutController::class);
-        $content = $this->router->render('/about', 'GET');
+        $router = $this->getRouter('/about');
+        $router->get('/about', AboutController::class);
+        $content = $router->render();
         $this->assertEquals('about', $content);
     }
 
     /** @test */
     public function it_can_render_a_dynamic_route_and_pass_correct_argument_to_controller()
     {
-        $this->router->get('/user/{id}/post/{post_id}', [UserController::class, 'show']);
-        $content = $this->router->render('/user/1/post/23_56', 'GET');
+        $router = $this->getRouter('/user/1/post/23_56');
+        $router->get('/user/{id}/post/{post_id}', [UserController::class, 'show']);
+        $content = $router->render();
         $this->assertEquals(['1', '23_56'], $content);
 
-        $this->router->get('/user/{id}', [UserController::class, 'edit']);
-        $content = $this->router->render('/user/1', 'GET');
+        $router = $this->getRouter('/user/1');
+        $router->get('/user/{id}', [UserController::class, 'edit']);
+        $content = $router->render();
         $this->assertEquals('1', $content);
 
-        $this->router->get('/user/{id}', [UserController::class, 'index']);
-        $content = $this->router->render('/user/1', 'GET');
+        $router = $this->getRouter('/user/1');
+        $router->get('/user/{id}', [UserController::class, 'index']);
+        $content = $router->render();
         $this->assertEquals('1', $content);
 
-        $this->router->get('/foo', [Foo::class, 'index']);
-        $content = $this->router->render('/foo', 'GET');
+        $router = $this->getRouter('/foo');
+        $router->get('/foo', [Foo::class, 'index']);
+        $content = $router->render('/foo', 'GET');
         $this->assertEquals('foo', $content);
     }
 
     /** @test */
     public function it_can_render_a_dynamic_route_and_pass_correct_argument_to_closure()
     {
-        $this->router->get('/user/{id}/post/{post_id}', fn($id, $post_id, Foo $foo) => [$id, $post_id]);
-        $content = $this->router->render('/user/1/post/23_56', 'GET');
+        $router = $this->getRouter('/user/1/post/23_56');
+        $router->get('/user/{id}/post/{post_id}', fn($id, $post_id, Foo $foo) => [$id, $post_id]);
+        $content = $router->render('/user/1/post/23_56', );
         $this->assertEquals(['1', '23_56'], $content);
 
-        $this->router->get('/user/{id}', fn($id, Request $request) => $id);
-        $content = $this->router->render('/user/1', 'GET');
+        $router = $this->getRouter('/user/1');
+        $router->get('/user/{id}', fn($id, Request $request) => $id);
+        $content = $router->render();
         $this->assertEquals('1', $content);
 
-        $this->router->get('/user', fn(Request $request) => 1);
-        $content = $this->router->render('/user', 'GET');
+        $router = $this->getRouter('/user');
+        $router->get('/user', fn(Request $request) => 1);
+        $content = $router->render();
         $this->assertEquals('1', $content);
+    }
+
+    /**
+     * @param $uri
+     * @param $method
+     * @return Router
+     */
+    protected function getRouter($uri, $method = 'GET'): Router
+    {
+        return new Router(new Application($_SERVER['DOCUMENT_ROOT'],
+            Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method])
+        ));
     }
 }
 

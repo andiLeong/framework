@@ -14,7 +14,7 @@ class LoadConfigurationTest extends testcase
     public function it_can_load_the_configuration_files_and_save_to_container()
     {
         $finder = new Finder();
-        $finder->files()->name('*.php')->in($_SERVER['DOCUMENT_ROOT'] . '/config');
+        $finder->files()->name('*.php')->in(appPath() . '/config');
 
         $config = new Config();
         foreach ($finder as $file) {
