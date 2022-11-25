@@ -6,8 +6,13 @@ use App\Models\User;
 
 require('vendor/autoload.php');
 
-$container = new Application(__DIR__);
+$app = new Application(__DIR__);
+
+//$e = new Exception();
+//
+//dump($app->get('exception.handler',[$e]));
+//dd($app);
 
 require_once './routes/routes.php';
 
-return $container['router']->run();
+return $app['router']->run();

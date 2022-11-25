@@ -31,7 +31,7 @@ class Container implements \ArrayAccess
         return $this->bindings[$key]['shared'];
     }
 
-    public function get($key)
+    public function get($key,$args = [])
     {
         $key = $this->getAlias($key);
 
@@ -52,7 +52,7 @@ class Container implements \ArrayAccess
 
 
         $concrete = $bind['concrete'] instanceof Closure
-            ? $bind['concrete']($this)
+            ? $bind['concrete']($this,$args)
             : $bind['concrete'];
 
         return $this->savedToSingleton(

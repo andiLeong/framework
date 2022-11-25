@@ -66,14 +66,14 @@ if (!function_exists('app')) {
      * @param null $key
      * @return object|null
      */
-    function app($key = null)
+    function app($key = null, $args = [])
     {
         $app = Container::getInstance();
         if (is_null($key)) {
             return $app;
         }
 
-        return $app->get($key);
+        return $app->get($key,$args);
     }
 
 }

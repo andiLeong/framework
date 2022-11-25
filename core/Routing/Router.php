@@ -3,6 +3,7 @@
 namespace Andileong\Framework\Core\Routing;
 
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Exception\ExceptionHandler;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Exception;
@@ -13,12 +14,11 @@ class Router
 {
     public $routes = [];
     protected Request $request;
-    private mixed $container;
 
-    public function __construct(Container $container = null)
+    public function __construct(private Container $container)
     {
-        $container ??= app();
-        $this->container = $container;
+//        $container ??= app();
+//        $this->container = $container;
         $this->request = $container[Request::class];
     }
 
@@ -64,24 +64,8 @@ class Router
         try {
             $content = $this->render($path, $method);
         } catch (Exception $e) {
-            if($e instanceof \InvalidArgumentException){
-                return new JsonResponse(['message' => 'handle it differently'],Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-            if (false) {
-                $exception = [
-                    'message' => 'internal server error'
-                ];
-            } else {
-
-                $exception = [
-                    'message' => $e->getMessage(),
-                    'exception' => get_class($e),
-                    'file' => $e->getFile(),
-                    'trace' => $e->getTrace(),
-                ];
-            }
-
-            return new JsonResponse($exception,Response::HTTP_INTERNAL_SERVER_ERROR);
+            $handler = app('exception.handler',[$e]);
+            return $handler->handle();
         }
 
         return $content;
