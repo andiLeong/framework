@@ -3,19 +3,25 @@
 namespace Andileong\Framework\Core\Exception;
 
 use Andileong\Framework\Core\Application;
-use App\Exception\AppException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ExceptionHandler
+class Handler
 {
+    protected $customExceptions = [];
+
     public function __construct(
         protected Application $app,
         protected Exception   $e,
     )
     {
-        //
+        $this->register();
+    }
+
+    public function register()
+    {
+       //
     }
 
     public function handle(): Response
@@ -25,17 +31,16 @@ class ExceptionHandler
         // finally we handle the exception in a default way.
 
         $e = $this->e;
-        $appException = new AppException;
 
-        if ($appException->hasRegistered($e)) {
-            return $appException->triggerRegisterException($e);
+        if ($closure = $this->hasRegistered($e)) {
+            return $this->triggerException($e, $closure);
         }
 
-        if ($appException->isCoreException($e)) {
-            return $appException->triggerCoreException($e);
+        if (method_exists($e, 'render')) {
+            return $this->triggerException($e);
         }
 
-        return $this->handleDefaultException($e);
+        return $this->triggerDefaultException($e);
 
     }
 
@@ -44,7 +49,7 @@ class ExceptionHandler
         return $this->app->isInProduction();
     }
 
-    private function handleDefaultException($e)
+    private function triggerDefaultException($e)
     {
         if ($this->inProduction()) {
             $exception = [
@@ -61,5 +66,22 @@ class ExceptionHandler
         }
 
         return new JsonResponse($exception, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    private function hasRegistered(Exception $e)
+    {
+        $key = get_class($e);
+        if (array_key_exists($key, $this->customExceptions)) {
+            return $this->customExceptions[$key];
+        }
+    }
+
+    private function triggerException(Exception|CoreExceptions $e, $closure = null)
+    {
+        if ($closure) {
+            return $closure($e);
+        }
+
+        return $e->render();
     }
 }

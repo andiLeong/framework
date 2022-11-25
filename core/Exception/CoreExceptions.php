@@ -5,7 +5,7 @@ namespace Andileong\Framework\Core\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class CoreExceptions extends \Exception
+abstract class CoreExceptions extends \Exception
 {
     protected $responseCode;
 

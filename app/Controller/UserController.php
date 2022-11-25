@@ -15,7 +15,7 @@ class UserController
             'name' => 'required'
         ]);
 
-//        throw new \InvalidArgumentException('playing with exception is so fun');
+        throw new \InvalidArgumentException('playing with exception is so fun');
         $users = User::select('id','username','email')->paginate(9,'page_name');
         return $users;
     }

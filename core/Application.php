@@ -6,10 +6,9 @@ use Andileong\Framework\Core\Bootstrap\Bootstrap;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
-use Andileong\Framework\Core\Exception\ExceptionHandler;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
-use App\Exception\AppException;
+use App\Exception\Handler;
 
 class Application extends Container
 {
@@ -19,7 +18,7 @@ class Application extends Container
         'router' => [Router::class],
         'config' => [Config::class],
         'db' => [Connection::class],
-        'exception.handler' => [ExceptionHandler::class],
+        'exception.handler' => [Handler::class],
     ];
 
     private $inProduction = false;
@@ -40,7 +39,7 @@ class Application extends Container
         $this->singleton($this->getAlias(Request::class), fn() => new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
-        $this->bind($this->getAlias(ExceptionHandler::class), fn($app,$args) => new ExceptionHandler($app,$args[0]));
+        $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app,$args[0]));
     }
 
     public function boot()

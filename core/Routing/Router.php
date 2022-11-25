@@ -3,7 +3,7 @@
 namespace Andileong\Framework\Core\Routing;
 
 use Andileong\Framework\Core\Container\Container;
-use Andileong\Framework\Core\Exception\ExceptionHandler;
+use Andileong\Framework\Core\Exception\Handler;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Exception;
@@ -17,9 +17,7 @@ class Router
 
     public function __construct(private Container $container)
     {
-//        $container ??= app();
-//        $this->container = $container;
-        $this->request = $container[Request::class];
+        $this->request = $container['request'];
     }
 
     public function get($uri, $action)
@@ -50,7 +48,7 @@ class Router
         $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
         ));
 
-        if (count($route) === 0) {
+        if (!count($route)) {
             throw new \Exception('Route not found exception');
         }
 
