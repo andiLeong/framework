@@ -3,7 +3,6 @@
 namespace Andileong\Framework\Core\Routing;
 
 use Andileong\Framework\Core\Container\Container;
-use Andileong\Framework\Core\Exception\Handler;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Exception;
@@ -20,12 +19,22 @@ class Router
         $this->request = $container['request'];
     }
 
+    /**
+     * register a get uri endpoint
+     * @param $uri
+     * @param $action
+     */
     public function get($uri, $action)
     {
         $uri = $this->validateUri($uri);
         $this->routes['GET'][] = new Route($uri, $action, $this->container);
     }
 
+    /**
+     * register a post uri endpoint
+     * @param $uri
+     * @param $action
+     */
     public function post($uri, $action)
     {
         $uri = $this->validateUri($uri);
@@ -47,7 +56,7 @@ class Router
         ));
 
         if (!count($route)) {
-            throw new \Exception('Route not found exception');
+            throw new RouteNotFoundException('Route not found exception',404);
         }
 
         $route = $route[0];
@@ -55,12 +64,17 @@ class Router
         return $route->render();
     }
 
+    /**
+     * try to get content from route throw exception if encountered
+     * @return mixed
+     * @throws Exception
+     */
     public function getContentFromRender()
     {
         try {
             $content = $this->render();
         } catch (Exception $e) {
-            $handler = app('exception.handler',[$e]);
+            $handler = $this->container->get('exception.handler',[$e]);
             return $handler->handle();
         }
 
@@ -69,34 +83,46 @@ class Router
 
     /**
      * return whatever the controller/closure return to the frontend
-     * @return JsonResponse|Response
-     * @throws \Exception
+     * @return Response
      */
-    public function run()
+    public function run() :Response
     {
         $content = $this->getContentFromRender();
 
         if (is_array($content) || $content instanceof \JsonSerializable) {
-            $response = new JsonResponse($content);
-            return $response->send();
+            return new JsonResponse($content);
         }
 
         if ($content instanceof View) {
             $response = new Response();
             $response->headers->set('Content-Type', 'text/html');
-            return $response->send();
+            return $response;
         }
 
         if ($content instanceof Response) {
-            return $content->send();
+            return $content;
         }
 
         $response = new Response($content);
         $response->headers->set('Content-Type', 'text/plain');
-        return $response->send();
+        return $response;
     }
 
-    private function validateUri($uri)
+    /**
+     * send Symfony response to client
+     * @return Response
+     */
+    public function response()
+    {
+       return $this->run()->send();
+    }
+
+    /**
+     * validate uri before save to memory
+     * @param $uri
+     * @return string
+     */
+    public static function validateUri($uri)
     {
         $uri = rtrim($uri, '/');
         if (!str_starts_with($uri, '/')) {

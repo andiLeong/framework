@@ -53,7 +53,8 @@ class Handler
     {
         if ($this->inProduction()) {
             $exception = [
-                'message' => 'internal server error'
+                'message' => 'internal server error',
+                'code' => 500
             ];
         } else {
 

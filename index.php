@@ -8,4 +8,4 @@ $app = new Application(__DIR__);
 
 require_once './routes/routes.php';
 
-return $app['router']->run();
+return $app['router']->response();

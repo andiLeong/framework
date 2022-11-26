@@ -9,6 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 class RouterRenderContentTest extends testcase
 {
+    use Http;
+    use CreateUser;
+    use Transaction;
+
     /** @test */
     public function it_can_render_a_controller_that_has_constructor_method_injection()
     {
@@ -65,7 +69,7 @@ class RouterRenderContentTest extends testcase
     {
         $router = $this->getRouter('/user/1/post/23_56');
         $router->get('/user/{id}/post/{post_id}', fn($id, $post_id, Foo $foo) => [$id, $post_id]);
-        $content = $router->render('/user/1/post/23_56', );
+        $content = $router->render('/user/1/post/23_56',);
         $this->assertEquals(['1', '23_56'], $content);
 
         $router = $this->getRouter('/user/1');
@@ -79,6 +83,15 @@ class RouterRenderContentTest extends testcase
         $this->assertEquals('1', $content);
     }
 
+
+    /** @test */
+    public function it_can_get_a_model_in_json_if_return_directly_from_route()
+    {
+        $user = $this->createUser();
+        $response = $this->get("/user/{$user->id}",['foo' => 'va']);
+        $response->assertJson()->assertOk();
+    }
+
     /**
      * @param $uri
      * @param $method
@@ -90,7 +103,7 @@ class RouterRenderContentTest extends testcase
             Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method])
         ));
     }
-}
+    }
 
 
 class AboutController

@@ -10,12 +10,12 @@ class UserController
 {
     public function index()
     {
-        $validator = new Validator(request()->all());
-        $validator->validate([
-            'name' => 'required'
-        ]);
+//        $validator = new Validator(request()->all());
+//        $validator->validate([
+//            'name' => 'required'
+//        ]);
 
-        throw new \InvalidArgumentException('playing with exception is so fun');
+//        throw new \InvalidArgumentException('playing with exception is so fun');
         $users = User::select('id','username','email')->paginate(9,'page_name');
         return $users;
     }
