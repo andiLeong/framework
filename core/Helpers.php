@@ -138,6 +138,17 @@ if (!function_exists('appPath')) {
     }
 }
 
+if (!function_exists('storagePath')) {
+    /**
+     * retrieve storage path
+     * @return object|null
+     */
+    function storagePath()
+    {
+        return app('storage_path');
+    }
+}
+
 if (!function_exists('classBaseName')) {
     /**
      * get classBaseName
@@ -168,5 +179,17 @@ if (!function_exists('hasMethodDefined')) {
             return $method;
         }
         return $default;
+    }
+}
+
+if (!function_exists('logger')) {
+    /**
+     * quickly to loh information
+     * @string|object $class
+     * @return void
+     */
+    function logger($message,$level = 'info')
+    {
+        app('logger')->{$level}($message);
     }
 }

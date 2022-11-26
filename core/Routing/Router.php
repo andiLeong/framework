@@ -6,6 +6,10 @@ use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Exception;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -75,6 +79,8 @@ class Router
             $content = $this->render();
         } catch (Exception $e) {
             $handler = $this->container->get('exception.handler',[$e]);
+            $logger = $this->container->get('logger');
+            $logger->error($e->getTraceAsString());
             return $handler->handle();
         }
 

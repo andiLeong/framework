@@ -9,6 +9,9 @@ use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
 use App\Exception\Handler;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class Application extends Container
 {
@@ -19,6 +22,7 @@ class Application extends Container
         'config' => [Config::class],
         'db' => [Connection::class],
         'exception.handler' => [Handler::class],
+        'logger' => [Logger::class],
     ];
 
     private $inProduction = false;
@@ -36,9 +40,20 @@ class Application extends Container
         self::$instance = $this;
 
         $this->bind('app_path', $this->appPath);
+        $this->bind('storage_path', $this->appPath. '/storage');
         $this->singleton($this->getAlias(Request::class), fn() => $this->request ?? new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
+        $this->singleton($this->getAlias(Logger::class), function ($app) {
+            $logConfig = $app['config'];
+            $logger = new Logger($logConfig->get('log.name'));
+            $path = $app['storage_path'] . '/logs/' . $logConfig->get('log.file_name') . '.log';
+            $formatter = new LineFormatter(null,null,true,true);
+            $handler = new StreamHandler($path);
+            $handler->setFormatter($formatter);
+            $logger->pushHandler($handler);
+            return $logger;
+        });
         $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app,$args[0]));
     }
 
