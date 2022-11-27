@@ -73,7 +73,7 @@ if (!function_exists('app')) {
             return $app;
         }
 
-        return $app->get($key,$args);
+        return $app->get($key, $args);
     }
 
 }
@@ -184,12 +184,14 @@ if (!function_exists('hasMethodDefined')) {
 
 if (!function_exists('logger')) {
     /**
-     * quickly to loh information
-     * @string|object $class
+     * quickly to log information
+     * @param $message
+     * @param string $level
+     * @param array $context
      * @return void
      */
-    function logger($message,$level = 'info')
+    function logger($message, $level = 'error', $context = [])
     {
-        app('logger')->{$level}($message);
+        app('logger')->{$level}($message, $context);
     }
 }

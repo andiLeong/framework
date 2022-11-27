@@ -79,8 +79,7 @@ class Router
             $content = $this->render();
         } catch (Exception $e) {
             $handler = $this->container->get('exception.handler',[$e]);
-            $logger = $this->container->get('logger');
-            $logger->error($e->getTraceAsString());
+            $this->container->get('logger')->error($e->getTraceAsString());
             return $handler->handle();
         }
 
@@ -90,6 +89,7 @@ class Router
     /**
      * return whatever the controller/closure return to the frontend
      * @return Response
+     * @throws Exception
      */
     public function run() :Response
     {
@@ -117,6 +117,7 @@ class Router
     /**
      * send Symfony response to client
      * @return Response
+     * @throws Exception
      */
     public function response()
     {

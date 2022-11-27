@@ -6,6 +6,7 @@ use Andileong\Framework\Core\Bootstrap\Bootstrap;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
 use App\Exception\Handler;
@@ -22,7 +23,7 @@ class Application extends Container
         'config' => [Config::class],
         'db' => [Connection::class],
         'exception.handler' => [Handler::class],
-        'logger' => [Logger::class],
+        'logger' => [LoggerManager::class],
     ];
 
     private $inProduction = false;
@@ -44,15 +45,19 @@ class Application extends Container
         $this->singleton($this->getAlias(Request::class), fn() => $this->request ?? new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
-        $this->singleton($this->getAlias(Logger::class), function ($app) {
-            $logConfig = $app['config'];
-            $logger = new Logger($logConfig->get('log.name'));
-            $path = $app['storage_path'] . '/logs/' . $logConfig->get('log.file_name') . '.log';
-            $formatter = new LineFormatter(null,null,true,true);
-            $handler = new StreamHandler($path);
-            $handler->setFormatter($formatter);
-            $logger->pushHandler($handler);
-            return $logger;
+//        $this->singleton($this->getAlias(Logger::class), function ($app) {
+//            $logConfig = $app['config'];
+//            $logger = new Logger($logConfig->get('log.name'));
+//            $path = $app['storage_path'] . '/logs/' . $logConfig->get('log.file_name') . '.log';
+//            $formatter = new LineFormatter(null,null,true,true);
+//            $handler = new StreamHandler($path);
+//            $handler->setFormatter($formatter);
+//            $logger->pushHandler($handler);
+//            return $logger;
+//        });
+
+        $this->singleton($this->getAlias(LoggerManager::class), function ($app) {
+            return new LoggerManager($app);
         });
         $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app,$args[0]));
     }
