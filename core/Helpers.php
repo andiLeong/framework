@@ -195,3 +195,18 @@ if (!function_exists('logger')) {
         app('logger')->{$level}($message, $context);
     }
 }
+
+if (!function_exists('ensureDirectoryExisted')) {
+    /**
+     * quickly to log information
+     * @param $path
+     * @param string $permission
+     * @return void
+     */
+    function ensureDirectoryExisted($path,$permission = '0775')
+    {
+        if (!file_exists($path)) {
+            mkdir($path, $permission, true);
+        }
+    }
+}

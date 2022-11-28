@@ -9,24 +9,23 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MakeController extends Command
+class MakeCommand extends Command
 {
-    protected static $defaultName = 'make:controller';
+
+    protected static $defaultName = 'make:command';
 
     /**
      * The command description shown when running "php bin/demo list".
      *
      * @var string
      */
-    protected static $defaultDescription = 'make a controller';
+    protected static $defaultDescription = 'make a command';
 
 
     protected function configure(): void
     {
         $this
-            ->addArgument('name', InputArgument::REQUIRED, 'name of the controller')
-            ->addArgument('resource', InputArgument::OPTIONAL, 'Weather its resourceful controller')
-        ;
+            ->addArgument('name', InputArgument::REQUIRED, 'name of the command');
     }
 
     /**
@@ -39,21 +38,16 @@ class MakeController extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
-        $resource = $input->getArgument('resource');
 
-        if($resource){
-           $stubName = 'ResourceController';
-        }
-
-        $creator = new CreateFileFromStubs($name,'controller',null,null,$stubName ?? null);
-        $fileName = $creator->handle(fn ($controllerName,$directoriesArray) =>
-             str_replace([
-                '{Controller}',
-                '{NameSpace}'
-            ], [
-                $controllerName,
-                $this->getNameSpace($directoriesArray)
-            ], $creator->getStubContent())
+        $location = appPath() . '/app/Console/Commands/';
+        $creator = new CreateFileFromStubs($name, 'command',$location);
+        $fileName = $creator->handle(fn($commandName, $directoriesArray) => str_replace([
+            '{Command}',
+            '{NameSpace}'
+        ], [
+            $commandName,
+            $this->getNameSpace($directoriesArray)
+        ], $creator->getStubContent())
         );
 
         $io = new SymfonyStyle($input, $output);
@@ -64,6 +58,6 @@ class MakeController extends Command
 
     private function getNameSpace(array $directories)
     {
-        return rtrim('App\\Controller\\' . implode('\\', $directories), '\\');
+        return rtrim('App\\Console\\Commands\\' . implode('\\', $directories), '\\');
     }
 }

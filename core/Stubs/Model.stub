@@ -1,0 +1,10 @@
+<?php
+
+namespace {NameSpace};
+
+use Andileong\Framework\Core\Database\Model\Model;
+
+class {Model} extends Model
+{
+
+}
