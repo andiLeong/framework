@@ -12,6 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MakeCommand extends Command
 {
+    use CreateFromStub;
 
     protected static $defaultName = 'make:command';
 
@@ -21,6 +22,9 @@ class MakeCommand extends Command
      * @var string
      */
     protected static $defaultDescription = 'make a command';
+
+    protected $oldContent;
+    protected $newContent;
 
     public function __construct(public Application $app)
     {
@@ -45,18 +49,8 @@ class MakeCommand extends Command
         $name = $input->getArgument('name');
 
         $location = appPath() . '/app/Console/Commands/';
-        $creator = new CreateFileFromStubs($name, 'command',$location);
-        $fileName = $creator->handle(fn($commandName, $directoriesArray) => str_replace([
-            '{Command}',
-            '{NameSpace}'
-        ], [
-            $commandName,
-            $this->getNameSpace($directoriesArray)
-        ], $creator->getStubContent())
-        );
-
-        $io = new SymfonyStyle($input, $output);
-        $io->success($fileName . ' Created successfully');
+        $fileName = $this->createFile($name, 'command', $location);
+        (new SymfonyStyle($input, $output))->success($fileName . ' Created Successfully');
 
         return Command::SUCCESS;
     }
@@ -64,5 +58,25 @@ class MakeCommand extends Command
     private function getNameSpace(array $directories)
     {
         return rtrim('App\\Console\\Commands\\' . implode('\\', $directories), '\\');
+    }
+
+//    private function getNewContent($oldContent)
+//    {
+//        return fn($name, $directoriesArray) => str_replace([
+//            '{Command}',
+//            '{NameSpace}'
+//        ], [
+//            $name,
+//            $this->getNameSpace($directoriesArray)
+//        ], $oldContent
+//        );
+//    }
+
+    private function getNewContent()
+    {
+        return function ($controllerName, $directoriesArray) {
+            $this->replaceNameSpace($this->getNameSpace($directoriesArray))->replaceClassName('Command', $controllerName);
+            return $this->newContent;
+        };
     }
 }

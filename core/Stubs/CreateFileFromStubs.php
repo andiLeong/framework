@@ -11,14 +11,13 @@ class CreateFileFromStubs
         protected $fileNameWithPath,
         protected $type = null,
         protected $location = null,
-        protected $extension = null,
+        protected $extension = 'php',
         protected $stubName = null
     )
     {
         $this->phraseNameAndDirectory();
 
         $this->setLocation($this->location);
-        $this->setExtension($this->extension);
         $this->setStubName($this->stubName);
     }
 
@@ -56,7 +55,7 @@ class CreateFileFromStubs
      */
     public function getWriteableDestination()
     {
-        $newDirectory = implode('/',$this->newDirectoriesArray);
+        $newDirectory = implode('/',$this->newDirectoriesArray) . '/';
         return $this->location . $newDirectory . $this->fileName . '.' . $this->extension;
     }
 
@@ -78,17 +77,6 @@ class CreateFileFromStubs
     {
         if (is_null($location)) {
             $this->location = sprintf("%s/app/%s/", appPath(), ucfirst($this->type));
-        }
-    }
-
-    /**
-     * set the file extension
-     * @param $extension
-     */
-    private function setExtension($extension)
-    {
-        if (is_null($extension)) {
-            $this->extension = 'php';
         }
     }
 

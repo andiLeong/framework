@@ -12,6 +12,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MakeModel extends Command
 {
+    use CreateFromStub;
+
     protected static $defaultName = 'make:model';
 
     /**
@@ -20,6 +22,9 @@ class MakeModel extends Command
      * @var string
      */
     protected static $defaultDescription = 'make a Model';
+
+    protected $oldContent;
+    protected $newContent;
 
     public function __construct(public Application $app)
     {
@@ -42,18 +47,8 @@ class MakeModel extends Command
     {
         $name = $input->getArgument('name');
 
-        $creator = new CreateFileFromStubs($name, 'model', appPath() . '/app/Models/');
-        $fileName = $creator->handle(fn($model, $directoriesArray) => str_replace([
-            '{Model}',
-            '{NameSpace}'
-        ], [
-            $model,
-            $this->getNameSpace($directoriesArray)
-        ], $creator->getStubContent())
-        );
-
-        $io = new SymfonyStyle($input, $output);
-        $io->success($fileName . ' Created Successfully');
+        $fileName = $this->createFile($name,'model',appPath() . '/app/Models/');
+        (new SymfonyStyle($input, $output))->success($fileName . ' Created Successfully');
 
         return Command::SUCCESS;
     }
@@ -62,4 +57,13 @@ class MakeModel extends Command
     {
         return rtrim('App\\Models\\' . implode('\\', $directories), '\\');
     }
+
+    private function getNewContent()
+    {
+        return function ($modelName, $directoriesArray) {
+            $this->replaceNameSpace($this->getNameSpace($directoriesArray))->replaceClassName('Model', $modelName);
+            return $this->newContent;
+        };
+    }
+
 }

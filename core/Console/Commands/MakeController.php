@@ -12,6 +12,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MakeController extends Command
 {
+    use CreateFromStub;
+
+    protected $oldContent;
+    protected $newContent;
+
     protected static $defaultName = 'make:controller';
 
     /**
@@ -30,8 +35,7 @@ class MakeController extends Command
     {
         $this
             ->addArgument('name', InputArgument::REQUIRED, 'name of the controller')
-            ->addArgument('resource', InputArgument::OPTIONAL, 'Weather its resourceful controller')
-        ;
+            ->addArgument('resource', InputArgument::OPTIONAL, 'Weather its resourceful controller');
     }
 
     /**
@@ -46,23 +50,12 @@ class MakeController extends Command
         $name = $input->getArgument('name');
         $resource = $input->getArgument('resource');
 
-        if($resource){
-           $stubName = 'ResourceController';
+        if ($resource) {
+            $stubName = 'ResourceController';
         }
 
-        $creator = new CreateFileFromStubs($name,'controller',null,null,$stubName ?? null);
-        $fileName = $creator->handle(fn ($controllerName,$directoriesArray) =>
-             str_replace([
-                '{Controller}',
-                '{NameSpace}'
-            ], [
-                $controllerName,
-                $this->getNameSpace($directoriesArray)
-            ], $creator->getStubContent())
-        );
-
-        $io = new SymfonyStyle($input, $output);
-        $io->success($fileName . ' Created successfully');
+        $fileName = $this->createFile($name, 'controller', null, 'php', $stubName ?? null);
+        (new SymfonyStyle($input, $output))->success($fileName . ' Created Successfully');
 
         return Command::SUCCESS;
     }
@@ -70,5 +63,13 @@ class MakeController extends Command
     private function getNameSpace(array $directories)
     {
         return rtrim('App\\Controller\\' . implode('\\', $directories), '\\');
+    }
+
+    private function getNewContent()
+    {
+        return function ($controllerName, $directoriesArray) {
+            $this->replaceNameSpace($this->getNameSpace($directoriesArray))->replaceClassName('Controller', $controllerName);
+            return $this->newContent;
+        };
     }
 }
