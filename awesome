@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Andileong\Framework\Core\Application;
+use App\Console\Commands\Play;
+use Symfony\Component\Console\Application as ConsoleApplication;
+
+
+$app = new Application(__DIR__);
+
+$application = new ConsoleApplication();
+
+$application->add(new Play());
+$application->add(new \App\Console\Commands\MakeController());
+$application->run();
