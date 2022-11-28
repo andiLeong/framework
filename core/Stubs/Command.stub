@@ -2,6 +2,7 @@
 
 namespace {NameSpace};
 
+use Andileong\Framework\Core\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,10 @@ class {Command} extends Command
      */
     protected static $defaultDescription = 'make a {Command}';
 
+    public function __construct(public Application $app)
+    {
+        parent::__construct(null);
+    }
 
     protected function configure(): void
     {

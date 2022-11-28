@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Andileong\Framework\Core\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,6 +24,11 @@ class Play extends Command
      * @var string
      */
     protected static $defaultDescription = 'Play the game!';
+
+    public function __construct(public Application $app)
+    {
+        parent::__construct(null);
+    }
 
     /**
      * Execute the command

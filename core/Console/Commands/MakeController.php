@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Andileong\Framework\Core\Console\Commands;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Stubs\CreateFileFromStubs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,6 +21,10 @@ class MakeController extends Command
      */
     protected static $defaultDescription = 'make a controller';
 
+    public function __construct(public Application $app)
+    {
+        parent::__construct(null);
+    }
 
     protected function configure(): void
     {

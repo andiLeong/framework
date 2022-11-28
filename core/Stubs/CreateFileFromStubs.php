@@ -29,26 +29,15 @@ class CreateFileFromStubs
      */
     public function handle(callable $fn)
     {
-//        $controllerPath = appPath() . '/app/Controller/';
-
         $possibleDirectories = implode('/', $this->newDirectoriesArray);
         ensureDirectoryExisted($this->location . $possibleDirectories);
-//        return [$fileName, $possibleDirectoriesArray];
-//        $content = str_replace([
-//            '{Controller}',
-//            '{NameSpace}'
-//        ], [
-//            $fileName,
-//            $this->getNameSpace($directoriesArray)
-//        ], $this->getStubContent());
 
         $content = $fn(
             $this->fileName,
             $this->newDirectoriesArray
         );
 
-        $fullPathFileName = $this->location . $this->fileNameWithPath . '.' . $this->extension;
-        file_put_contents($fullPathFileName, $content);
+        file_put_contents($fullPathFileName = $this->getWriteableDestination(), $content);
         return $fullPathFileName;
     }
 
@@ -59,7 +48,16 @@ class CreateFileFromStubs
     private function phraseNameAndDirectory(): void
     {
         $this->newDirectoriesArray = explode('/', $this->fileNameWithPath);
-        $this->fileName = array_pop($this->newDirectoriesArray);
+        $this->fileName = ucfirst(array_pop($this->newDirectoriesArray));
+    }
+
+    /**
+     * @return string
+     */
+    public function getWriteableDestination()
+    {
+        $newDirectory = implode('/',$this->newDirectoriesArray);
+        return $this->location . $newDirectory . $this->fileName . '.' . $this->extension;
     }
 
     /**
