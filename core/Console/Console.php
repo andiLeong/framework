@@ -13,6 +13,7 @@ class Console
         Commands\MakeCommand::class,
         Commands\MakeModel::class,
         Commands\MakeTest::class,
+        Commands\Serve::class,
     ];
 
     protected $appCommands = [];
