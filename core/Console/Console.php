@@ -12,6 +12,7 @@ class Console
         Commands\MakeController::class,
         Commands\MakeCommand::class,
         Commands\MakeModel::class,
+        Commands\MakeTest::class,
     ];
 
     protected $appCommands = [];
@@ -36,5 +37,13 @@ class Console
         $application = new ConsoleApplication();
         $application->addCommands($this->resolveCommands());
         $application->run();
+    }
+
+    public function runInTest($input,$output)
+    {
+        $application = new ConsoleApplication();
+        $application->setAutoExit(false);
+        $application->addCommands($this->resolveCommands());
+        $application->run($input, $output);
     }
 }

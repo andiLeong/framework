@@ -42,6 +42,7 @@ class Application extends Container
         $this->bind('app_path', $this->appPath);
         $this->bind('storage_path', $this->appPath. '/storage');
         $this->bind('stubs_path', $this->appPath. '/core/Stubs');
+        $this->singleton($this->getAlias(Request::class), fn() => $this->request ?? new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));

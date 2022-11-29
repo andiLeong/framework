@@ -3,12 +3,10 @@
 namespace Andileong\Framework\Core\Console\Commands;
 
 use Andileong\Framework\Core\Application;
-use Andileong\Framework\Core\Stubs\CreateFileFromStubs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class MakeCommand extends Command
 {
@@ -50,7 +48,7 @@ class MakeCommand extends Command
 
         $location = appPath() . '/app/Console/Commands/';
         $fileName = $this->createFile($name, 'command', $location);
-        (new SymfonyStyle($input, $output))->success($fileName . ' Created Successfully');
+        $output->writeln("<info>$fileName Created Successfully</info>");
 
         return Command::SUCCESS;
     }

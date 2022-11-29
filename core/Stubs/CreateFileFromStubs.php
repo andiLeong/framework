@@ -41,7 +41,7 @@ class CreateFileFromStubs
     }
 
     /**
-     * phrase the name that mya contains the new directory
+     * phrase the name that may contain the new directory
      * @return void
      */
     private function phraseNameAndDirectory(): void
@@ -51,11 +51,14 @@ class CreateFileFromStubs
     }
 
     /**
+     * get the file destination where will be written to disk
      * @return string
      */
     public function getWriteableDestination()
     {
         $newDirectory = implode('/',$this->newDirectoriesArray) . '/';
+//        dump($newDirectory);
+//        dd($this->fileName);
         return $this->location . $newDirectory . $this->fileName . '.' . $this->extension;
     }
 

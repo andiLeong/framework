@@ -8,21 +8,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MakeModel extends Command
+class MakeTest extends Command
 {
     use CreateFromStub;
 
-    protected static $defaultName = 'make:model';
+    protected $oldContent;
+    protected $newContent;
+
+    protected static $defaultName = 'make:test';
 
     /**
      * The command description
      *
      * @var string
      */
-    protected static $defaultDescription = 'make a Model';
-
-    protected $oldContent;
-    protected $newContent;
+    protected static $defaultDescription = 'make a test';
 
     public function __construct(public Application $app)
     {
@@ -31,7 +31,7 @@ class MakeModel extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'name of the model');
+        $this->addArgument('name', InputArgument::REQUIRED, 'name of the test');
     }
 
     /**
@@ -44,8 +44,7 @@ class MakeModel extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
-
-        $fileName = $this->createFile($name,'model',appPath() . '/app/Models/');
+        $fileName = $this->createFile($name, 'test', appPath() . '/core/tests/');
         $output->writeln("<info>$fileName Created Successfully</info>");
 
         return Command::SUCCESS;
@@ -53,15 +52,14 @@ class MakeModel extends Command
 
     private function getNameSpace(array $directories)
     {
-        return rtrim('App\\Models\\' . implode('\\', $directories), '\\');
+        return rtrim('Andileong\\Framework\\Tests\\' . implode('\\', $directories), '\\');
     }
 
     private function getNewContent()
     {
-        return function ($modelName, $directoriesArray) {
-            $this->replaceNameSpace($this->getNameSpace($directoriesArray))->replaceClassName('Model', $modelName);
+        return function ($testName, $directoriesArray) {
+            $this->replaceNameSpace($this->getNameSpace($directoriesArray))->replaceClassName('TestName', $testName);
             return $this->newContent;
         };
     }
-
 }
