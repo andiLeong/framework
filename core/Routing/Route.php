@@ -100,7 +100,7 @@ class Route
     {
         $pattern = '';
         foreach ($this->staticSegments as $para) {
-            $pattern .= "\/$para\/[1-9,a-z,A-z,\-,_]+";
+            $pattern .= "\/$para\/[0-9,a-z,A-z,\-,_]+";
         }
 
         return "/{$pattern}/";

@@ -13,9 +13,11 @@ class RouteTest extends testcase
     {
         $route3 = new Route('/user/{id}/post/{post-id}', 'GET', '');
         $route2 = new Route('/user/{id}', 'GET', '');
+        $route4 = new Route('/user/{id}', 'GET', '');
         $route = new Route('/about', 'GET', '');
 
 
+        $this->assertTrue($route4->matches('/user/1000'));
         $this->assertTrue($route3->matches('/user/1/post/3'));
         $this->assertTrue($route2->matches('/user/1'));
         $this->assertFalse($route2->matches('/user/1/post/3'));
