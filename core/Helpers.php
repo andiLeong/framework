@@ -20,10 +20,7 @@ if (!function_exists('resolveParam')) {
         }
 
         $typeName = $param->getType()->getName();
-        if (class_exists($typeName)) {
-            $app ??= app();
-            return $app->get($typeName);
-        }
+        return $app->get($typeName);
     }
 
 }
@@ -203,10 +200,41 @@ if (!function_exists('ensureDirectoryExisted')) {
      * @param string $permission
      * @return void
      */
-    function ensureDirectoryExisted($path,$permission = '0775')
+    function ensureDirectoryExisted($path, $permission = '0775')
     {
         if (!file_exists($path)) {
             mkdir($path, $permission, true);
         }
+    }
+}
+
+if (!function_exists('value')) {
+    /**
+     * retrieve a value if not callable , else call it and return
+     * @param $value
+     * @param array $params
+     * @return void
+     */
+    function value($value, $params = [])
+    {
+        return is_callable($value) ? $value(...$params) : $value;
+    }
+}
+
+if (!function_exists('cache')) {
+    /**
+     * get the cache instance or get the key from the cache
+     * @param null|string $key
+     * @param null|closure $default
+     * @return object
+     */
+    function cache($key = null, $default = null)
+    {
+        $cache = app('cache');
+        if (is_null($key)) {
+            return $cache;
+        }
+
+        return $cache->get($key, $default);
     }
 }

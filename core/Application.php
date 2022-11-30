@@ -3,7 +3,9 @@
 namespace Andileong\Framework\Core;
 
 use Andileong\Framework\Core\Bootstrap\Bootstrap;
-use Andileong\Framework\Core\Cache\FileCacheHandler;
+use Andileong\Framework\Core\Cache\CacheHandler;
+use Andileong\Framework\Core\Cache\CacheManager;
+use Andileong\Framework\Core\Cache\Contract\Cache;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
@@ -24,7 +26,7 @@ class Application extends Container
         'exception.handler' => [Handler::class],
         'logger' => [LoggerManager::class],
         'console' => [Console::class],
-        'cache' => [FileCacheHandler::class],
+        'cache' => [CacheManager::class],
     ];
 
     private $inProduction = false;
@@ -42,16 +44,18 @@ class Application extends Container
         self::$instance = $this;
 
         $this->bind('app_path', $this->appPath);
-        $this->bind('storage_path', $this->appPath. '/storage');
-        $this->bind('stubs_path', $this->appPath. '/core/Stubs');
-        $this->bind('public_path', $this->appPath. '/public');
+        $this->bind('storage_path', $this->appPath . '/storage');
+        $this->bind('stubs_path', $this->appPath . '/core/Stubs');
+        $this->bind('public_path', $this->appPath . '/public');
         $this->singleton($this->getAlias(Request::class), fn() => $this->request ?? new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
         $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));
-        $this->singleton($this->getAlias(FileCacheHandler::class), fn($app) => new FileCacheHandler($app));
-        $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app,$args[0]));
+        $this->singleton($this->getAlias(CacheManager::class), fn($app) => new CacheManager($app));
+        $this->singleton(Cache::class, fn($app) => $app['cache']->driver());
+        $this->singleton(CacheHandler::class, fn($app) => $app['cache']->driver());
+        $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app, $args[0]));
     }
 
     public function boot()
@@ -61,10 +65,10 @@ class Application extends Container
 
     private function loadAlias()
     {
-        foreach($this->aliasMapping as $key => $alias){
-           foreach ($alias as $alia){
-              $this->alias[$alia] = $key;
-           }
+        foreach ($this->aliasMapping as $key => $alias) {
+            foreach ($alias as $alia) {
+                $this->alias[$alia] = $key;
+            }
         }
     }
 

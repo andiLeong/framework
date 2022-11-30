@@ -4,7 +4,6 @@ namespace Andileong\Framework\Core\Cache\Contract;
 
 interface Cache
 {
-
     public function put($key, $value, $second = 0): bool;
 
     public function get($key, $default = null);

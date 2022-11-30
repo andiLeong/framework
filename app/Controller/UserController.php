@@ -2,22 +2,17 @@
 
 namespace App\Controller;
 
-use Andileong\Validation\Validator;
+use Andileong\Framework\Core\Cache\Contract\Cache;
 use App\Models\User;
-use Exception;
 
 class UserController
 {
-    public function index()
+    public function index(Cache $cache)
     {
-//        $validator = new Validator(request()->all());
-//        $validator->validate([
-//            'name' => 'required'
-//        ]);
-
-//        throw new \InvalidArgumentException('playing with exception is so fun');
-        $users = User::select('id','username','email')->paginate(9,'page_name');
-        return $users;
+        return $cache->get('users','default');
+        return $cache->remember('users',2*60,function(){
+            return User::get();
+        });
     }
 
     public function show($id)

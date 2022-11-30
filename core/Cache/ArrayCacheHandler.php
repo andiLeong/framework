@@ -2,22 +2,11 @@
 
 namespace Andileong\Framework\Core\Cache;
 
-use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Cache\Contract\Cache;
 
-class ArrayCacheHandler implements Cache
+class ArrayCacheHandler extends CacheHandler implements Cache
 {
-    protected $items = [
-//        'users' => [
-//            'expire' => 0,
-//            'value' => 'sth'
-//        ]
-    ];
-
-    public function __construct(protected Application $app)
-    {
-        //
-    }
+    protected $items = [];
 
     public function put($key, $value, $second = 0): bool
     {
@@ -42,28 +31,7 @@ class ArrayCacheHandler implements Cache
             return $default;
         }
 
-        return unserialize($this->items[$key]['value'])[0];
-    }
-
-    public function has($key): bool
-    {
-        return $this->get($key) !== null;
-    }
-
-    public function forever($key, $value): bool
-    {
-        return $this->put($key, $value);
-    }
-
-    public function putMany(array $values, $seconds = 0): bool
-    {
-        foreach ($values as $key => $value){
-            if(!$this->put($key,$value,$seconds)){
-                return false;
-            }
-        }
-
-        return true;
+        return unserialize($this->items[$key]['value']);
     }
 
     public function delete($key): bool
@@ -76,18 +44,6 @@ class ArrayCacheHandler implements Cache
     {
         $this->items = [];
         return true;
-    }
-
-    /**
-     * @param mixed $second
-     * @return int|mixed
-     */
-    protected function generateTimestamp(mixed $second): mixed
-    {
-        if ($second == 0) {
-            return $second;
-        }
-        return time() + $second;
     }
 
     public function isExpired($time)

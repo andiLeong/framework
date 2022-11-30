@@ -6,7 +6,7 @@ use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Cache\Contract\Cache;
 use Symfony\Component\Finder\Finder;
 
-class FileCacheHandler implements Cache
+class FileCacheHandler extends CacheHandler implements Cache
 {
     protected $directory;
     private $expiredKeys = [];
@@ -49,19 +49,19 @@ class FileCacheHandler implements Cache
     public function get($key, $default = null)
     {
         if (!file_exists($path = $this->path(md5($key)))) {
-            return $default;
+            return value($default);
         }
 
         $content = @file_get_contents($path);
         if (!$content) {
-            return $default;
+            return value($default);
         }
 
         [$time, $content] = $this->extractContent($content);
 
-        if ($this->isExpired($time,$key)) {
+        if ($this->isExpired($time, $key)) {
             $this->delete($key);
-            return $default;
+            return value($default);
         }
 
         return unserialize($content);
@@ -105,29 +105,14 @@ class FileCacheHandler implements Cache
     }
 
     /**
-     * generate the cache timestamp
-     * @param $second
-     * @return mixed
-     */
-    protected function generateTimestamp($second)
-    {
-        if ($second == 0) {
-            return $second;
-        }
-
-        $time = time() + $second;
-        return min($time, 9999999999);
-    }
-
-    /**
      * check a certain timestamp is expired
      * @param $time
      * @param null $key
      * @return bool
      */
-    protected function isExpired($time,$key = null)
+    protected function isExpired($time, $key = null)
     {
-        if(in_array($key,$this->expiredKeys)){
+        if (in_array($key, $this->expiredKeys)) {
             $this->expiredKeys = [];
             return true;
         }
@@ -136,44 +121,6 @@ class FileCacheHandler implements Cache
             return false;
         }
         return time() >= $time;
-    }
-
-    /**
-     * check if key existed in cache
-     * @param $key
-     * @return bool
-     */
-    public function has($key) :bool
-    {
-        return $this->get($key) !== null;
-    }
-
-    /**
-     * store a cache item forever
-     * @param $key
-     * @param $value
-     * @return bool
-     */
-    public function forever($key, $value) :bool
-    {
-        return $this->put($key, $value);
-    }
-
-    /**
-     * store array of keys
-     * @param array $values
-     * @param $seconds
-     * @return bool
-     */
-    public function putMany(array $values, $seconds = 0) :bool
-    {
-        foreach ($values as $key => $value) {
-            if(!$this->put($key, $value, $seconds)){
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -194,7 +141,7 @@ class FileCacheHandler implements Cache
      * remove all the cache items
      *
      */
-    public function remove() :bool
+    public function remove(): bool
     {
         if (!is_dir($this->directory)) {
             return false;
