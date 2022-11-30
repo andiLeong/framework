@@ -2,7 +2,7 @@
 
 namespace Andileong\Framework\Core\Cache\Contract;
 
-interface CacheStore
+interface Cache
 {
 
     public function put($key, $value, $second = 0): bool;

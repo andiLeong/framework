@@ -3,12 +3,13 @@
 namespace Andileong\Framework\Core\Cache;
 
 use Andileong\Framework\Core\Application;
-use Andileong\Framework\Core\Cache\Contract\CacheStore;
+use Andileong\Framework\Core\Cache\Contract\Cache;
 use Symfony\Component\Finder\Finder;
 
-class FileCacheHandler implements CacheStore
+class FileCacheHandler implements Cache
 {
     protected $directory;
+    private $expiredKeys = [];
 
     public function __construct(protected Application $app)
     {
@@ -48,25 +49,20 @@ class FileCacheHandler implements CacheStore
     public function get($key, $default = null)
     {
         if (!file_exists($path = $this->path(md5($key)))) {
-            return 'file not exist';
             return $default;
         }
 
         $content = @file_get_contents($path);
         if (!$content) {
-            return 'cant get content';
             return $default;
         }
 
         [$time, $content] = $this->extractContent($content);
 
-//        dd([$time, $content]);
-        if ($this->isExpired($time)) {
+        if ($this->isExpired($time,$key)) {
             $this->delete($key);
-            dump('expired delete the cache');
-            return 'expired';
+            return $default;
         }
-
 
         return unserialize($content);
     }
@@ -126,12 +122,18 @@ class FileCacheHandler implements CacheStore
     /**
      * check a certain timestamp is expired
      * @param $time
+     * @param null $key
      * @return bool
      */
-    protected function isExpired($time)
+    protected function isExpired($time,$key = null)
     {
-        if ($time == 0) {
+        if(in_array($key,$this->expiredKeys)){
+            $this->expiredKeys = [];
             return true;
+        }
+
+        if ($time == 0) {
+            return false;
         }
         return time() >= $time;
     }
@@ -207,5 +209,18 @@ class FileCacheHandler implements CacheStore
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirectory(): string
+    {
+        return $this->directory;
+    }
+
+    public function setKeyToExpired($key)
+    {
+        $this->expiredKeys[] = $key;
     }
 }
