@@ -3,6 +3,7 @@
 namespace Andileong\Framework\Core;
 
 use Andileong\Framework\Core\Bootstrap\Bootstrap;
+use Andileong\Framework\Core\Cache\FileCacheHandler;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
@@ -23,6 +24,7 @@ class Application extends Container
         'exception.handler' => [Handler::class],
         'logger' => [LoggerManager::class],
         'console' => [Console::class],
+        'cache' => [FileCacheHandler::class],
     ];
 
     private $inProduction = false;
@@ -48,6 +50,7 @@ class Application extends Container
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
         $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));
+        $this->singleton($this->getAlias(FileCacheHandler::class), fn($app) => new FileCacheHandler($app));
         $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app,$args[0]));
     }
 
