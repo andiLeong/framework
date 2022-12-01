@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\tests;
 
 use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\Routing\RouteNotFoundException;
 use Andileong\Framework\Core\Routing\Router;
 use PHPUnit\Framework\TestCase;
 
@@ -92,10 +93,19 @@ class RouterRenderContentTest extends testcase
         $response->assertJson()->assertOk();
     }
 
+    /** @test */
+    public function it_can_render_different_verb_of_routes()
+    {
+        $user = $this->createUser();
+        $response = $this->post("/user/{$user->id}",['foo' => 'va']);
+        $response->assertNotFound();
+    }
+
     /**
      * @param $uri
      * @param $method
      * @return Router
+     * @throws \ErrorException
      */
     protected function getRouter($uri, $method = 'GET'): Router
     {

@@ -30,4 +30,12 @@ class Response
         return $this;
     }
 
+    public function assertNotFound()
+    {
+        $this->testCase->assertTrue(
+            $this->statusCode === \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND
+        );
+        return $this;
+    }
+
 }

@@ -52,6 +52,10 @@ class Router
         $method = $this->request->method();
         $path = $this->request->path();
 
+        if(!isset($this->routes[$method])){
+            throw new RouteNotFoundException('Route not found exception', 404);
+        }
+
         $routes = $this->routes[$method];
         $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
         ));

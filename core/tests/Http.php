@@ -8,6 +8,10 @@ use Andileong\Framework\Core\Routing\Router;
 
 trait Http
 {
+    public function post($uri, $data = [])
+    {
+        return $this->call('post', $uri, $data);
+    }
 
     public function get($uri, $data = [])
     {
