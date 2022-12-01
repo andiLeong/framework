@@ -6,12 +6,9 @@ use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Exception;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class Router
 {
@@ -60,7 +57,7 @@ class Router
         ));
 
         if (!count($route)) {
-            throw new RouteNotFoundException('Route not found exception',404);
+            throw new RouteNotFoundException('Route not found exception', 404);
         }
 
         $route = $route[0];
@@ -77,8 +74,8 @@ class Router
     {
         try {
             $content = $this->render();
-        } catch (Exception $e) {
-            $handler = $this->container->get('exception.handler',[$e]);
+        } catch (Throwable $e) {
+            $handler = $this->container->get('exception.handler', [$e]);
             $this->container->get('logger')->error($e->getTraceAsString());
             return $handler->handle();
         }
@@ -91,7 +88,7 @@ class Router
      * @return Response
      * @throws Exception
      */
-    public function run() :Response
+    public function run(): Response
     {
         $content = $this->getContentFromRender();
 
@@ -121,7 +118,7 @@ class Router
      */
     public function response()
     {
-       return $this->run()->send();
+        return $this->run()->send();
     }
 
     /**

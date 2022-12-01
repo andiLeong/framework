@@ -3,9 +3,9 @@
 namespace Andileong\Framework\Core\Exception;
 
 use Andileong\Framework\Core\Application;
-use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class Handler
 {
@@ -13,7 +13,7 @@ class Handler
 
     public function __construct(
         protected Application $app,
-        protected Exception   $e,
+        protected Throwable   $e,
     )
     {
         $this->register();
@@ -21,7 +21,7 @@ class Handler
 
     public function register()
     {
-       //
+        //
     }
 
     public function handle(): Response
@@ -69,7 +69,7 @@ class Handler
         return new JsonResponse($exception, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    private function hasRegistered(Exception $e)
+    private function hasRegistered(Throwable $e)
     {
         $key = get_class($e);
         if (array_key_exists($key, $this->customExceptions)) {
@@ -77,7 +77,7 @@ class Handler
         }
     }
 
-    private function triggerException(Exception|CoreExceptions $e, $closure = null)
+    private function triggerException(Throwable|CoreExceptions $e, $closure = null)
     {
         if ($closure) {
             return $closure($e);

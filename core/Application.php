@@ -14,6 +14,7 @@ use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
 use App\Console\Console;
 use App\Exception\Handler;
+use ErrorException;
 
 class Application extends Container
 {
@@ -37,6 +38,15 @@ class Application extends Container
         $this->registerBinding();
         $this->boot();
         $this->setInProduction();
+
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            // error was suppressed with the @-operator
+            if (0 === error_reporting()) {
+                return false;
+            }
+
+            throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+        });
     }
 
     public function registerBinding()
