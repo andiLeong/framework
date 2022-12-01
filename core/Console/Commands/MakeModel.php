@@ -3,23 +3,16 @@
 namespace Andileong\Framework\Core\Console\Commands;
 
 use Andileong\Framework\Core\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'make:model',description: 'make a model')]
 class MakeModel extends Command
 {
     use CreateFromStub;
-
-    protected static $defaultName = 'make:model';
-
-    /**
-     * The command description
-     *
-     * @var string
-     */
-    protected static $defaultDescription = 'make a Model';
 
     protected $oldContent;
     protected $newContent;

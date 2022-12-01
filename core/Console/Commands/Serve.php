@@ -3,22 +3,16 @@
 namespace Andileong\Framework\Core\Console\Commands;
 
 use Andileong\Framework\Core\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'serve',description: 'make a local php server')]
 class Serve extends Command
 {
-    protected static $defaultName = 'serve';
-
-    /**
-     * The command description
-     *
-     * @var string
-     */
-    protected static $defaultDescription = 'make a local php server';
-
+    
     public function __construct(public Application $app)
     {
         parent::__construct(null);

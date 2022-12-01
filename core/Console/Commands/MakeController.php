@@ -3,26 +3,19 @@
 namespace Andileong\Framework\Core\Console\Commands;
 
 use Andileong\Framework\Core\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'make:controller',description: 'make a controller')]
 class MakeController extends Command
 {
     use CreateFromStub;
 
     protected $oldContent;
     protected $newContent;
-
-    protected static $defaultName = 'make:controller';
-
-    /**
-     * The command description shown when running "php bin/demo list".
-     *
-     * @var string
-     */
-    protected static $defaultDescription = 'make a controller';
 
     public function __construct(public Application $app)
     {

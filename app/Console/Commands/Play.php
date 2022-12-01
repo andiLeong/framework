@@ -3,28 +3,15 @@
 namespace App\Console\Commands;
 
 use Andileong\Framework\Core\Application;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'play',description: 'play game')]
 class Play extends Command
 {
-
-    /**
-     * The name of the command (the part after "bin/demo").
-     *
-     * @var string
-     */
-    protected static $defaultName = 'play';
-
-    /**
-     * The command description shown when running "php bin/demo list".
-     *
-     * @var string
-     */
-    protected static $defaultDescription = 'Play the game!';
-
     public function __construct(public Application $app)
     {
         parent::__construct(null);
