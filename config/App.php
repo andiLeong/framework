@@ -1,5 +1,8 @@
 <?php
 
 return [
-    'name' => 'framework'
+    'name' => 'framework',
+
+
+    'timezone' => 'Asia/Hong_Kong',
 ];

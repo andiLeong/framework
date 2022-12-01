@@ -25,7 +25,7 @@ class FileCacheHandler extends CacheHandler implements Cache
      */
     public function put($key, $value, $second = 0): bool
     {
-        $time = $this->generateTimestamp($second);
+        $time = $this->getTimestamp($key,$second);
 
         try {
             ensureDirectoryExisted($this->directory);

@@ -47,6 +47,8 @@ class Application extends Container
 
             throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         });
+
+        date_default_timezone_set($this->get('config')['app.timezone']);
     }
 
     public function registerBinding()

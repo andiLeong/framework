@@ -2,6 +2,8 @@
 
 namespace Andileong\Framework\Core\Cache;
 
+use Carbon\Carbon;
+
 abstract class CacheHandler
 {
     /**
@@ -43,16 +45,43 @@ abstract class CacheHandler
     }
 
     /**
+     * get the timestamp where will store
+     * @param $key
+     * @param $second
+     * @return false|void
+     */
+    protected function getTimestamp($key, $second)
+    {
+        try {
+            $timestamp = $this->generateTimestamp($second);
+        } catch (\InvalidArgumentException $e) {
+            $this->delete($key);
+            return false;
+        }
+
+        return $timestamp;
+    }
+
+    /**
      * generate the cache timestamp
      * @param mixed $second
      * @return int|mixed
      */
     protected function generateTimestamp(mixed $second): mixed
     {
+        if ($second instanceof \DateTimeInterface) {
+            $second = Carbon::now()->diffInSeconds($second, false);
+        }
+
         if ($second == 0) {
             return $second;
         }
-        return time() + $second;
+
+        if ($second > 0) {
+            return time() + $second;
+        }
+
+        throw new \InvalidArgumentException('cache time can not be less than a second');
     }
 
     /**

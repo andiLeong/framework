@@ -25,7 +25,7 @@ class Config implements \ArrayAccess
 
     public function offsetGet(mixed $offset)
     {
-        return $this->configs[$offset];
+        return $this->get($offset);
     }
 
     public function offsetSet(mixed $offset, mixed $value)
