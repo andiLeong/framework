@@ -25,6 +25,8 @@ class LoadConfiguration
         }
 
         $app->singleton($app->getAlias(Config::class), $config);
+
+        date_default_timezone_set($config->get('app.timezone','Asia/Hong_Kong'));
     }
 
     protected function configPath()

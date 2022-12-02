@@ -13,6 +13,7 @@ use Throwable;
 class Router
 {
     public $routes = [];
+    public $uri = [];
     public Request $request;
 
     public function __construct(private Container $container)
@@ -53,7 +54,7 @@ class Router
         $path = $this->request->path();
 
         if(!isset($this->routes[$method])){
-            throw new RouteNotFoundException('Route not found exception', 404);
+            throw new RouteNotFoundException($path . ' Route not found exception, No verb registered ' . $method, 404);
         }
 
         $routes = $this->routes[$method];

@@ -9,6 +9,7 @@ class Bootstrap
     protected $bootstrapers = [
         SetEnvironmentVariable::class,
         LoadConfiguration::class,
+        HandleError::class,
     ];
 
 
