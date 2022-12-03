@@ -9,6 +9,7 @@ use Andileong\Framework\Core\Cache\Contract\Cache;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
@@ -56,7 +57,10 @@ class Application extends Container
         $this->singleton($this->getAlias(CacheManager::class), fn($app) => new CacheManager($app));
         $this->singleton(Cache::class, fn($app) => $app['cache']->driver());
         $this->singleton(CacheHandler::class, fn($app) => $app['cache']->driver());
-        $this->bind($this->getAlias(Handler::class), fn($app, $args) => new Handler($app, $args[0]));
+        $this->bind($this->getAlias(Handler::class), function ($app, $args) {
+            $renderer = new Renderer($app,$args[0]);
+            return new Handler($args[0],$renderer);
+        });
     }
 
     public function boot()

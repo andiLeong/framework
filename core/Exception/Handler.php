@@ -2,8 +2,6 @@
 
 namespace Andileong\Framework\Core\Exception;
 
-use Andileong\Framework\Core\Application;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -12,14 +10,14 @@ class Handler
     protected $customExceptions = [];
 
     public function __construct(
-        protected Application $app,
-        protected Throwable   $e,
+        protected Throwable $e,
+        protected Renderer  $renderer,
     )
     {
         $this->register();
     }
 
-    public function register()
+    protected function register()
     {
         //
     }
@@ -33,56 +31,27 @@ class Handler
         $e = $this->e;
 
         if ($closure = $this->hasRegistered($e)) {
-            return $this->triggerException($e, $closure);
+            return $this->renderer->renderClosure($closure);
         }
 
         if (method_exists($e, 'render')) {
-            return $this->triggerException($e);
+            return $this->renderer->render('core');
         }
 
-        return $this->triggerDefaultException($e);
+        return $this->renderer->render();
 
     }
 
-    private function inProduction(): bool
-    {
-        return $this->app->isInProduction();
-    }
-
-    private function triggerDefaultException($e)
-    {
-        if ($this->inProduction()) {
-            $exception = [
-                'message' => 'internal server error',
-                'code' => 500
-            ];
-        } else {
-
-            $exception = [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'trace' => $e->getTrace(),
-            ];
-        }
-
-        return new JsonResponse($exception, Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-
+    /**
+     * check any exception is register
+     * @param Throwable $e
+     * @return mixed|void
+     */
     private function hasRegistered(Throwable $e)
     {
         $key = get_class($e);
         if (array_key_exists($key, $this->customExceptions)) {
             return $this->customExceptions[$key];
         }
-    }
-
-    private function triggerException(Throwable|CoreExceptions $e, $closure = null)
-    {
-        if ($closure) {
-            return $closure($e);
-        }
-
-        return $e->render();
     }
 }

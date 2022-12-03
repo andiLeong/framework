@@ -12,7 +12,7 @@ class Handler extends CoreHandler
     /**
      * register developer needed exception handle
      */
-    public function register()
+    protected function register()
     {
         $this->customExceptions[ValidationException::class] = fn($e) => new JsonResponse($e->errors(), Response::HTTP_BAD_REQUEST);
     }
