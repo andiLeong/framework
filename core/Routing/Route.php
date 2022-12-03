@@ -50,12 +50,12 @@ class Route
         return false;
     }
 
-    public function isClosure()
+    protected function isClosure()
     {
         return $this->controller instanceof \Closure;
     }
 
-    public function callClosure()
+    protected function callClosure()
     {
         return (new FunctionDispatcher($this))->dispatch();
     }
@@ -96,7 +96,7 @@ class Route
      * make a regular expression for matching the dynamic route
      * @return string
      */
-    public function buildPattern()
+    protected function buildPattern()
     {
         $pattern = '';
         foreach ($this->staticSegments as $para) {
@@ -145,7 +145,6 @@ class Route
     {
         return $this->staticSegments;
     }
-
 
     public function getDynamicParams()
     {

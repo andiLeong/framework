@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Router;
 
 use Andileong\Framework\Core\Routing\Route;
 use PHPUnit\Framework\TestCase;

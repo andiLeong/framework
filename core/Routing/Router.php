@@ -28,8 +28,7 @@ class Router
      */
     public function get($uri, $action)
     {
-        $uri = $this->validateUri($uri);
-        $this->routes['GET'][] = new Route($uri, $action, $this->container);
+        $this->register('get',$uri,$action);
     }
 
     /**
@@ -39,8 +38,49 @@ class Router
      */
     public function post($uri, $action)
     {
+        $this->register('post',$uri,$action);
+    }
+
+    /**
+     * register a delete uri endpoint
+     * @param $uri
+     * @param $action
+     */
+    public function delete($uri, $action)
+    {
+        $this->register('delete',$uri,$action);
+    }
+
+    /**
+     * register a put uri endpoint
+     * @param $uri
+     * @param $action
+     */
+    public function put($uri, $action)
+    {
+        $this->register('put',$uri,$action);
+    }
+
+    /**
+     * register a patch uri endpoint
+     * @param $uri
+     * @param $action
+     */
+    public function patch($uri, $action)
+    {
+        $this->register('patch',$uri,$action);
+    }
+
+    /**
+     * register any given method route
+     * @param $method
+     * @param $uri
+     * @param $action
+     */
+    protected function register($method, $uri, $action) :void
+    {
         $uri = $this->validateUri($uri);
-        $this->routes['POST'][] = new Route($uri, $action, $this->container);
+        $this->routes[strtoupper($method)][] = new Route($uri, $action, $this->container);
     }
 
     /**
