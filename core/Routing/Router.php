@@ -3,8 +3,11 @@
 namespace Andileong\Framework\Core\Routing;
 
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
+use App\Middleware\MiddlewareOne;
+use App\Middleware\MiddlewareTwo;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +28,11 @@ class Router
      * register a get uri endpoint
      * @param $uri
      * @param $action
+     * @return route
      */
-    public function get($uri, $action)
+    public function get($uri, $action) :route
     {
-        $this->register('get',$uri,$action);
+        return $this->register('get', $uri, $action);
     }
 
     /**
@@ -38,7 +42,7 @@ class Router
      */
     public function post($uri, $action)
     {
-        $this->register('post',$uri,$action);
+        $this->register('post', $uri, $action);
     }
 
     /**
@@ -48,7 +52,7 @@ class Router
      */
     public function delete($uri, $action)
     {
-        $this->register('delete',$uri,$action);
+        $this->register('delete', $uri, $action);
     }
 
     /**
@@ -58,7 +62,7 @@ class Router
      */
     public function put($uri, $action)
     {
-        $this->register('put',$uri,$action);
+        $this->register('put', $uri, $action);
     }
 
     /**
@@ -68,7 +72,7 @@ class Router
      */
     public function patch($uri, $action)
     {
-        $this->register('patch',$uri,$action);
+        $this->register('patch', $uri, $action);
     }
 
     /**
@@ -76,11 +80,15 @@ class Router
      * @param $method
      * @param $uri
      * @param $action
+     * @return Route
      */
-    protected function register($method, $uri, $action) :void
+    protected function register($method, $uri, $action)
     {
         $uri = $this->validateUri($uri);
-        $this->routes[strtoupper($method)][] = new Route($uri, $action, $this->container);
+        $route = new Route($uri, $action, $this->container);
+        $this->routes[strtoupper($method)][] = $route;
+
+        return $route;
     }
 
     /**
@@ -93,7 +101,7 @@ class Router
         $method = $this->request->method();
         $path = $this->request->path();
 
-        if(!isset($this->routes[$method])){
+        if (!isset($this->routes[$method])) {
             throw new RouteNotFoundException($path . ' Route not found exception, No verb registered ' . $method, 404);
         }
 
@@ -107,7 +115,7 @@ class Router
 
         $route = $route[0];
 
-        return $route->render();
+        return $this->runThroughMiddleware($route);
     }
 
     /**
@@ -178,5 +186,15 @@ class Router
             return '/' . $uri;
         }
         return $uri;
+    }
+
+    private function runThroughMiddleware($route)
+    {
+        $pipeline = $this->container->get(Pipeline::class);
+        return $pipeline
+            ->send($this->request)
+            ->through($route->getMiddleware())
+            ->run()
+            ->then(fn($request) => $route->render());
     }
 }

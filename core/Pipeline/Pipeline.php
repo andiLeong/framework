@@ -63,7 +63,7 @@ class Pipeline
      */
     public function result()
     {
-        if($stopper = $this->getBrokenPipe()){
+        if ($stopper = $this->getBrokenPipe()) {
             return $stopper->getMessage();
         }
 
@@ -74,12 +74,27 @@ class Pipeline
      * try to get a stopped pipe if any
      * @return mixed|void
      */
-    public function getBrokenPipe()
+    protected function getBrokenPipe()
     {
         $broken = array_values(array_filter($this->pipes, fn(Chainable $pipe) => $pipe->getMessage() !== null));
         if (!empty($broken)) {
             return $broken[0];
         }
+    }
+
+    /**
+     * execute the callback if the pipe is not broke
+     * @param $fn
+     * @return mixed
+     */
+    public function then($fn)
+    {
+        if ($stopper = $this->getBrokenPipe()) {
+            return $stopper->getMessage();
+        }
+
+        $object = $this->pipes[array_key_last($this->pipes)]->getObject();
+        return $fn($object);
     }
 
     /**
@@ -100,11 +115,11 @@ class Pipeline
                 return Chainable::buildAnonymousChain($pipe);
             }
 
-            if($this->container){
+            if ($this->container) {
                 return $this->container->get($pipe);
             }
 
-            throw new \InvalidArgumentException('unrecognizable pipe '. $pipe);
+            throw new \InvalidArgumentException('unrecognizable pipe ' . $pipe);
         }, $pipes);
     }
 

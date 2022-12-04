@@ -2,6 +2,9 @@
 
 namespace Andileong\Framework\Core\Routing;
 
+use Andileong\Framework\Core\Support\Arr;
+use App\Middleware\Middleware;
+
 class Route
 {
     protected $controller;
@@ -10,6 +13,7 @@ class Route
     protected $staticSegments = [];
     protected $dynamicParamNames = [];
     protected $dynamicParams = [];
+    protected $middlewares = [];
 
     public function __construct(protected $uri, string|array|callable $action, public $container)
     {
@@ -202,5 +206,21 @@ class Route
         return array_filter(explode('/', $matchedPath), function ($segment) {
             return !in_array($segment, $this->staticSegments, true) && $segment !== '';
         });
+    }
+
+    public function middleware($middlewares)
+    {
+        $middlewares = is_array($middlewares) ? $middlewares : func_get_args();
+        $this->middlewares = $middlewares;
+    }
+
+    public function getMiddleware()
+    {
+        $middleware = Arr::only(Middleware::$middlewares, $this->middlewares);
+        if (empty($middleware)) {
+            throw new \LogicException('middlewares was not found');
+        }
+
+        return array_values($middleware);
     }
 }

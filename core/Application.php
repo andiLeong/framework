@@ -11,6 +11,7 @@ use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Logs\LoggerManager;
+use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
 use App\Console\Console;
@@ -61,6 +62,7 @@ class Application extends Container
             $renderer = new Renderer($app,$args[0]);
             return new Handler($args[0],$renderer);
         });
+        $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
     }
 
     public function boot()
