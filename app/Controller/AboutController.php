@@ -21,13 +21,3 @@ class AboutController
         return 'this is a about page';
     }
 }
-
-class Foo
-{
-
-}
-
-class Bar
-{
-
-}
