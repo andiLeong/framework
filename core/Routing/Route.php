@@ -208,17 +208,27 @@ class Route
         });
     }
 
+    /**
+     * attach middleware to the route
+     * @param $middlewares
+     * @return $this
+     */
     public function middleware($middlewares)
     {
         $middlewares = is_array($middlewares) ? $middlewares : func_get_args();
-        $this->middlewares = $middlewares;
+        $this->middlewares = array_values(array_unique(array_merge($this->middlewares, $middlewares)));
+        return $this;
     }
 
+    /**
+     * extract middlewares from registered app middleware lists
+     * @return array
+     */
     public function getMiddleware()
     {
         $middleware = Arr::only(Middleware::$middlewares, $this->middlewares);
         if (empty($middleware)) {
-            throw new \LogicException('middlewares was not found');
+            return [];
         }
 
         return array_values($middleware);

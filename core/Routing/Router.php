@@ -6,8 +6,7 @@ use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
-use App\Middleware\MiddlewareOne;
-use App\Middleware\MiddlewareTwo;
+use Closure;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +16,9 @@ class Router
 {
     public $routes = [];
     public $uri = [];
+    public $middlewares = [];
     public Request $request;
+    private $onGroup = false;
 
     public function __construct(private Container $container)
     {
@@ -30,7 +31,7 @@ class Router
      * @param $action
      * @return route
      */
-    public function get($uri, $action) :route
+    public function get($uri, $action): route
     {
         return $this->register('get', $uri, $action);
     }
@@ -39,40 +40,44 @@ class Router
      * register a post uri endpoint
      * @param $uri
      * @param $action
+     * @return Route
      */
     public function post($uri, $action)
     {
-        $this->register('post', $uri, $action);
+        return $this->register('post', $uri, $action);
     }
 
     /**
      * register a delete uri endpoint
      * @param $uri
      * @param $action
+     * @return Route
      */
     public function delete($uri, $action)
     {
-        $this->register('delete', $uri, $action);
+        return $this->register('delete', $uri, $action);
     }
 
     /**
      * register a put uri endpoint
      * @param $uri
      * @param $action
+     * @return Route
      */
     public function put($uri, $action)
     {
-        $this->register('put', $uri, $action);
+        return $this->register('put', $uri, $action);
     }
 
     /**
      * register a patch uri endpoint
      * @param $uri
      * @param $action
+     * @return Route
      */
     public function patch($uri, $action)
     {
-        $this->register('patch', $uri, $action);
+        return $this->register('patch', $uri, $action);
     }
 
     /**
@@ -86,6 +91,7 @@ class Router
     {
         $uri = $this->validateUri($uri);
         $route = new Route($uri, $action, $this->container);
+        $this->addMiddlewareToRoute($route);
         $this->routes[strtoupper($method)][] = $route;
 
         return $route;
@@ -116,6 +122,22 @@ class Router
         $route = $route[0];
 
         return $this->runThroughMiddleware($route);
+    }
+
+    /**
+     * run the route with middlewares if any
+     * @param Route $route
+     * @return mixed
+     * @throws Exception
+     */
+    private function runThroughMiddleware(Route $route)
+    {
+        $pipeline = $this->container->get(Pipeline::class);
+        return $pipeline
+            ->send($this->request)
+            ->through($route->getMiddleware())
+            ->run()
+            ->then(fn($request) => $route->render());
     }
 
     /**
@@ -188,13 +210,52 @@ class Router
         return $uri;
     }
 
-    private function runThroughMiddleware($route)
+    /**
+     * save the registered middlewares
+     * @param $middlewares
+     * @return $this
+     */
+    public function middleware($middlewares)
     {
-        $pipeline = $this->container->get(Pipeline::class);
-        return $pipeline
-            ->send($this->request)
-            ->through($route->getMiddleware())
-            ->run()
-            ->then(fn($request) => $route->render());
+        $this->middlewares = (is_array($middlewares) ? $middlewares : func_get_args());
+        return $this;
+    }
+
+    /**
+     * group closure of routes to middleware
+     * @param Closure $closure
+     */
+    public function group(Closure $closure)
+    {
+        $this->onGroup = true;
+        $closure($this);
+        if($this->hasMiddlewareRegistered()){
+            $this->middlewares = [];
+        }
+
+        $this->onGroup = false;
+    }
+
+    /**
+     * check if has register any middlewares
+     * @return bool
+     */
+    private function hasMiddlewareRegistered()
+    {
+        return !empty($this->middlewares);
+    }
+
+    /**
+     * add the registered middleware to a route
+     * @param Route $route
+     */
+    private function addMiddlewareToRoute(Route $route)
+    {
+        if ($this->hasMiddlewareRegistered()) {
+            $route->middleware($this->middlewares);
+            if (!$this->onGroup) {
+                $this->middlewares = [];
+            }
+        }
     }
 }

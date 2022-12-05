@@ -53,7 +53,9 @@ class Pipeline
      */
     private function start()
     {
-        $this->pipes[0]->handle($this->object);
+        if(!empty($this->pipes)){
+            $this->pipes[0]->handle($this->object);
+        }
         return $this;
     }
 
@@ -89,6 +91,10 @@ class Pipeline
      */
     public function then($fn)
     {
+        if(empty($this->pipes)){
+            return $fn($this->object);
+        }
+
         if ($stopper = $this->getBrokenPipe()) {
             return $stopper->getMessage();
         }

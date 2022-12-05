@@ -11,8 +11,8 @@ class MiddlewareOne extends Chainable
     public function handle($request)
     {
 //        throw new Exception('smth wrong');
-//        $response = new JsonResponse(['msg' => 'break the pipeline'],400);
-//        $this->break($response);
+        $response = new JsonResponse(['msg' => 'break the pipeline'],400);
+        $this->break($response);
         return $this->next($request);
     }
 }
