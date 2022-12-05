@@ -65,6 +65,10 @@ class Pipeline
      */
     public function result()
     {
+        if(empty($this->pipes)){
+            return $this->object;
+        }
+
         if ($stopper = $this->getBrokenPipe()) {
             return $stopper->getMessage();
         }
@@ -135,8 +139,7 @@ class Pipeline
      */
     private function connectPipe()
     {
-        $target = $this->pipes;
-        foreach ($target as $key => $value) {
+        foreach ($this->pipes as $key => $value) {
             $next = $key + 1;
             if ($next < count($this->pipes)) {
                 $value->setSuccessor($this->pipes[$next]);

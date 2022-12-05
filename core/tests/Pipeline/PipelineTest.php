@@ -10,7 +10,7 @@ class PipelineTest extends TestCase
 {
     private array $object;
 
-    public function setUp() :void
+    public function setUp(): void
     {
         $this->object = ['foo' => 'bar'];
     }
@@ -105,7 +105,26 @@ class PipelineTest extends TestCase
         $this->assertEquals('stop', $result);
     }
 
-    public function pipeline($object, $pipes)
+
+    /** @test */
+    public function after_run_through_all_the_pipes_caller_can_execute_a_callback_if_no_pipe_break()
+    {
+        $pipeline = $this->pipeline($this->object, [
+            new PipeOne(),
+            new PipeTwo(),
+        ]);
+
+        $pipeline->run()->then(fn() => $this->assertTrue(true));
+    }
+
+    /** @test */
+    public function if_no_pipe_is_provided_result_should_return_the_object()
+    {
+        $result = $this->pipeline($this->object)->run()->result();
+        $this->assertEquals($this->object, $result);
+    }
+
+    public function pipeline($object, $pipes = [])
     {
         return (new Pipeline(app()))
             ->send($object)
