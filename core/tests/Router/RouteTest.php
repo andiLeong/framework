@@ -48,4 +48,18 @@ class RouteTest extends testcase
         $this->assertEquals(['user'],$route2->getStaticSegments());
         $this->assertEquals(['user','post'],$route3->getStaticSegments());
     }
+
+    /** @test */
+    public function it_can_add_middlewares_to_route()
+    {
+        $route2 = new Route('foo', 'GET', '');
+        $this->assertEmpty($route2->getMiddleware());
+        $route2->middleware(['foo']);
+        $this->assertEquals(['foo'],$route2->getRegisteredMiddleware());
+
+        $route3 = new Route('foo', 'GET', '');
+        $route3->middleware(['foo']);
+        $route3->middleware(['bar']);
+        $this->assertEquals(['foo','bar'],$route3->getRegisteredMiddleware());
+    }
 }

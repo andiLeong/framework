@@ -1,14 +1,18 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Router;
 
 use Andileong\Framework\Core\Application;
+use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
-use Andileong\Framework\Core\Routing\RouteNotFoundException;
 use Andileong\Framework\Core\Routing\Router;
-use PHPUnit\Framework\TestCase;
+use Andileong\Framework\Core\tests\CreateUser;
+use Andileong\Framework\Core\tests\Http;
+use Andileong\Framework\Core\tests\Transaction;
+use Mockery;
+//use PHPUnit\Framework\TestCase;
 
-class RouterRenderContentTest extends testcase
+class RouterRenderContentTest extends Mockery\Adapter\Phpunit\MockeryTestCase
 {
     use Http;
     use CreateUser;
@@ -101,6 +105,36 @@ class RouterRenderContentTest extends testcase
         $response->assertNotFound();
     }
 
+
+    /** @test */
+    public function it_can_render_middleware_route()
+    {
+        $this->markTestSkipped();
+    }
+
+    /** @test */
+    public function pipeline_is_call_when_render_route()
+    {
+        $this->markTestSkipped();
+        $mock = Mockery::mock(Pipeline::class);
+        $mock->shouldReceive('run')->andReturn($mock)->once();
+        $mock->shouldReceive('send')->andReturn($mock)->once();
+        $mock->shouldReceive('then')->once();
+        $mock->shouldReceive('through')->andReturn($mock)->once();
+        $app = new Application($_SERVER['DOCUMENT_ROOT'],Request::setTest([], [], ['REQUEST_URI' => '/foo', 'REQUEST_METHOD' => 'GET']));
+        $app->bind('mock',$mock);
+//        dd(app());
+//        $mock->run();
+
+        $router = new Router($app);
+        $router->middleware('foo')->get('/foo', fn() => 'foo');
+        $content = $router->render();
+
+//        $pipeline = (new Pipeline)->through([])->send('hi')->run();
+//        $pipeline = (new Pipeline)->through([])->send('hi')->run();
+//        dd($mock);
+    }
+
     /**
      * @param $uri
      * @param $method
@@ -113,7 +147,8 @@ class RouterRenderContentTest extends testcase
             Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method])
         ));
     }
-    }
+
+}
 
 
 class AboutController
