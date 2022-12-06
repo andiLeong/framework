@@ -8,6 +8,8 @@ use Closure;
 
 class Container implements \ArrayAccess
 {
+    use HasTestBinding;
+
     protected $bindings = [];
     protected $singletons = [];
     protected $alias = [];
@@ -34,6 +36,10 @@ class Container implements \ArrayAccess
     public function get($key,$args = [])
     {
         $key = $this->getAlias($key);
+
+        if($this->isUnitTesting()){
+           return $this->getTestBinding($key);
+        }
 
         if (!$this->has($key)) {
 
