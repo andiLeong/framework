@@ -14,7 +14,7 @@ Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
 //Route::middleware('one')->get('/foo', [AboutController::class, 'index']);
 //    Route::get('/bar', [AboutController::class, 'index'])
 
-Route::get('/bar', [AboutController::class, 'index'])->middleware('one');
+Route::get('/bar', [AboutController::class, 'index'])->middleware('auth');
 
 
 Route::middleware('one')->get('/foo', [AboutController::class, 'index']);

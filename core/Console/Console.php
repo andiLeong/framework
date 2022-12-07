@@ -14,6 +14,7 @@ class Console
         Commands\MakeModel::class,
         Commands\MakeTest::class,
         Commands\Serve::class,
+        Commands\MakeMiddleware::class,
     ];
 
     protected $appCommands = [];

@@ -300,6 +300,27 @@ class Request
     }
 
     /**
+     * opposite the has
+     * @param $key
+     * @return bool
+     */
+    public function doesnotHas($key)
+    {
+        return !$this->has($key);
+    }
+
+    /**
+     * check if the key really exist and value is not empty
+     * @param $key
+     * @return bool
+     */
+    public function exist($key)
+    {
+        $result = $this->get($key);
+        return $result !== null && $result !== '';
+    }
+
+    /**
      * return subset of dataset according to the keys
      * @param $keys
      * @return array

@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\Pipeline;
 
+use Andileong\Framework\Core\Request\Request;
 use Closure;
 
 abstract class Chainable
@@ -10,7 +11,7 @@ abstract class Chainable
     protected $message;
     protected $successor;
 
-    abstract public function handle($object);
+    abstract public function handle(?Request $object);
 
     /**
      * set up the next chain

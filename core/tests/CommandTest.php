@@ -28,7 +28,7 @@ class CommandTest extends TestCase
     /** @test */
     public function it_can_make_resourceful_controller()
     {
-        $input = $this->getInput('make:controller', 'ResourceController',[
+        $input = $this->getInput('make:controller', 'ResourceController', [
             'resource' => 'resource'
         ]);
         $output = $this->runCommand($input);
@@ -43,7 +43,7 @@ class CommandTest extends TestCase
         $this->assertTrue(unlink($filePath));
     }
 
-        /** @test */
+    /** @test */
     public function it_can_make_controller_with_multiple_directory()
     {
         $input = $this->getInput('make:controller', 'Api/UserController');
@@ -57,7 +57,7 @@ class CommandTest extends TestCase
 
         $this->assertEquals($fileContent, $newContent);
         $this->assertTrue(unlink($filePath));
-        $this->assertTrue(rmdir(appPath().'/app/Controller/Api'));
+        $this->assertTrue(rmdir(appPath() . '/app/Controller/Api'));
     }
 
     /** @test */
@@ -92,7 +92,7 @@ class CommandTest extends TestCase
         $this->assertTrue(unlink($filePath));
     }
 
-        /** @test */
+    /** @test */
     public function it_can_make_test()
     {
         $input = $this->getInput('make:test', 'fooTest');
@@ -103,6 +103,22 @@ class CommandTest extends TestCase
             "Andileong\\Framework\\Tests",
             "FooTest",
         ], $this->stubContent('Test'));
+
+        $this->assertEquals($fileContent, $newContent);
+        $this->assertTrue(unlink($filePath));
+    }
+
+    /** @test */
+    public function it_can_make_middleware()
+    {
+        $input = $this->getInput('make:middleware', 'fooMiddleware');
+        $output = $this->runCommand($input);
+
+        [$fileContent, $filePath] = $this->parseFileFromResponse($output->fetch());
+        $newContent = str_replace(['{NameSpace}', '{Middleware}'], [
+            "App\\Middleware",
+            "FooMiddleware",
+        ], $this->stubContent('Middleware'));
 
         $this->assertEquals($fileContent, $newContent);
         $this->assertTrue(unlink($filePath));
