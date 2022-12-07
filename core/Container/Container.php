@@ -34,7 +34,23 @@ class Container implements \ArrayAccess
         return $this->bindings[$key]['shared'];
     }
 
-    public function get($key,$args = [])
+    public function existedInSingleton($key)
+    {
+        return isset($this->singletons[$key]);
+    }
+
+    public function getSingleton()
+    {
+        return $this->singletons;
+    }
+
+    public function setSingleton($key,$concrete)
+    {
+        $key = $this->getAlias($key);
+        return $this->singletons[$key] = $concrete;
+    }
+
+    public function get($key, $args = [])
     {
         $key = $this->getAlias($key);
 
@@ -42,7 +58,7 @@ class Container implements \ArrayAccess
            return $this->getTestBinding($key);
         }
 
-        if (!$this->has($key)) {
+        if (!$this->has($key) && !$this->existedInSingleton($key)) {
 
             if (class_exists($key)) {
                 return $this->instantiate($key);
@@ -51,7 +67,7 @@ class Container implements \ArrayAccess
             throw new \Exception("there is no key registered {$key}");
         }
 
-        if ($this->isSingleton($key) && isset($this->singletons[$key])) {
+        if ($this->existedInSingleton($key)) {
             return $this->singletons[$key];
         }
 
@@ -59,7 +75,7 @@ class Container implements \ArrayAccess
 
 
         $concrete = $bind['concrete'] instanceof Closure
-            ? $bind['concrete']($this,$args)
+            ? $bind['concrete']($this, $args)
             : $bind['concrete'];
 
         return $this->savedToSingleton(
@@ -73,7 +89,7 @@ class Container implements \ArrayAccess
      * @param $key
      * @param $concrete
      */
-    public function savedToSingleton($key, $concrete)
+    protected function savedToSingleton($key, $concrete)
     {
         if ($this->isSingleton($key)) {
             $this->singletons[$key] = $concrete;

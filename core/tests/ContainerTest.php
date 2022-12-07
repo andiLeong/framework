@@ -2,8 +2,10 @@
 
 namespace Andileong\Framework\Tests;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Container\Exception\InstantiateException;
+use Andileong\Framework\Core\Request\Request;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends testCase
@@ -76,6 +78,36 @@ class ContainerTest extends testCase
         $this->expectException(InstantiateException::class);
         $container = new Container();
         $container->get(DependsOnAbstract::class);
+    }
+
+    /** @test */
+    public function it_can_set_the_singleton_instance_directly()
+    {
+        $container = new Container();
+        $this->assertEmpty($container->getSingleton());
+        $container->setSingleton(NoDependency::class,new NoDependency());
+        $this->assertNotEmpty($container->getSingleton());
+        $this->assertArrayHasKey(NoDependency::class,$container->getSingleton());
+    }
+
+    /** @test */
+    public function it_can_thing_out_of_singleton_even_not_a_singleton_binding()
+    {
+        $container = new Container();
+        $instance = new NoDependency();
+        $container->setSingleton(NoDependency::class,$instance);
+
+        $this->assertSame($instance,$container->get(NoDependency::class));
+    }
+
+    /** @test */
+    public function it_can_set_the_singleton_instance_directly_by_its_alias_if_any()
+    {
+        $container = new Application($_SERVER['DOCUMENT_ROOT']);
+        $this->assertEmpty($container->getSingleton());
+        $container->setSingleton(Request::class,new Request());
+        $this->assertArrayHasKey('request',$container->getSingleton());
+        $this->assertArrayNotHasKey(Request::class,$container->getSingleton());
     }
 
     /** @test */

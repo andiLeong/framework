@@ -15,7 +15,6 @@ Route::middleware('one')->get('/foo', [AboutController::class, 'index']);
 Route::get('/baz', [AboutController::class, 'index']);
 
 Route::middleware('auth','one','two')->group(function () {
-    $res = Route::get('/middleware', [AboutController::class, 'index']);
-//    dump($res);
+    Route::get('/middleware', [AboutController::class, 'index']);
     Route::get('/middleware2', [AboutController::class, 'index']);
 });
