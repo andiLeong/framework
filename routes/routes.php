@@ -11,19 +11,11 @@ Route::get('user/{id}', [UserController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
 
-//Route::middleware('one')->get('/foo', [AboutController::class, 'index']);
-//    Route::get('/bar', [AboutController::class, 'index'])
-
-Route::get('/bar', [AboutController::class, 'index'])->middleware('auth');
-
-
 Route::middleware('one')->get('/foo', [AboutController::class, 'index']);
 Route::get('/baz', [AboutController::class, 'index']);
-Route::middleware('one')->group(function () {
-    Route::get('/middleware', [AboutController::class, 'index']);
+
+Route::middleware('auth','one','two')->group(function () {
+    $res = Route::get('/middleware', [AboutController::class, 'index']);
+//    dump($res);
     Route::get('/middleware2', [AboutController::class, 'index']);
 });
-
-
-//    dd(
-//);

@@ -23,6 +23,14 @@ abstract class Chainable
     }
 
     /**
+     * remove the next chain on the line-up
+     */
+    public function removeNextChain()
+    {
+        $this->successor = null;
+    }
+
+    /**
      * trigger the next chain call
      * @param $object
      */
@@ -42,6 +50,7 @@ abstract class Chainable
     public function break($message)
     {
         $this->message = $message;
+        $this->removeNextChain();
     }
 
     /**

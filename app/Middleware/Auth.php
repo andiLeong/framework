@@ -10,9 +10,9 @@ class Auth extends Chainable
 {
     public function handle(Request|null $request)
     {
-        if(!$request->exist('foo')){
-            $response = new JsonResponse(['msg' => 'you are not login'],403);
-            return $this->break($response);
+        if (!$request->exist('foo')) {
+            $response = new JsonResponse(['msg' => 'you are not login'], 403);
+            $this->break($response);
         }
 
         return $this->next($request);

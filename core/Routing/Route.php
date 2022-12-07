@@ -226,12 +226,14 @@ class Route
      */
     public function getMiddleware()
     {
-        $middleware = Arr::only(Middleware::$middlewares, $this->getRegisteredMiddleware());
-        if (empty($middleware)) {
-            return [];
+        $filteredMiddlewares = [];
+        foreach ($this->getRegisteredMiddleware() as $middleware) {
+            if (array_key_exists($middleware, Middleware::$middlewares)) {
+                $filteredMiddlewares[] = Middleware::$middlewares[$middleware];
+            }
         }
 
-        return array_values($middleware);
+        return $filteredMiddlewares;
     }
 
     public function getRegisteredMiddleware()

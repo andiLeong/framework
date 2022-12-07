@@ -6,17 +6,19 @@ use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Framework\Core\tests\ApplicationTestCase;
 use Andileong\Framework\Core\tests\CreateUser;
 use Andileong\Framework\Core\tests\Http;
 use Andileong\Framework\Core\tests\Transaction;
 use Mockery;
 //use PHPUnit\Framework\TestCase;
 
-class RouterRenderContentTest extends Mockery\Adapter\Phpunit\MockeryTestCase
+class RouterRenderContentTest extends ApplicationTestCase
 {
     use Http;
     use CreateUser;
     use Transaction;
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
     /** @test */
     public function it_can_render_a_controller_that_has_constructor_method_injection()
@@ -115,24 +117,21 @@ class RouterRenderContentTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     /** @test */
     public function pipeline_is_call_when_render_route()
     {
-        $this->markTestSkipped();
         $mock = Mockery::mock(Pipeline::class);
         $mock->shouldReceive('run')->andReturn($mock)->once();
         $mock->shouldReceive('send')->andReturn($mock)->once();
         $mock->shouldReceive('then')->once();
         $mock->shouldReceive('through')->andReturn($mock)->once();
-        $app = new Application($_SERVER['DOCUMENT_ROOT'],Request::setTest([], [], ['REQUEST_URI' => '/foo', 'REQUEST_METHOD' => 'GET']));
-        $app->bind('mock',$mock);
-//        dd(app());
-//        $mock->run();
+
+
+        $request = Request::setTest([], [], ['REQUEST_URI' => '/foo', 'REQUEST_METHOD' => 'GET']);
+        $app = $this->app($request);
+        $app->setTestBinding(Pipeline::class,$mock);
+        $app->setTestBinding(Request::class,$request);
 
         $router = new Router($app);
         $router->middleware('foo')->get('/foo', fn() => 'foo');
         $content = $router->render();
-
-//        $pipeline = (new Pipeline)->through([])->send('hi')->run();
-//        $pipeline = (new Pipeline)->through([])->send('hi')->run();
-//        dd($mock);
     }
 
     /**

@@ -29,11 +29,21 @@ trait HasTestBinding
      * put things to test binding array
      * @param $key
      * @param $value
-     * @return mixed
+     * @return bool
      */
     public function setTestBinding($key, $value)
     {
-        return $this->testBinding[$key] = $value;
+        if (!empty($filtered = $this->getAliasMappingFor($key))) {
+
+            $alias = $this->flattenAliasItem($filtered);
+            foreach ($alias as $aliasKey) {
+                $this->testBinding[$aliasKey] = $value;
+            }
+            return true;
+        }
+
+        $this->testBinding[$key] = $value;
+        return true;
     }
 
     /**
@@ -54,6 +64,34 @@ trait HasTestBinding
         }
 
         throw new \InvalidArgumentException($key . ' is not found in the test binding');
+    }
+
+    /**
+     * get all the register alias for a key
+     * @param $key
+     * @return array|mixed
+     */
+    protected function getAliasMappingFor($key): mixed
+    {
+        return array_filter($this->aliasMapping, fn($value, $aliasKey) => $aliasKey == $key || in_array($key, $value),
+            ARRAY_FILTER_USE_BOTH);
+    }
+
+    /**
+     * flatten an alias array
+     * @param mixed $aliasItem
+     * @return array
+     */
+    protected function flattenAliasItem(mixed $aliasItem): array
+    {
+        $alias = [];
+        foreach ($aliasItem as $name => $aliasArray) {
+            $alias[] = $name;
+            foreach ($aliasArray as $aliasValue) {
+                $alias[] = $aliasValue;
+            }
+        }
+        return $alias;
     }
 
 }

@@ -16,7 +16,6 @@ use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
 use App\Console\Console;
 use App\Exception\Handler;
-use ErrorException;
 
 class Application extends Container
 {
@@ -70,7 +69,7 @@ class Application extends Container
         (new Bootstrap($this))->boot();
     }
 
-    private function loadAlias()
+    protected function loadAlias()
     {
         foreach ($this->aliasMapping as $key => $alias) {
             foreach ($alias as $alia) {

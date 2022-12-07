@@ -105,6 +105,29 @@ class PipelineTest extends TestCase
         $this->assertEquals('stop', $result);
     }
 
+    /** @test */
+    public function once_a_pipe_has_been_broke_the_next_pipe_wont_execute()
+    {
+        $pipeline = $this->pipeline($this->object, [
+            function ($obj, $instance) {
+                $obj['a'] = 'b';
+                return $instance->next($obj);
+            },
+            function ($obj, $instance) {
+                $instance->break('stop');
+                $obj['c'] = 'd';
+                return $instance->next($obj);
+            },
+            function ($obj, $instance) {
+                $obj['e'] = 'f';
+                throw new \Exception('exception just been reported');
+                return $instance->next($obj);
+            },
+        ]);
+
+        $pipeline->run()->result();
+        $this->assertTrue(true);
+    }
 
     /** @test */
     public function after_run_through_all_the_pipes_caller_can_execute_a_callback_if_no_pipe_break()

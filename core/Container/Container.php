@@ -13,6 +13,7 @@ class Container implements \ArrayAccess
     protected $bindings = [];
     protected $singletons = [];
     protected $alias = [];
+    protected $aliasMapping = [];
     static protected $instance;
 
     public function bind($key, $concrete, $share = false)
