@@ -2,23 +2,18 @@
 
 namespace Andileong\Framework\Core\tests\Router;
 
-use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
-use Andileong\Framework\Core\tests\ApplicationTestCase;
 use Andileong\Framework\Core\tests\CreateUser;
-use Andileong\Framework\Core\tests\Http;
+use Andileong\Framework\Core\tests\Testcase\ApplicationTestCase;
 use Andileong\Framework\Core\tests\Transaction;
 use Mockery;
-//use PHPUnit\Framework\TestCase;
 
 class RouterRenderContentTest extends ApplicationTestCase
 {
-    use Http;
     use CreateUser;
     use Transaction;
-    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
     /** @test */
     public function it_can_render_a_controller_that_has_constructor_method_injection()
@@ -76,7 +71,7 @@ class RouterRenderContentTest extends ApplicationTestCase
     {
         $router = $this->getRouter('/user/1/post/23_56');
         $router->get('/user/{id}/post/{post_id}', fn($id, $post_id, Foo $foo) => [$id, $post_id]);
-        $content = $router->render('/user/1/post/23_56',);
+        $content = $router->render();
         $this->assertEquals(['1', '23_56'], $content);
 
         $router = $this->getRouter('/user/1');
@@ -95,7 +90,7 @@ class RouterRenderContentTest extends ApplicationTestCase
     public function it_can_get_a_model_in_json_if_return_directly_from_route()
     {
         $user = $this->createUser();
-        $response = $this->get("/user/{$user->id}",['foo' => 'va']);
+        $response = $this->get("/user/{$user->id}", ['foo' => 'va']);
         $response->assertJson()->assertOk();
     }
 
@@ -103,7 +98,7 @@ class RouterRenderContentTest extends ApplicationTestCase
     public function it_can_render_different_verb_of_routes()
     {
         $user = $this->createUser();
-        $response = $this->post("/user/{$user->id}",['foo' => 'va']);
+        $response = $this->post("/user/{$user->id}", ['foo' => 'va']);
         $response->assertNotFound();
     }
 
@@ -123,28 +118,25 @@ class RouterRenderContentTest extends ApplicationTestCase
         $mock->shouldReceive('then')->once();
         $mock->shouldReceive('through')->andReturn($mock)->once();
 
-
-        $request = Request::setTest([], [], ['REQUEST_URI' => '/foo', 'REQUEST_METHOD' => 'GET']);
-        $app = $this->app($request);
-        $app->setTestBinding(Pipeline::class,$mock);
-        $app->setTestBinding(Request::class,$request);
-
-        $router = new Router($app);
+        $this->fake(Pipeline::class, $mock);
+        $router = $this->getRouter('/foo');
         $router->middleware('foo')->get('/foo', fn() => 'foo');
-        $content = $router->render();
+        $router->render();
     }
 
     /**
      * @param $uri
-     * @param $method
+     * @param string $method
      * @return Router
-     * @throws \ErrorException
+     * @throws \Exception
      */
     protected function getRouter($uri, $method = 'GET'): Router
     {
-        return new Router(new Application($_SERVER['DOCUMENT_ROOT'],
-            Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method])
-        ));
+        $request = Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method]);
+        $this->app->setSingleton('request', $request);
+        $router = new Router($this->app);
+        $this->app->setSingleton('router',$router);
+        return $this->app->get('router');
     }
 
 }

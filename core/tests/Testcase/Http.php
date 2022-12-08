@@ -1,10 +1,10 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Testcase;
 
-use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Framework\Core\tests\Response;
 
 trait Http
 {
@@ -25,11 +25,11 @@ trait Http
             'REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method
         ]);
 
-        $app = new Application(app('app_path'), $request);
+        $this->app->setSingleton('request',$request);
 
         require_once './routes/routes.php';
 
-        $response = $app['router']->run();
+        $response = $this->app['router']->run();
         return new Response($this, $response);
     }
 

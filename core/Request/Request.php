@@ -51,6 +51,7 @@ class Request
     {
         self::$test = true;
         $instance = new static($query, $payload, $server);
+//        dump($instance);
         return $instance;
     }
 

@@ -33,7 +33,7 @@ class Application extends Container
 
     private $inProduction = false;
 
-    public function __construct(protected $appPath = null, protected $request = null)
+    public function __construct(protected $appPath = null)
     {
         $this->loadAlias();
         $this->registerBinding();
@@ -49,7 +49,7 @@ class Application extends Container
         $this->bind('storage_path', $this->appPath . '/storage');
         $this->bind('stubs_path', $this->appPath . '/core/Stubs');
         $this->bind('public_path', $this->appPath . '/public');
-        $this->singleton($this->getAlias(Request::class), fn() => $this->request ?? new Request());
+        $this->singleton($this->getAlias(Request::class), fn() => new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
