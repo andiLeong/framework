@@ -2,18 +2,35 @@
 
 namespace Andileong\Framework\Core\tests\Router;
 
+use Andileong\Framework\Core\Pipeline\Chainable;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\Routing\RouteNotFoundException;
 use Andileong\Framework\Core\Routing\Router;
 use Andileong\Framework\Core\tests\CreateUser;
 use Andileong\Framework\Core\tests\Testcase\ApplicationTestCase;
 use Andileong\Framework\Core\tests\Transaction;
+use App\Middleware\Middleware;
 use Mockery;
 
 class RouterRenderContentTest extends ApplicationTestCase
 {
     use CreateUser;
     use Transaction;
+
+    /** @test */
+    public function exception_will_throw_if_route_not_found()
+    {
+        $this->expectException(RouteNotFoundException::class);
+        $router = $this->getRouter('/middleware?foo=true');
+        $router->get('/about', [AboutController::class, 'index']);
+        $router->render();
+
+        $router = $this->getRouter('/middleware?foo=true');
+        $router->get('/middleware', [AboutController::class, 'index']);
+        $router->render();
+        $this->assertTrue(true);
+    }
 
     /** @test */
     public function it_can_render_a_controller_that_has_constructor_method_injection()
@@ -106,7 +123,25 @@ class RouterRenderContentTest extends ApplicationTestCase
     /** @test */
     public function it_can_render_middleware_route()
     {
-        $this->markTestSkipped();
+        $router = $this->getRouter('/bar');
+        $request = $this->app->get('request');
+
+        $bar = Mockery::mock('Bar', Chainable::class)->makePartial();
+        $bar->shouldReceive('handle')->with($request)->once()->andReturn($bar->next($request));
+
+        $foo = Mockery::mock('Foo', Chainable::class)->makePartial();
+        $foo->setSuccessor($bar);
+        $foo->shouldReceive('handle')->with($request)->once()->andReturn($foo->next($request));
+
+        $mock = Mockery::mock(Middleware::class);
+        $mock->middlewares = [
+            'foo' => $foo,
+            'bar' => $bar,
+        ];
+
+        $this->fake(Middleware::class, $mock);
+        $router->middleware('foo', 'bar')->get('/bar', fn() => 'bar');
+        $router->render();
     }
 
     /** @test */
@@ -135,7 +170,7 @@ class RouterRenderContentTest extends ApplicationTestCase
         $request = Request::setTest([], [], ['REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method]);
         $this->app->setSingleton('request', $request);
         $router = new Router($this->app);
-        $this->app->setSingleton('router',$router);
+        $this->app->setSingleton('router', $router);
         return $this->app->get('router');
     }
 

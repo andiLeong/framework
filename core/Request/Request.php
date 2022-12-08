@@ -130,7 +130,7 @@ class Request
     {
         $uri = $this->server['REQUEST_URI'];
         if ($withoutQuery && $this->hasQueryString()) {
-            return rtrim($uri, '/?' . $this->queryString());
+            return rtrim(preg_replace('/\?[0-9a-zA-Z=\-_&\$\+]+/', '', $uri),'/');
         }
         return $uri;
     }
@@ -176,7 +176,10 @@ class Request
 
     public function path()
     {
-        $path = rtrim($this->uriWithoutQuery(), '/?');
+        $path = $this->uriWithoutQuery();
+//        $path = rtrim($this->uriWithoutQuery(), '/?');
+//        dump($this->uriWithoutQuery());
+//        dump($path);
         return $path === '' ? '/' : $path;
     }
 

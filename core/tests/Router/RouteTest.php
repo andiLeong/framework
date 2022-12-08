@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\tests\Router;
 
+use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Routing\Route;
 use PHPUnit\Framework\TestCase;
 
@@ -52,12 +53,12 @@ class RouteTest extends testcase
     /** @test */
     public function it_can_add_middlewares_to_route()
     {
-        $route2 = new Route('foo', 'GET', '');
+        $route2 = new Route('foo', 'GET', new container());
         $this->assertEmpty($route2->getMiddleware());
         $route2->middleware(['foo']);
         $this->assertEquals(['foo'],$route2->getRegisteredMiddleware());
 
-        $route3 = new Route('foo', 'GET', '');
+        $route3 = new Route('foo', 'GET', new Container);
         $route3->middleware(['foo']);
         $route3->middleware(['bar']);
         $this->assertEquals(['foo','bar'],$route3->getRegisteredMiddleware());

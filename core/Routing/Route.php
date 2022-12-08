@@ -226,10 +226,11 @@ class Route
      */
     public function getMiddleware()
     {
+        $middlewares = $this->container->get(Middleware::class)->middlewares;
         $filteredMiddlewares = [];
         foreach ($this->getRegisteredMiddleware() as $middleware) {
-            if (array_key_exists($middleware, Middleware::$middlewares)) {
-                $filteredMiddlewares[] = Middleware::$middlewares[$middleware];
+            if (array_key_exists($middleware, $middlewares)) {
+                $filteredMiddlewares[] = $middlewares[$middleware];
             }
         }
 

@@ -4,7 +4,7 @@ namespace App\Middleware;
 
 class Middleware
 {
-    public static $middlewares = [
+    public $middlewares = [
         'one' => MiddlewareOne::class,
         'two' => MiddlewareTwo::class,
         'auth' => Auth::class,
