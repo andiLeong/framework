@@ -64,7 +64,7 @@ class Application extends Container
         $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
     }
 
-    public function boot()
+    protected function boot()
     {
         (new Bootstrap($this))->boot();
     }

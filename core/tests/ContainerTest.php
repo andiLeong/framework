@@ -43,6 +43,15 @@ class ContainerTest extends testCase
     }
 
     /** @test */
+    public function it_will_return_back_object_if_the_key_an_object()
+    {
+        $object = new NoDependency();
+        $container = new Container();
+        $result = $container->get($object);
+        $this->assertSame($object,$result);
+    }
+
+    /** @test */
     public function it_can_instantiate_class_without_dependency_if_key_is_class_path()
     {
         $container = new Container();
@@ -91,7 +100,7 @@ class ContainerTest extends testCase
     }
 
     /** @test */
-    public function it_can_thing_out_of_singleton_even_not_a_singleton_binding()
+    public function it_can_get_thing_out_of_singleton_even_not_a_singleton_binding()
     {
         $container = new Container();
         $instance = new NoDependency();

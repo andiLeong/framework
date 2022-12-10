@@ -50,6 +50,10 @@ class Container implements \ArrayAccess
 
     public function get($key, $args = [])
     {
+        if (is_object($key)) {
+            return $key;
+        }
+
         $key = $this->getAlias($key);
 
         if (!$this->has($key) && !$this->existedInSingleton($key)) {
