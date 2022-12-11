@@ -4,7 +4,6 @@ namespace Andileong\Framework\Core\tests\Testcase;
 
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
-use Andileong\Framework\Core\tests\Response;
 
 trait Http
 {

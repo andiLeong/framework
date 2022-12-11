@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Tests;
+namespace Andileong\Framework\Core\tests\Cache;
 
 use Andileong\Framework\Core\Cache\FileCacheHandler;
 use PHPUnit\Framework\TestCase;

@@ -1,9 +1,11 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Database;
 
 use Andileong\Framework\Core\Support\Str;
+use Andileong\Framework\Core\tests\CreateUser;
 use Andileong\Framework\Core\tests\stubs\User;
+use Andileong\Framework\Core\tests\Transaction;
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends testcase

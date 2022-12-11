@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Testcase;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;

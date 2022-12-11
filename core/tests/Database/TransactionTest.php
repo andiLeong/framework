@@ -1,8 +1,9 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Database;
 
 use Andileong\Framework\Core\Facades\DB;
+use Andileong\Framework\Core\tests\CreateUser;
 use Andileong\Framework\Core\tests\stubs\User;
 use Exception;
 use PHPUnit\Framework\TestCase;

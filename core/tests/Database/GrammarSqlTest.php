@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Database;
 
 use App\Models\User;
 use PHPUnit\Framework\TestCase;

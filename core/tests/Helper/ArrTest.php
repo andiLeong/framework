@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\tests;
+namespace Andileong\Framework\Core\tests\Helper;
 
 use Andileong\Framework\Core\Support\Arr;
 use PHPUnit\Framework\TestCase;

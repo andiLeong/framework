@@ -4,6 +4,7 @@ use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\View\View;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 if (!function_exists('resolveParam')) {
 
@@ -12,6 +13,7 @@ if (!function_exists('resolveParam')) {
      * @param ReflectionParameter $param
      * @param Application|Container|null $app
      * @return mixed|object|string|null
+     * @throws Exception
      */
     function resolveParam(ReflectionParameter $param, Application|Container $app = null)
     {
@@ -215,7 +217,7 @@ if (!function_exists('value')) {
      * @param array $params
      * @return void
      */
-    function value($value, $params = [])
+    function value($value, ...$params)
     {
         return is_callable($value) ? $value(...$params) : $value;
     }
@@ -236,5 +238,19 @@ if (!function_exists('cache')) {
         }
 
         return $cache->get($key, $default);
+    }
+}
+
+if (!function_exists('json')) {
+    /**
+     * get a Symfony json response object instance
+     * @param $body
+     * @param int $code
+     * @param array $headers
+     * @return object
+     */
+    function json($body, $code = 200, $headers = [])
+    {
+        return new JsonResponse($body, $code, $headers);
     }
 }
