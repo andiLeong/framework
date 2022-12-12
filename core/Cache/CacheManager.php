@@ -7,10 +7,6 @@ use Andileong\Framework\Core\Application;
 class CacheManager
 {
     protected $instances = [];
-    protected $drivers = [
-        'file' => FileCacheHandler::class,
-        'array' => ArrayCacheHandler::class
-    ];
 
     public function __construct(protected Application $app)
     {
@@ -27,7 +23,7 @@ class CacheManager
         }
 
         $method = 'create'. ucfirst($driver) .'Driver';
-        if (!isset($this->drivers[$driver]) && !method_exists($this,$method)) {
+        if (!method_exists($this,$method)) {
             throw new \Exception('driver ' . $driver . ' not found exception');
         }
 
@@ -42,6 +38,11 @@ class CacheManager
     protected function createArrayDriver()
     {
         return new ArrayCacheHandler();
+    }
+
+    protected function createRedisDriver()
+    {
+        return new RedisCacheHandler($this->app);
     }
 
     public function __call(string $name, array $arguments)

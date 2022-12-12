@@ -69,9 +69,7 @@ abstract class CacheHandler
      */
     protected function generateTimestamp(mixed $second): mixed
     {
-        if ($second instanceof \DateTimeInterface) {
-            $second = Carbon::now()->diffInSeconds($second, false);
-        }
+        $second = $this->isDatetimeInterface($second);
 
         if ($second == 0) {
             return $second;
@@ -113,5 +111,18 @@ abstract class CacheHandler
     public function rememberForever($key, $default)
     {
         return $this->remember($key, 0, $default);
+    }
+
+    /**
+     * detect if the time pass is datetime interface
+     * @param mixed $second
+     * @return float|int|mixed
+     */
+    protected function isDatetimeInterface(mixed $second): mixed
+    {
+        if ($second instanceof \DateTimeInterface) {
+            $second = Carbon::now()->diffInSeconds($second, false);
+        }
+        return $second;
     }
 }
