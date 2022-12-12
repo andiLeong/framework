@@ -2,17 +2,18 @@
 
 namespace Andileong\Framework\Core\Database\Connection;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Database\Query\Grammar;
 use Andileong\Framework\Core\Database\Query\QueryBuilder;
 use Exception;
 use PDO;
 
-class Connection
+class Connection extends AbstractConnection
 {
     protected ?QueryBuilder $builder = null;
     protected static PDO|null $pdo = null;
 
-    public function __construct()
+    public function __construct(protected Application $app)
     {
         //
     }
@@ -49,7 +50,7 @@ class Connection
     public function getPdo()
     {
         if (self::$pdo === null) {
-            self::$pdo = $this->getDriver()->connect();
+            self::$pdo = $this->connect();
             return self::$pdo;
         }
 
@@ -59,17 +60,6 @@ class Connection
     public function setPdo($pdo = null)
     {
         self::$pdo = $pdo;
-    }
-
-    public function getDriver()
-    {
-        $driver = ucfirst(config('database.default')) . 'Connector';
-        $class = 'Andileong\\Framework\\Core\\Database\\Connection\\' . $driver;
-        if (class_exists($class)) {
-            return new $class();
-        }
-
-        throw new Exception("Driver $driver not supported!");
     }
 
     public function builder($model)

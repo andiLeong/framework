@@ -9,6 +9,7 @@ use Andileong\Framework\Core\Cache\Contract\Cache;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Database\Connection\RedisConnection;
 use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
@@ -25,6 +26,7 @@ class Application extends Container
         'router' => [Router::class],
         'config' => [Config::class],
         'db' => [Connection::class],
+        'redis' => [RedisConnection::class],
         'exception.handler' => [Handler::class],
         'logger' => [LoggerManager::class],
         'console' => [Console::class],
@@ -51,7 +53,8 @@ class Application extends Container
         $this->bind('public_path', $this->appPath . '/public');
         $this->singleton($this->getAlias(Request::class), fn() => new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
-        $this->singleton($this->getAlias(Connection::class), fn() => new Connection());
+        $this->singleton($this->getAlias(Connection::class), fn($app) => new Connection($app));
+        $this->singleton($this->getAlias(RedisConnection::class), fn($app) => new RedisConnection($app));
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
         $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));
         $this->singleton($this->getAlias(CacheManager::class), fn($app) => new CacheManager($app));

@@ -4,7 +4,6 @@ return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
-
     'connections' => [
         'mysql' => [
             'driver' => 'mysql',
@@ -24,6 +23,11 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+        'redis' => [
+            'scheme' => env('REDIS_SCHEME','tcp'),
+            'host' => env('REDIS_HOST','127.0.0.1'),
+            'port' => env('REDIS_PORT',6379),
         ],
     ],
 ];

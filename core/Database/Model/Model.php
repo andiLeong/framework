@@ -66,7 +66,7 @@ abstract class Model implements JsonSerializable
 
     public function getConnection()
     {
-        $this->setConnection(new Connection());
+        $this->setConnection(app('db'));
         return $this->connection;
     }
 

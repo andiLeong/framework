@@ -8,17 +8,14 @@ trait Transaction
 
     public static function setUpBeforeClass(): void
     {
-
-        $connection = new \Andileong\Framework\Core\Database\Connection\Connection();
+        $connection = app('db');
+//        $connection = new \Andileong\Framework\Core\Database\Connection\Connection();
         self::$connection = $connection;
         $connection->beginTransaction();
-
-//        dump('test starts');
     }
 
     public static function tearDownAfterClass(): void
     {
         self::$connection->rollback();
-//        dump('test finished');
     }
 }
