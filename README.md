@@ -17,6 +17,7 @@ a very simple php mvc framework that contains some well-known laravel components
 ##### testing - make fake request to own endpoint , make use of mysql transaction in test
 ##### validation and collection ( through my own package)
 ##### some arr and str helpers
+##### pipeline and middleware
 
 of course, I rely on some third party package to get it done, like
 symfony console.
@@ -26,7 +27,6 @@ monolog
 
 compare to laravel there are many components are missing just to name few
 db migration
-middleware
 authentication
 queue
 file system
