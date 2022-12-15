@@ -3,7 +3,6 @@
 namespace Andileong\Framework\Core\Database\Connection;
 
 use Andileong\Framework\Core\Config\Config;
-use Andileong\Framework\Core\Container\Container;
 use Predis\Client;
 
 class RedisConnector
@@ -13,10 +12,8 @@ class RedisConnector
     private $port;
     private $scheme;
 
-    public function __construct(Container $container = null)
+    public function __construct(Config $config)
     {
-        $container ??= app();
-        $config = $container->get(Config::class);
         $this->host = $config->get('database.connections.redis.host');
         $this->port = $config->get('database.connections.redis.port');
         $this->scheme = $config->get('database.connections.redis.scheme');
@@ -31,7 +28,7 @@ class RedisConnector
                 'port' => $this->port
             ]);
         } catch (\Throwable $e) {
-           throw new \Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
     }
 }

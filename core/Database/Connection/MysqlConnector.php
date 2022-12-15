@@ -16,10 +16,8 @@ class MysqlConnector
     protected $database;
     protected $fetchMode = PDO::FETCH_OBJ;
 
-    public function __construct(Container $container = null)
+    public function __construct(Config $config)
     {
-        $container ??= app();
-        $config = $container->get(Config::class);
         $this->host = $config->get('database.connections.mysql.host');
         $this->username = $config->get('database.connections.mysql.username');
         $this->password = $config->get('database.connections.mysql.password');

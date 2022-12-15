@@ -18,12 +18,12 @@ class CacheManager
         $default = $this->app->get('config')['cache']['default'];
         $driver ??= $default;
 
-        if(array_key_exists($driver,$this->instances)){
-           return $this->instances[$driver];
+        if (array_key_exists($driver, $this->instances)) {
+            return $this->instances[$driver];
         }
 
-        $method = 'create'. ucfirst($driver) .'Driver';
-        if (!method_exists($this,$method)) {
+        $method = 'create' . ucfirst($driver) . 'Driver';
+        if (!method_exists($this, $method)) {
             throw new \Exception('driver ' . $driver . ' not found exception');
         }
 
@@ -32,7 +32,8 @@ class CacheManager
 
     protected function createFileDriver()
     {
-        return new FileCacheHandler($this->app);
+        $directory = $this->app->get('storage_path') . '/framework/cache';
+        return new FileCacheHandler($directory);
     }
 
     protected function createArrayDriver()
@@ -42,11 +43,13 @@ class CacheManager
 
     protected function createRedisDriver()
     {
-        return new RedisCacheHandler($this->app);
+        $redis = $this->app->get('redis')->getRedis();
+        $prefix = $this->app->get('config')['cache.drivers.redis.prefix'];
+        return new RedisCacheHandler($redis, $prefix);
     }
 
     public function __call(string $name, array $arguments)
     {
-        return [$this->driver(),$name](...$arguments);
+        return [$this->driver(), $name](...$arguments);
     }
 }

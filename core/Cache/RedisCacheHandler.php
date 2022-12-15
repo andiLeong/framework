@@ -2,18 +2,14 @@
 
 namespace Andileong\Framework\Core\Cache;
 
-use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Cache\Contract\Cache;
 
 class RedisCacheHandler extends CacheHandler implements Cache
 {
-    protected $redis;
-    private mixed $prefix;
 
-    public function __construct(protected Application $app)
+    public function __construct(protected $redis, protected $prefix)
     {
-        $this->redis = $app->get('redis')->getRedis();
-        $this->prefix = $app->get('config')['cache.drivers.redis.prefix'];
+        //
     }
 
     public function put($key, $value, $second = 0): bool
@@ -51,9 +47,8 @@ class RedisCacheHandler extends CacheHandler implements Cache
 
     public function remove(): bool
     {
-        foreach ($this->redis->keys('*') as $key)
-        {
-            if(str_starts_with($key, $this->prefix)){
+        foreach ($this->redis->keys('*') as $key) {
+            if (str_starts_with($key, $this->prefix)) {
                 $this->redis->del($key);
             }
         }

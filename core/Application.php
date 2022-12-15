@@ -9,7 +9,9 @@ use Andileong\Framework\Core\Cache\Contract\Cache;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Database\Connection\MysqlConnector;
 use Andileong\Framework\Core\Database\Connection\RedisConnection;
+use Andileong\Framework\Core\Database\Connection\RedisConnector;
 use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
@@ -54,6 +56,8 @@ class Application extends Container
         $this->singleton($this->getAlias(Request::class), fn() => new Request());
         $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
         $this->singleton($this->getAlias(Connection::class), fn($app) => new Connection($app));
+        $this->bind($this->getAlias(MysqlConnector::class), fn($app) => new MysqlConnector($app->get('config')));
+        $this->bind($this->getAlias(RedisConnector::class), fn($app) => new RedisConnector($app->get('config')));
         $this->singleton($this->getAlias(RedisConnection::class), fn($app) => new RedisConnection($app));
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
         $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));

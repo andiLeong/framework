@@ -12,7 +12,7 @@ abstract class AbstractConnection
         $driver = ucfirst($driver ?? config('database.default')) . 'Connector';
         $class = 'Andileong\\Framework\\Core\\Database\\Connection\\' . $driver;
         if (class_exists($class)) {
-            return new $class();
+            return $this->app->get($class);
         }
 
         throw new Exception("Driver $driver not supported!");

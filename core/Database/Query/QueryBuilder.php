@@ -32,9 +32,11 @@ class QueryBuilder
     public $offset;
     public $from;
 
-    public function __construct(protected Connection $connection, protected Grammar $grammar, protected Model $model)
+    public function __construct(protected Connection $connection, protected Grammar $grammar, protected ?Model $model = null)
     {
-        $this->from = $model->getTable();
+        if ($model !== null) {
+            $this->from = $model->getTable();
+        }
     }
 
     public function select($columns = ['*'])
@@ -257,7 +259,7 @@ class QueryBuilder
 
     public function paginate($perPage = null, $pageName = 'page')
     {
-        $requestedColumns = $this->columns ;
+        $requestedColumns = $this->columns;
         $this->columns = [];
         $total = $this->count();
 

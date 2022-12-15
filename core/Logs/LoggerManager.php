@@ -52,8 +52,9 @@ class LoggerManager implements LoggerInterface
             'single' => BuildSingleLogDriver::class,
             'daily' => BuildDailyLogDriver::class
         ];
+        $inProduction = $this->app->isInProduction();
 
-        return $this->drivers[$driver] = (new $drivers[$driver]($this->app,$this->configs['driver'][$driver]))->build();
+        return $this->drivers[$driver] = (new $drivers[$driver]($inProduction,$this->configs['driver'][$driver]))->build();
     }
 
     /**

@@ -20,7 +20,7 @@ class RedisStoreTest extends TestCase
         $mock->shouldReceive('set')->with('cache_foo', serialize('bar'), 'EX', 60)->once();
 
         $redis = $this->getRedisStore($mock);
-        $redis->put('foo','bar',60);
+        $redis->put('foo', 'bar', 60);
     }
 
     /** @test */
@@ -31,7 +31,7 @@ class RedisStoreTest extends TestCase
         $mock->shouldReceive('set')->with('cache_foo', serialize('bar'))->once();
 
         $redis = $this->getRedisStore($mock);
-        $redis->put('foo','bar');
+        $redis->put('foo', 'bar');
     }
 
     /** @test */
@@ -42,7 +42,7 @@ class RedisStoreTest extends TestCase
         $mock->shouldReceive('set')->with('cache_foo', serialize('bar'))->once();
 
         $redis = $this->getRedisStore($mock);
-        $redis->forever('foo','bar');
+        $redis->forever('foo', 'bar');
     }
 
     /** @test */
@@ -103,7 +103,9 @@ class RedisStoreTest extends TestCase
     public function getRedisStore($mock)
     {
         $app = new Application($_SERVER['DOCUMENT_ROOT']);
-        $app->setSingleton('redis', $mock);
-        return new RedisCacheHandler($app);
+//        $app->setSingleton('redis', $mock);
+//        $this->redis = $app->get('redis')->getRedis();
+        $prefix = $app->get('config')['cache.drivers.redis.prefix'];
+        return new RedisCacheHandler($mock->getRedis(),$prefix);
     }
 }

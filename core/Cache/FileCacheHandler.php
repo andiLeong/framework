@@ -2,18 +2,16 @@
 
 namespace Andileong\Framework\Core\Cache;
 
-use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Cache\Contract\Cache;
 use Symfony\Component\Finder\Finder;
 
 class FileCacheHandler extends CacheHandler implements Cache
 {
-    protected $directory;
     private $expiredKeys = [];
 
-    public function __construct(protected Application $app)
+    public function __construct(protected $directory)
     {
-        $this->directory = $this->app->get('storage_path') . '/framework/cache';
+        //
     }
 
     /**

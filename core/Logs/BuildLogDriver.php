@@ -16,7 +16,7 @@ abstract class BuildLogDriver
             return $this->config['name'];
         }
 
-        return $this->application->isInProduction() ? 'production' : 'local';
+        return $this->isProduction ? 'production' : 'local';
     }
 
     protected function getDateFormat()

@@ -8,7 +8,7 @@ use Monolog\Logger;
 
 class BuildDailyLogDriver extends BuildLogDriver
 {
-    public function __construct(protected Application $application, protected array $config)
+    public function __construct(protected $isProduction, protected array $config)
     {
         //
     }
