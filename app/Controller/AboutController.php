@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Andileong\Framework\Core\Config\Config;
+use Andileong\Framework\Core\Hashing\Hasher;
 use Andileong\Framework\Core\Request\Request;
 
 class AboutController
@@ -13,8 +14,9 @@ class AboutController
         //
     }
 
-    public function index(Config $config)
+    public function index(Hasher $hasher)
     {
+        dd($hasher->create('pass'));
 //        dump(request()->get('foo'));
 //        dump(config('database'));
 //        dd(app());

@@ -13,6 +13,8 @@ use Andileong\Framework\Core\Database\Connection\MysqlConnector;
 use Andileong\Framework\Core\Database\Connection\RedisConnection;
 use Andileong\Framework\Core\Database\Connection\RedisConnector;
 use Andileong\Framework\Core\Exception\Renderer;
+use Andileong\Framework\Core\Hashing\Hasher;
+use Andileong\Framework\Core\Hashing\HashManager;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
@@ -33,6 +35,7 @@ class Application extends Container
         'logger' => [LoggerManager::class],
         'console' => [Console::class],
         'cache' => [CacheManager::class],
+        'hash' => [HashManager::class],
     ];
 
     private $inProduction = false;
@@ -61,6 +64,8 @@ class Application extends Container
         $this->singleton($this->getAlias(RedisConnection::class), fn($app) => new RedisConnection($app));
         $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
         $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));
+        $this->singleton($this->getAlias(HashManager::class), fn($app) => new HashManager($app));
+        $this->singleton($this->getAlias(Hasher::class), fn($app) => $app['hash']->driver());
         $this->singleton($this->getAlias(CacheManager::class), fn($app) => new CacheManager($app));
         $this->singleton(Cache::class, fn($app) => $app['cache']->driver());
         $this->singleton(CacheHandler::class, fn($app) => $app['cache']->driver());
