@@ -254,3 +254,16 @@ if (!function_exists('json')) {
         return new JsonResponse($body, $code, $headers);
     }
 }
+
+if (!function_exists('bcrypt')) {
+    /**
+     * get a Symfony bcrypt response object instance
+     * @param $value
+     * @param array $options
+     * @return object
+     */
+    function bcrypt($value,$options = [])
+    {
+        return app('hash')->create($value,$options);
+    }
+}

@@ -19,7 +19,7 @@ class HelperTest extends TestCase
     public function it_can_get_a_cache_driver_or_key()
     {
         $this->assertInstanceOf(CacheManager::class, cache());
-        $this->assertEquals('default', cache('key-not-exist','default'));
+        $this->assertEquals('default', cache('key-not-exist', 'default'));
     }
 
     /** @test */
@@ -27,8 +27,13 @@ class HelperTest extends TestCase
     {
         $this->assertEquals('value2', value('value2'));
         $fn = fn($value) => $value;
-        $this->assertEquals('callback', value($fn,'callback'));
+        $this->assertEquals('callback', value($fn, 'callback'));
     }
 
-
+    /** @test */
+    public function it_can_bcrypt_hash_value()
+    {
+        $value = bcrypt('password');
+        $this->assertTrue(app('hash')->verify('password',$value));
+    }
 }
