@@ -414,6 +414,20 @@ class Request
         return isset($this->headers[$key]);
     }
 
+    public function bearerToken($default = null)
+    {
+        $token = $this->header('Authorization');
+        if(is_null($token)){
+            return $default;
+        }
+
+        if (str_starts_with($token, 'Bearer ')) {
+            return substr($token, 7);
+        }
+
+        return $token;
+    }
+
     /**
      * dynamic method to get attribute from the request payload
      * @param string $name
