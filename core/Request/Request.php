@@ -5,6 +5,7 @@ namespace Andileong\Framework\Core\Request;
 class Request
 {
 
+    private array $headers;
     private array $query;
     private array $payload;
     private array $server;
@@ -18,6 +19,7 @@ class Request
             $query = $_GET;
             $payload = $_POST;
             $server = $this->removeEnv($_SERVER);
+            $this->headers = getallheaders();
         }
 
         $this->query = $query;
@@ -130,7 +132,7 @@ class Request
     {
         $uri = $this->server['REQUEST_URI'];
         if ($withoutQuery && $this->hasQueryString()) {
-            return rtrim(preg_replace('/\?[0-9a-zA-Z=\-_&\$\+]+/', '', $uri),'/');
+            return rtrim(preg_replace('/\?[0-9a-zA-Z=\-_&\$\+]+/', '', $uri), '/');
         }
         return $uri;
     }
@@ -177,9 +179,6 @@ class Request
     public function path()
     {
         $path = $this->uriWithoutQuery();
-//        $path = rtrim($this->uriWithoutQuery(), '/?');
-//        dump($this->uriWithoutQuery());
-//        dump($path);
         return $path === '' ? '/' : $path;
     }
 
@@ -387,6 +386,32 @@ class Request
             return $this->all($key);
         }
         return $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function headers(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param $key
+     * @param null $default
+     * @return mixed|null
+     */
+    public function header($key, $default = null)
+    {
+        if ($this->hasHeader($key)) {
+            return $this->headers[$key];
+        }
+        return $default;
+    }
+
+    public function hasHeader($key)
+    {
+        return isset($this->headers[$key]);
     }
 
     /**
