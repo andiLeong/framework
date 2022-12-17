@@ -3,31 +3,15 @@
 namespace Andileong\Framework\Core\Cache;
 
 use Andileong\Framework\Core\Application;
+use Andileong\Framework\Core\Support\Traits\HasMultipleDrivers;
 
 class CacheManager
 {
-    protected $instances = [];
+    use HasMultipleDrivers;
 
     public function __construct(protected Application $app)
     {
         //
-    }
-
-    public function driver($driver = null)
-    {
-        $default = $this->app->get('config')['cache']['default'];
-        $driver ??= $default;
-
-        if (array_key_exists($driver, $this->instances)) {
-            return $this->instances[$driver];
-        }
-
-        $method = 'create' . ucfirst($driver) . 'Driver';
-        if (!method_exists($this, $method)) {
-            throw new \Exception('driver ' . $driver . ' not found exception');
-        }
-
-        return $this->instances[$driver] = $this->{$method}();
     }
 
     protected function createFileDriver()
@@ -48,8 +32,8 @@ class CacheManager
         return new RedisCacheHandler($redis, $prefix);
     }
 
-    public function __call(string $name, array $arguments)
+    public function getDefaultDriverName()
     {
-        return [$this->driver(), $name](...$arguments);
+        return $this->app->get('config')['cache']['default'];
     }
 }

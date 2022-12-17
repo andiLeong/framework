@@ -3,31 +3,15 @@
 namespace Andileong\Framework\Core\Hashing;
 
 use Andileong\Framework\Core\Application;
+use Andileong\Framework\Core\Support\Traits\HasMultipleDrivers;
 
 class HashManager
 {
-    protected $instances = [];
+    use HasMultipleDrivers;
 
     public function __construct(protected Application $app)
     {
         //
-    }
-
-    public function driver($driver = null)
-    {
-        $default = $this->app->get('config')['hash.driver'];
-        $driver ??= $default;
-
-        if (array_key_exists($driver, $this->instances)) {
-            return $this->instances[$driver];
-        }
-
-        $method = 'create' . ucfirst($driver) . 'Driver';
-        if (!method_exists($this, $method)) {
-            throw new \Exception('driver ' . $driver . ' not found exception');
-        }
-
-        return $this->instances[$driver] = $this->{$method}();
     }
 
     public function createBcryptDriver()
@@ -44,9 +28,8 @@ class HashManager
         );
     }
 
-    public function __call(string $name, array $arguments)
+    public function getDefaultDriverName()
     {
-        return $this->driver()->{$name}(...$arguments);
+        return $this->app->get('config')['hash.driver'];
     }
-
 }

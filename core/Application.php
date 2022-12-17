@@ -2,8 +2,7 @@
 
 namespace Andileong\Framework\Core;
 
-use Andileong\Framework\Core\Auth\TokenGuard;
-use Andileong\Framework\Core\Auth\UserProvider;
+use Andileong\Framework\Core\Auth\AuthManager;
 use Andileong\Framework\Core\Bootstrap\Bootstrap;
 use Andileong\Framework\Core\Cache\CacheHandler;
 use Andileong\Framework\Core\Cache\CacheManager;
@@ -24,7 +23,6 @@ use Andileong\Framework\Core\Routing\Router;
 use App\Console\Console;
 use App\Exception\Handler;
 use App\Middleware\Auth;
-use TheSeer\Tokenizer\Token;
 
 class Application extends Container
 {
@@ -40,7 +38,7 @@ class Application extends Container
         'console' => [Console::class],
         'cache' => [CacheManager::class],
         'hash' => [HashManager::class],
-        'auth' => [TokenGuard::class],
+        'auth' => [AuthManager::class],
     ];
 
     private $inProduction = false;
@@ -79,12 +77,9 @@ class Application extends Container
             return new Handler($args[0],$renderer);
         });
         $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
-        $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')));
+        $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->driver()));
 
-        $this->singleton($this->getAlias(TokenGuard::class), fn($app) => new TokenGuard(
-            $app->get('request'),
-            new UserProvider()
-        ));
+        $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app) );
     }
 
     protected function boot()

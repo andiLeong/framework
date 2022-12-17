@@ -6,9 +6,13 @@ use App\Models\User;
 
 class UserProvider
 {
+    public function __construct(protected $config)
+    {
+        //
+    }
 
     public function retrievedByToken(string|null $token)
     {
-        return User::where('remember_token',$token)->first();
+        return $this->config['model']::where($this->config['column'],$token)->first();
     }
 }

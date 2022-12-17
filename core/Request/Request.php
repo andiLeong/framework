@@ -132,7 +132,8 @@ class Request
     {
         $uri = $this->server['REQUEST_URI'];
         if ($withoutQuery && $this->hasQueryString()) {
-            return rtrim(preg_replace('/\?[0-9a-zA-Z=\-_&\$\+]+/', '', $uri), '/');
+            return rtrim(preg_replace('/\?.+/', '', $uri), '/');
+//            return rtrim(preg_replace('/\?[0-9a-zA-Z=\-_&\$\.\/+]+/', '', $uri), '/');
         }
         return $uri;
     }
