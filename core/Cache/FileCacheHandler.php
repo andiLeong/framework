@@ -3,6 +3,8 @@
 namespace Andileong\Framework\Core\Cache;
 
 use Andileong\Framework\Core\Cache\Contract\Cache;
+use Andileong\Framework\Core\Database\Model\Model;
+use Andileong\Framework\Core\Database\Model\Paginator;
 use Symfony\Component\Finder\Finder;
 
 class FileCacheHandler extends CacheHandler implements Cache
@@ -23,7 +25,7 @@ class FileCacheHandler extends CacheHandler implements Cache
      */
     public function put($key, $value, $second = 0): bool
     {
-        $time = $this->getTimestamp($key,$second);
+        $time = $this->getTimestamp($key, $second);
 
         try {
             ensureDirectoryExisted($this->directory);
@@ -32,7 +34,7 @@ class FileCacheHandler extends CacheHandler implements Cache
                 $this->content($value, $time)
             );
         } catch (\Exception $e) {
-            return false;
+            throw $e;
         }
 
         return true;
@@ -99,6 +101,7 @@ class FileCacheHandler extends CacheHandler implements Cache
      */
     private function content($value, $time)
     {
+        $value = $this->serializedValue($value);
         return $time . serialize($value);
     }
 

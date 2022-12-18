@@ -21,7 +21,9 @@ trait Http
     {
         [$method, $uri, $query, $payload] = $this->getRequestParams($method, $uri, $data);
         $request = Request::setTest($query, $payload, [
-            'REQUEST_URI' => $uri, 'REQUEST_METHOD' => $method
+            'REQUEST_URI' => $uri,
+            'REQUEST_METHOD' => $method,
+            'HTTP_HOST' => 'localhost:8080',
         ]);
 
         $this->app->setSingleton('request',$request);

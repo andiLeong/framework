@@ -12,9 +12,10 @@ Route::get('user/{id}', [UserController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
 
-Route::middleware('one')->get('/foo', [AboutController::class, 'index']);
-Route::get('/baz', [AboutController::class, 'index']);
-
 Route::middleware('auth')->group(function () {
     Route::get('/me', [MeController::class, 'index']);
+
+    Route::post('/user', [UserController::class, 'store']);
+    Route::put('/user/{id}', [UserController::class, 'update']);
+    Route::delete('/user/{id}', [UserController::class, 'destroy']);
 });

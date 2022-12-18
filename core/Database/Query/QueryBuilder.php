@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Database\Query;
 
 use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Database\Model\Model;
+use Andileong\Framework\Core\Database\Model\ModelCollection;
 use Andileong\Framework\Core\Database\Model\Paginator;
 use Andileong\Framework\Core\Support\Arr;
 use Closure;
@@ -290,9 +291,8 @@ class QueryBuilder
 
         $hydrated = array_map(fn($result) => $this->model->newInstance((array) $result)
             , $selectedResults);
-//        dump($hydrated);
 
-        return $hydrated;
+        return ModelCollection::make($hydrated);
     }
 
     public function toSelectSql()

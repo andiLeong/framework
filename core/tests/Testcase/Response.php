@@ -38,4 +38,13 @@ class Response
         return $this;
     }
 
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    public function getBodyAsArray()
+    {
+        return json_decode($this->body,true);
+    }
 }

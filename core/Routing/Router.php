@@ -7,6 +7,7 @@ use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use Closure;
+use ErrorException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

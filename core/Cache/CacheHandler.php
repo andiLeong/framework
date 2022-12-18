@@ -2,6 +2,9 @@
 
 namespace Andileong\Framework\Core\Cache;
 
+use Andileong\Framework\Core\Database\Model\Model;
+use Andileong\Framework\Core\Database\Model\ModelCollection;
+use Andileong\Framework\Core\Database\Model\Paginator;
 use Carbon\Carbon;
 
 abstract class CacheHandler
@@ -124,5 +127,18 @@ abstract class CacheHandler
             $second = Carbon::now()->diffInSeconds($second, false);
         }
         return $second;
+    }
+
+    protected function serializedValue($value)
+    {
+        if ($value instanceof Model) {
+            $value = $value->jsonSerialize();
+        }
+
+        if ($value instanceof Paginator || $value instanceof ModelCollection) {
+            $value = $value->toJson();
+        }
+
+        return $value;
     }
 }
