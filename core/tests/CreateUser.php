@@ -26,6 +26,7 @@ trait CreateUser
             'email' => Str::random(5) . '@asd.com',
             'password' => 'mysdsdsd@asd.com',
             'username' => Str::random(),
+            'remember_token' => Str::random(),
             'name' => 'mysdsdsd@asd.com',
         ], $overwrite);
     }

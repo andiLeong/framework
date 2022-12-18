@@ -3,8 +3,6 @@
 namespace Andileong\Framework\Core\Cache;
 
 use Andileong\Framework\Core\Cache\Contract\Cache;
-use Andileong\Framework\Core\Database\Model\Model;
-use Andileong\Framework\Core\Database\Model\Paginator;
 use Symfony\Component\Finder\Finder;
 
 class FileCacheHandler extends CacheHandler implements Cache

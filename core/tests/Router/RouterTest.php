@@ -11,9 +11,9 @@ class RouterTest extends TestCase
     public function it_can_register_get_method()
     {
         $router = app('router');
-        $router->get('/user', fn() => 'user');
+        $router->get('/unique', fn() => 'user');
 
-        $match = array_filter($router->routes['GET'], fn($route) => $route->matches('/user'));
+        $match = array_filter($router->routes['GET'], fn($route) => $route->matches('/unique'));
         $this->assertCount(1, $match);
     }
 
@@ -21,9 +21,9 @@ class RouterTest extends TestCase
     public function it_can_register_post_method()
     {
         $router = app('router');
-        $router->post('/user', fn() => 'user');
+        $router->post('/post-endpoint', fn() => 'user');
 
-        $match = array_filter($router->routes['POST'], fn($route) => $route->matches('/user'));
+        $match = array_filter($router->routes['POST'], fn($route) => $route->matches('/post-endpoint'));
         $this->assertCount(1, $match);
     }
 

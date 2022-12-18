@@ -7,9 +7,19 @@ use Andileong\Framework\Core\Routing\Router;
 
 trait Http
 {
-    public function post($uri, $data = [])
+    public function put($uri, $data = [], $headers = [])
     {
-        return $this->call('post', $uri, $data);
+        return $this->call('put', $uri, $data, $headers);
+    }
+
+    public function delete($uri, $data = [], $headers = [])
+    {
+        return $this->call('delete', $uri, $data, $headers);
+    }
+
+    public function post($uri, $data = [], $headers = [])
+    {
+        return $this->call('post', $uri, $data, $headers);
     }
 
     public function get($uri, $data = [])
@@ -17,18 +27,18 @@ trait Http
         return $this->call('get', $uri, $data);
     }
 
-    public function call($method, $uri, $data = [])
+    public function call($method, $uri, $data = [], $headers = [])
     {
         [$method, $uri, $query, $payload] = $this->getRequestParams($method, $uri, $data);
         $request = Request::setTest($query, $payload, [
             'REQUEST_URI' => $uri,
             'REQUEST_METHOD' => $method,
             'HTTP_HOST' => 'localhost:8080',
-        ]);
+        ], $headers);
 
-        $this->app->setSingleton('request',$request);
+        $this->app->setSingleton('request', $request);
 
-        require_once './routes/routes.php';
+        require './routes/routes.php';
 
         $response = $this->app['router']->run();
         return new Response($this, $response);

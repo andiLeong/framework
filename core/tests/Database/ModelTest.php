@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\tests\Database;
 
+use Andileong\Framework\Core\Database\Model\ModelCollection;
 use Andileong\Framework\Core\Support\Str;
 use Andileong\Framework\Core\tests\CreateUser;
 use Andileong\Framework\Core\tests\stubs\User;
@@ -134,7 +135,7 @@ class ModelTest extends testcase
         $user = $this->createUser();
         $users = User::orderBy('id', 'desc')->get();
 
-        $this->assertIsArray($users);
+        $this->assertInstanceOf(ModelCollection::class,$users);
         $this->assertEquals($user->id, $users[0]->id);
     }
 
@@ -220,14 +221,14 @@ class ModelTest extends testcase
         $this->createUser(['location' => 'uk']);
 
         $users = User::country('usa')->get();
-        $usa = array_filter($users, fn($user) => $user->location === 'usa');
-        $uk = array_filter($users, fn($user) => $user->location === 'uk');
+        $usa = array_filter($users->all(), fn($user) => $user->location === 'usa');
+        $uk = array_filter($users->all(), fn($user) => $user->location === 'uk');
         $this->assertCount(1, $usa);
         $this->assertCount(0, $uk);
 
         $users = User::country('uk')->get();
-        $usa = array_filter($users, fn($user) => $user->location === 'usa');
-        $uk = array_filter($users, fn($user) => $user->location === 'uk');
+        $usa = array_filter($users->all(), fn($user) => $user->location === 'usa');
+        $uk = array_filter($users->all(), fn($user) => $user->location === 'uk');
         $this->assertCount(0, $usa);
         $this->assertCount(1, $uk);
 

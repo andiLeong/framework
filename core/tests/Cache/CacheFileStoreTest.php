@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\tests\Cache;
 
+use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Cache\FileCacheHandler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Finder;
@@ -12,7 +13,9 @@ class CacheFileStoreTest extends TestCase
 
     public function setUp(): void
     {
-        $this->cache = new FileCacheHandler(app());
+        $app = new Application($_SERVER['DOCUMENT_ROOT']);
+        $directory = $app->get('storage_path') . '/framework/cache';
+        $this->cache = new FileCacheHandler($directory);
         $this->cache->remove();
     }
 

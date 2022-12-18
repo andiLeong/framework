@@ -155,7 +155,7 @@ class QueryBuilder
     {
         $this->limit(1);
         $records = $this->get($columns);
-        if (empty($records)) {
+        if ($records->isEmpty()) {
             return null;
         }
         return $records[0];

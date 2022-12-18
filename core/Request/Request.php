@@ -13,18 +13,19 @@ class Request
     private array $addOn = [];
     public static $test = false;
 
-    public function __construct($query = [], $payload = [], $server = [])
+    public function __construct($query = [], $payload = [], $server = [], $headers = [])
     {
         if (!self::$test) {
             $query = $_GET;
             $payload = $_POST;
             $server = $this->removeEnv($_SERVER);
-            $this->headers = getallheaders();
+            $headers = getallheaders();
         }
 
         $this->query = $query;
         $this->payload = $payload;
         $this->server = $server;
+        $this->headers = $headers;
 
         $this->all = array_merge($this->payload, $this->query);
     }
@@ -49,11 +50,10 @@ class Request
      * @param array $payload
      * @param array $server
      */
-    public static function setTest($query = [], $payload = [], $server = [])
+    public static function setTest($query = [], $payload = [], $server = [], $headers = [])
     {
         self::$test = true;
-        $instance = new static($query, $payload, $server);
-//        dump($instance);
+        $instance = new static($query, $payload, $server, $headers);
         return $instance;
     }
 
@@ -418,7 +418,7 @@ class Request
     public function bearerToken($default = null)
     {
         $token = $this->header('Authorization');
-        if(is_null($token)){
+        if (is_null($token)) {
             return $default;
         }
 

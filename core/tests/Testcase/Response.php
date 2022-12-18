@@ -14,6 +14,8 @@ class Response
     {
         $this->body = $this->response->getContent();
         $this->statusCode = $this->response->getStatusCode();
+//        dump($this->statusCode);
+//        dump($this->body);
     }
 
     public function assertOk()
