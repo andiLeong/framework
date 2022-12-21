@@ -8,4 +8,6 @@ $app = new Application(dirname(__DIR__));
 
 require_once '../routes/routes.php';
 
+header("Access-Control-Allow-Origin: *");
+
 return $app['router']->response();
