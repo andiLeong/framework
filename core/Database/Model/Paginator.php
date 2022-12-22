@@ -12,9 +12,10 @@ class Paginator implements JsonSerializable
     private $results;
     private $perPage;
     private $total;
-    private $currentPage;
+    public $currentPage;
     private $pageName;
     private $request;
+    private $groupBy = 3;
 
     public function __construct($results, $perPage, $total, $page, $pageName)
     {
@@ -39,7 +40,7 @@ class Paginator implements JsonSerializable
      * check if it has more page
      * @return bool
      */
-    private function hasMorePage()
+    public function hasMorePage()
     {
         return $this->totalPage() > $this->currentPage;
     }
@@ -86,7 +87,7 @@ class Paginator implements JsonSerializable
      * get the total page
      * @return false|float
      */
-    private function totalPage()
+    public function totalPage()
     {
         return ceil($this->total / $this->perPage);
     }
@@ -114,7 +115,7 @@ class Paginator implements JsonSerializable
      * @param int $page
      * @return string
      */
-    private function url(int $page)
+    public function url(int $page)
     {
         $request = $this->request()->all();
         $request[$this->pageName] = $page;
@@ -186,38 +187,11 @@ class Paginator implements JsonSerializable
      */
     private function links()
     {
-        $links = array_map(
-            fn($page) => $this->link($page),
-            range(1, $this->totalPage())
-        );
-
-        if ($this->hasMorePage()) {
-            $links[] = $this->link($this->currentPage + 1, 'next');
-        }
-
-        if ($this->previousPageUrl()) {
-            array_unshift($links, $this->link($this->currentPage - 1, 'previous'));
-        }
-
-        return $links;
+        $generator = new GeneratePaginatorLinks($this);
+        return $generator($this->groupBy);
     }
 
-    /**
-     * indicate each link item should contain
-     * @param $page
-     * @param $label
-     * @return array
-     */
-    private function link($page, $label = null)
-    {
-        return [
-            'url' => $this->url($page),
-            'label' => $label ?? $page,
-            'active' => $this->currentPage == $page,
-        ];
-    }
-
-    public function jsonSerialize() :mixed
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

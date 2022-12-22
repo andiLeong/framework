@@ -35,7 +35,7 @@ class Serve extends Command
     {
         $port = $input->getArgument('port') ?? 8080;
         $publicPath = $this->app->get('public_path');
-        exec("cd $publicPath && php -S localhost:$port");
+        exec("cd $publicPath && php -S 127.0.0.1:$port");
 
         return Command::SUCCESS;
     }
