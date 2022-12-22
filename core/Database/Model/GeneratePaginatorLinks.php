@@ -179,6 +179,7 @@ class GeneratePaginatorLinks
         return [
             'url' => $this->paginator->url($page),
             'label' => $label ?? $page,
+            'page' => $page,
             'active' => $this->currentPage == $page,
         ];
     }

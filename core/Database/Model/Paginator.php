@@ -66,7 +66,7 @@ class Paginator implements JsonSerializable
             'current_page' => $this->currentPage,
             'data' => $this->results,
             'first_page_url' => $this->firstPageUrl(),
-//            'from' => '',
+            'from' => $this->getFromTo()[0],
             'last_page' => $this->totalPage(),
             'last_page_url' => $this->lastPageUrl(),
             'links' => $this->links(),
@@ -75,7 +75,7 @@ class Paginator implements JsonSerializable
             'base_path' => $this->basePath(),
             'per_page' => $this->perPage,
             'previous_page_url' => $this->previousPageUrl(),
-//            'to' => '',
+            'to' => $this->getFromTo()[1],
             'total' => $this->total,
             'total_page' => $this->totalPage(),
             'has_next_page' => $this->hasMorePage(),
@@ -194,5 +194,24 @@ class Paginator implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->toArray();
+    }
+
+    /**
+     * get the results from and to value
+     * @return array
+     */
+    private function getFromTo()
+    {
+        if ($this->currentPage === 1) {
+            return [1, $this->perPage];
+        }
+
+        $addUp = $this->perPage - 1;
+        $start = ($this->currentPage - 1) * $this->perPage;
+
+        return [
+            $start + 1,
+            $start + 1 + $addUp,
+        ];
     }
 }
