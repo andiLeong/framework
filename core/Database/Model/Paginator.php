@@ -53,7 +53,7 @@ class Paginator implements JsonSerializable
      */
     public function toJson($options = 0)
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray(),$options);
     }
 
     /**
@@ -85,7 +85,7 @@ class Paginator implements JsonSerializable
 
     /**
      * get the total page
-     * @return false|float
+     * @return float
      */
     public function totalPage()
     {
@@ -102,7 +102,7 @@ class Paginator implements JsonSerializable
     }
 
     /**
-     * determine if its on the first page
+     * determine if it's on the first page
      * @return bool
      */
     private function firstPage(): bool
@@ -206,12 +206,21 @@ class Paginator implements JsonSerializable
             return [1, $this->perPage];
         }
 
-        $addUp = $this->perPage - 1;
-        $start = ($this->currentPage - 1) * $this->perPage;
+        $start = $this->countItemsFromPastPages();
 
         return [
             $start + 1,
-            $start + 1 + $addUp,
+            $start + $this->perPage,
         ];
     }
+
+    /**
+     * get how many page results before the current page
+     * @return float|int
+     */
+    private function countItemsFromPastPages()
+    {
+        return ($this->currentPage - 1) * $this->perPage;
+    }
+
 }
