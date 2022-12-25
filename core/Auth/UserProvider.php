@@ -2,7 +2,7 @@
 
 namespace Andileong\Framework\Core\Auth;
 
-use App\Models\User;
+use Andileong\Framework\Core\Support\Arr;
 
 class UserProvider
 {
@@ -13,6 +13,16 @@ class UserProvider
 
     public function retrievedByToken(string|null $token)
     {
-        return $this->config['model']::where($this->config['column'],$token)->first();
+        return $this->config['model']::where($this->config['column'], $token)->first();
+    }
+
+    public function retrievedByCredentials(array $credential)
+    {
+        $credential = Arr::only($credential, ['email']);
+        if(empty($credential)){
+            return;
+        }
+
+        return $this->config['model']::where('email', $credential['email'])->first();
     }
 }

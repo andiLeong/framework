@@ -21,8 +21,9 @@ class AuthManager
         return new TokenGuard(
             $this->app->get('request'),
             new UserProvider(
-                $this->config['auth.drivers.token.provider']
-            )
+                $this->config['auth.drivers.token.provider'],
+            ),
+            $this->app->get('hash')
         );
     }
 

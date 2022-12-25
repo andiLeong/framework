@@ -20,6 +20,7 @@ use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Validation\Validator;
 use App\Console\Console;
 use App\Exception\Handler;
 use App\Middleware\Auth;
@@ -39,6 +40,7 @@ class Application extends Container
         'cache' => [CacheManager::class],
         'hash' => [HashManager::class],
         'auth' => [AuthManager::class],
+        'validator' => [Validator::class],
     ];
 
     private $inProduction = false;
@@ -80,6 +82,7 @@ class Application extends Container
         $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->driver()));
 
         $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app) );
+        $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()) );
     }
 
     protected function boot()

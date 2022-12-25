@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\Database\Model;
 
+use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\Support\Str;
 
 trait HasAttributes
@@ -101,6 +102,17 @@ trait HasAttributes
         }
 
         return $attributes;
+    }
+
+    /**
+     * get a subset of model attributes back
+     * @param $keys
+     * @return array
+     */
+    public function only($keys)
+    {
+        $keys = is_array($keys) ? $keys : func_get_args();
+        return Arr::only($this->toArray(),$keys);
     }
 
     protected function getAppends()

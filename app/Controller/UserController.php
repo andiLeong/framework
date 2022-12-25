@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\Support\Str;
 use Andileong\Validation\Validator;
 use App\Models\User;
 
@@ -29,7 +30,7 @@ class UserController
             'username' => 'required',
         ]);
 
-        return User::create($attributes);
+        return User::create($attributes + ['remember_token' => Str::random(20)]);
     }
 
     public function update(Request $request, $id)
