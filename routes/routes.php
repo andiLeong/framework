@@ -13,8 +13,8 @@ Route::get('user/{id}', [UserController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
 
-Route::middleware('options')->post('/login', [LoginController::class]);
-Route::middleware('options')->get('/login', [LoginController::class]);
+Route::post('/login', [LoginController::class]);
+Route::get('/login', [LoginController::class]);
 Route::middleware('auth')->group(function () {
     Route::get('/me', [MeController::class, 'index']);
 

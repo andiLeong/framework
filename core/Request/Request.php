@@ -202,7 +202,7 @@ class Request
 
     /**
      * get the base url
-     * eg : http://example.com/test
+     * eg : http://example.com
      * @return string
      */
     public function baseUrl()

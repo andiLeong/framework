@@ -17,6 +17,7 @@ use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Hashing\Hasher;
 use Andileong\Framework\Core\Hashing\HashManager;
 use Andileong\Framework\Core\Logs\LoggerManager;
+use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
@@ -83,6 +84,9 @@ class Application extends Container
 
         $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app) );
         $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()) );
+
+
+        $this->singleton($this->getAlias(HandlePreflightRequest::class), fn($app) => new HandlePreflightRequest($app['config']) );
     }
 
     protected function boot()

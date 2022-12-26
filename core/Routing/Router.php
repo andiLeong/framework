@@ -6,6 +6,7 @@ use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
+use App\Middleware\Middleware;
 use Closure;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -104,8 +105,20 @@ class Router
      */
     public function render()
     {
-        $method = $this->request->method();
-        $path = $this->request->path();
+        return $this->runGlobalMiddlewares(fn (Request $request) => $this->findRoute($request));
+    }
+
+
+    /**
+     * try to find a matching route and dispatch the route
+     * @param Request $request
+     * @return mixed
+     * @throws RouteNotFoundException
+     */
+    protected function findRoute(Request $request)
+    {
+        $method = $request->method();
+        $path = $request->path();
 
         if (!isset($this->routes[$method])) {
             throw new RouteNotFoundException($path . ' Route not found exception, No verb registered ' . $method, 404);
@@ -121,23 +134,51 @@ class Router
 
         $route = $route[0];
 
-        return $this->runThroughMiddleware($route);
+        return $this->runThroughMiddleware($route,$request);
+    }
+
+    /**
+     * run the global middlewares
+     * @param callable $next
+     * @return mixed
+     * @throws Exception
+     */
+    private function runGlobalMiddlewares(callable $next)
+    {
+        $pipeline = $this->container->get(Pipeline::class);
+        return $pipeline
+            ->send($this->request)
+            ->through($this->getGlobalMiddlewares())
+            ->run()
+            ->then($next);
     }
 
     /**
      * run the route with middlewares if any
      * @param Route $route
+     * @param null $request
      * @return mixed
      * @throws Exception
      */
-    private function runThroughMiddleware(Route $route)
+    private function runThroughMiddleware(Route $route , $request = null)
     {
+        $request ??= $this->request;
         $pipeline = $this->container->get(Pipeline::class);
         return $pipeline
-            ->send($this->request)
+            ->send($request)
             ->through($route->getMiddleware())
             ->run()
             ->then(fn($request) => $route->render());
+    }
+
+    /**
+     * fetch the global run middlewares
+     * @return mixed
+     * @throws Exception
+     */
+    protected function getGlobalMiddlewares()
+    {
+        return $this->container->get(Middleware::class)->golbalMiddlewares;
     }
 
     /**
@@ -229,7 +270,7 @@ class Router
     {
         $this->onGroup = true;
         $closure($this);
-        if($this->hasMiddlewareRegistered()){
+        if ($this->hasMiddlewareRegistered()) {
             $this->middlewares = [];
         }
 
@@ -258,4 +299,5 @@ class Router
             }
         }
     }
+
 }
