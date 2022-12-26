@@ -16,10 +16,10 @@ class Request
     public function __construct($query = [], $payload = [], $server = [], $headers = [])
     {
         if (!self::$test) {
-            $query = $_GET;
-            $payload = $_POST;
-            $server = $this->removeEnv($_SERVER);
             $headers = getallheaders();
+            $query = $_GET;
+            $payload = $this->parsePayload();
+            $server = $this->removeEnv($_SERVER);
         }
 
         $this->query = $query;
@@ -55,6 +55,23 @@ class Request
         self::$test = true;
         $instance = new static($query, $payload, $server, $headers);
         return $instance;
+    }
+
+    private function parsePayload()
+    {
+        if (!empty($_POST)) {
+            return $_POST;
+        }
+
+//        $output = [];
+        $json = json_decode(file_get_contents('php://input'), true);
+//        parse_str($input, $output);
+
+        if(is_null($json)){
+            return [];
+        }
+
+        return $json;
     }
 
     /**
@@ -445,4 +462,5 @@ class Request
     {
         return $this->mergeIfNotExist([$name => $value]);
     }
+
 }

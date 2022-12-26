@@ -8,5 +8,6 @@ class Middleware
         'one' => MiddlewareOne::class,
         'two' => MiddlewareTwo::class,
         'auth' => Auth::class,
+        'options' => FilterOptions::class,
     ];
 }

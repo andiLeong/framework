@@ -5,6 +5,10 @@ namespace Andileong\Framework\Core\Auth;
 use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Support\Traits\HasMultipleDrivers;
 
+/**
+ * @method attempt(array $credential)
+ * @method user()
+ */
 class AuthManager
 {
     use HasMultipleDrivers;
