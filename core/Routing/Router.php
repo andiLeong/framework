@@ -5,6 +5,7 @@ namespace Andileong\Framework\Core\Routing;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\Support\Cors;
 use Andileong\Framework\Core\View\View;
 use App\Middleware\Middleware;
 use Closure;
@@ -117,6 +118,11 @@ class Router
      */
     protected function findRoute(Request $request)
     {
+        //here the request may be mutated since it was filtered by middleware
+        //therefor we need to update the container request and local request property
+        $this->request = $request;
+        $this->container->setSingleton('request',$request);
+
         $method = $request->method();
         $path = $request->path();
 
@@ -234,7 +240,20 @@ class Router
      */
     public function response()
     {
-        return $this->run()->send();
+        $response = $this->addCors($this->run());
+        return $response->send();
+    }
+
+    /**
+     * add cors to response header if its header Sec-Fetch-Mode = 'cors'
+     * @param Response $response
+     * @return mixed
+     * @throws Exception
+     */
+    private function addCors(Response $response)
+    {
+        $cors = $this->container->get('cors');
+        return $cors->handleResponse($response);
     }
 
     /**
@@ -299,5 +318,6 @@ class Router
             }
         }
     }
+
 
 }

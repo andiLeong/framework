@@ -21,6 +21,7 @@ use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Framework\Core\Support\Cors;
 use Andileong\Validation\Validator;
 use App\Console\Console;
 use App\Exception\Handler;
@@ -42,6 +43,7 @@ class Application extends Container
         'hash' => [HashManager::class],
         'auth' => [AuthManager::class],
         'validator' => [Validator::class],
+        'cors' => [Cors::class],
     ];
 
     private $inProduction = false;
@@ -76,17 +78,19 @@ class Application extends Container
         $this->singleton(Cache::class, fn($app) => $app['cache']->driver());
         $this->singleton(CacheHandler::class, fn($app) => $app['cache']->driver());
         $this->bind($this->getAlias(Handler::class), function ($app, $args) {
-            $renderer = new Renderer($app,$args[0]);
-            return new Handler($args[0],$renderer);
+            $renderer = new Renderer($app, $args[0]);
+            return new Handler($args[0], $renderer);
         });
         $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
         $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->driver()));
 
-        $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app) );
-        $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()) );
+        $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app));
+        $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()));
 
 
-        $this->singleton($this->getAlias(HandlePreflightRequest::class), fn($app) => new HandlePreflightRequest($app['config']) );
+        $this->singleton($this->getAlias(HandlePreflightRequest::class), fn($app) => new HandlePreflightRequest($app));
+
+        $this->bind($this->getAlias(Cors::class), fn($app) => new Cors($app['request'], $app['config']));
     }
 
     protected function boot()

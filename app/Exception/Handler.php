@@ -14,8 +14,6 @@ class Handler extends CoreHandler
      */
     protected function register()
     {
-        $this->customExceptions[ValidationException::class] = fn($e) => new JsonResponse($e->errors(), Response::HTTP_BAD_REQUEST , [
-            'Access-Control-Allow-Origin' => '*',
-        ]);
+        $this->customExceptions[ValidationException::class] = fn($e) => new JsonResponse($e->errors(), Response::HTTP_BAD_REQUEST);
     }
 }
