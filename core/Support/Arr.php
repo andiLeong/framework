@@ -2,6 +2,8 @@
 
 namespace Andileong\Framework\Core\Support;
 
+use Andileong\Collection\Collection;
+
 class Arr
 {
     //hasAny
@@ -125,5 +127,16 @@ class Arr
         }
 
         return $default;
+    }
+
+    /**
+     * get a random value from an array
+     * @param $arr
+     * @param int $take
+     * @return Collection|mixed
+     */
+    public static function random($arr,$take = 1)
+    {
+        return collection($arr)->random($take);
     }
 }

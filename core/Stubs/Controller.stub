@@ -2,7 +2,9 @@
 
 namespace {NameSpace};
 
-class {Controller}
+use Andileong\Framework\Core\Support\Controller;
+
+class {Controller} extends Controller
 {
 
 }

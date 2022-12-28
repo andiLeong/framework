@@ -11,7 +11,7 @@ class Auth extends Chainable
 {
     public function __construct(protected AuthContract $auth)
     {
-       //
+        //
     }
 
     public function handle(Request|null $request)
@@ -20,7 +20,10 @@ class Auth extends Chainable
             return $this->next($request);
         }
 
-        $response = new JsonResponse(['msg' => 'you are not login'], 403);
+        $response = new JsonResponse([
+            'message' => 'you are not login',
+            'code' => 403
+        ], 403);
         $this->break($response);
     }
 }
