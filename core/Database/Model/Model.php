@@ -2,13 +2,14 @@
 
 namespace Andileong\Framework\Core\Database\Model;
 
-use Andileong\Framework\Core\Database\Connection\Connection;
+use Carbon\Carbon;
 use JsonSerializable;
 
 abstract class Model implements JsonSerializable
 {
     use HasAttributes;
     use HasScope;
+    use HasTimeStamp;
 
     protected $connection = null;
     protected $table = null;
@@ -109,9 +110,20 @@ abstract class Model implements JsonSerializable
         return $instance->getBuilder();
     }
 
+    /**
+     * creating the database record
+     * @param array $attributes
+     * @return static
+     */
     public static function create(array $attributes)
     {
         $instance = self::modelInstance();
+        if ($method = hasMethodDefined($instance, 'creating')) {
+            $instance->{$method}();
+        }
+
+        $instance->setCreateTimestamp();
+
         $instance->setAttributes($attributes);
         $id = $instance->query()->insert($instance->attributes);
 
@@ -125,6 +137,8 @@ abstract class Model implements JsonSerializable
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
+
+        $this->setUpdateTimestamp();
 
         return $this->toUpdate();
     }
@@ -143,6 +157,7 @@ abstract class Model implements JsonSerializable
             return false;
         }
 
+        $newAttributes = $newAttributes + $this->getUpdateTimestampArray();
         $res = $this->toUpdateSql()->update($newAttributes);
         if ($res) {
             $this->syncOriginals();
@@ -160,6 +175,8 @@ abstract class Model implements JsonSerializable
 
     private function toSave()
     {
+        $this->setCreateTimestamp();
+
         $id = $this->getBuilder()->insert($this->attributes);
         $this->existed = true;
 

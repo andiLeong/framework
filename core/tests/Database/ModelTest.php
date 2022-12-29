@@ -233,4 +233,45 @@ class ModelTest extends testcase
         $this->assertCount(1, $uk);
 
     }
+
+    /** @test */
+    public function it_trigger_creating_event()
+    {
+        $user = User::create($this->baseAttribute());
+        $this->assertNotNull($user->avatar);
+    }
+
+    /** @test */
+    public function it_auto_fill_create_at_updated_at_timestamp_when_create_user()
+    {
+        $user = User::create($this->baseAttribute());
+        $this->assertNotNull($user->created_at);
+        $this->assertNotNull($user->updated_at);
+
+        $saveUser = new User($this->baseAttribute());
+        $saveUser->save();
+
+        $this->assertNotNull($saveUser->created_at);
+        $this->assertNotNull($saveUser->updated_at);
+    }
+
+    /** @test */
+    public function it_auto_fill_updated_at_timestamp_when_update_user()
+    {
+        $user = User::create($this->baseAttribute());
+        $oldUpdate = $user->updated_at;
+        $user->update(['location' => 'hiii']);
+        $newUpdate = $user->updated_at;
+
+        $this->assertNotSame($oldUpdate,$newUpdate);
+
+
+        $user2 = User::create($this->baseAttribute());
+        $oldUpdate = $user2->updated_at;
+        $user2->location = 'eygey';
+        $user2->save();
+
+        $newUpdate = $user2->updated_at;
+        $this->assertNotSame($oldUpdate,$newUpdate);
+    }
 }

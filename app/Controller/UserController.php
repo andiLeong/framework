@@ -2,16 +2,12 @@
 
 namespace App\Controller;
 
-use Andileong\Framework\Core\Request\Request;
-use Andileong\Framework\Core\Support\Arr;
 use Andileong\Framework\Core\Support\Controller;
-use Andileong\Framework\Core\Support\Str;
 use App\Models\User;
-use Carbon\Carbon;
 
 class UserController extends Controller
 {
-    protected $columns = ['id', 'name', 'email', 'avatar', 'username', 'location', 'created_at'];
+    protected $columns = ['id', 'name', 'email', 'avatar', 'username', 'location', 'created_at', 'updated_at'];
 
     public function index()
     {
@@ -23,7 +19,7 @@ class UserController extends Controller
         return User::select($this->columns)->find($id);
     }
 
-    public function store(Request $request)
+    public function store()
     {
         $attributes = $this->validate([
             'name' => 'required',
@@ -34,16 +30,10 @@ class UserController extends Controller
             'username' => 'required',
         ]);
 
-        $additional = [
-            'remember_token' => Str::random(20),
-            'created_at' => Carbon::now(),
-            'avatar' => 'https://i.pravatar.cc/150?img=' . Arr::random(range(1, 70))
-        ];
-
-        return User::create($attributes + $additional);
+        return User::create($attributes);
     }
 
-    public function update(Request $request, $id)
+    public function update($id)
     {
         $user = User::find($id);
         if (is_null($user)) {

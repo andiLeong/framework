@@ -3,6 +3,8 @@
 namespace Andileong\Framework\Core\tests\stubs;
 
 use Andileong\Framework\Core\Database\Model\Model;
+use Andileong\Framework\Core\Support\Arr;
+use Andileong\Framework\Core\Support\Str;
 
 class User extends Model
 {
@@ -29,5 +31,16 @@ class User extends Model
     public function scopeCountry($builder, $name)
     {
         $builder->where('location', $name);
+    }
+
+    public function creating()
+    {
+        $attributes = [
+            'avatar' => 'https://i.pravatar.cc/150?img=' . Arr::random(range(1, 70))
+        ];
+
+       foreach ($attributes as $key => $value) {
+          $this->{$key} = $value;
+       }
     }
 }
