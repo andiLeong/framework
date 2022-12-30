@@ -62,10 +62,20 @@ class Connection extends AbstractConnection
         self::$pdo = $pdo;
     }
 
-    public function builder($model)
+    public function builder($model = null)
     {
         $this->builder = new QueryBuilder($this, new Grammar(), $model);
         return $this->builder;
+    }
+
+    public function from($table)
+    {
+        return $this->builder()->from($table);
+    }
+
+    public function select($columns = null)
+    {
+        return $this->builder()->select($columns);
     }
 
     public function runSelect($query, $bindings = [])

@@ -2,7 +2,6 @@
 
 namespace Andileong\Framework\Core\Database\Model;
 
-use Carbon\Carbon;
 use JsonSerializable;
 
 abstract class Model implements JsonSerializable
@@ -42,11 +41,20 @@ abstract class Model implements JsonSerializable
         return $this->perPage;
     }
 
+    /**
+     * get the table name
+     * @return mixed|string
+     * @throws \ReflectionException
+     */
     public function getTable()
     {
         return $this->table ?? strtolower(classBaseName($this) . 's');
     }
 
+    /**
+     * set the table
+     * @param $table
+     */
     public function setTable($table)
     {
         $this->table = $table;
@@ -60,23 +68,40 @@ abstract class Model implements JsonSerializable
         return $this->primaryKey;
     }
 
+    /**
+     * get a query builder instance
+     * @return mixed
+     */
     public function getBuilder()
     {
         return $this->getConnection()->builder($this);
     }
 
+    /**
+     * get a database connection
+     * @return mixed|null
+     */
     public function getConnection()
     {
         $this->setConnection(app('db'));
         return $this->connection;
     }
 
+    /**
+     * set a db connection
+     * @param $connection
+     * @return $this
+     */
     public function setConnection($connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
+    /**
+     * get a new fresh model instance
+     * @return Model
+     */
     public static function modelInstance(): Model
     {
         return new static;
@@ -87,6 +112,7 @@ abstract class Model implements JsonSerializable
      * @param array $attributes
      * @param bool $existed
      * @return $this
+     * @throws \ReflectionException
      */
     public function newInstance($attributes = [], $existed = true)
     {
@@ -104,6 +130,10 @@ abstract class Model implements JsonSerializable
         return $new;
     }
 
+    /**
+     * a convenient interface to start the query
+     * @return mixed
+     */
     public static function query()
     {
         $instance = self::modelInstance();
@@ -114,6 +144,7 @@ abstract class Model implements JsonSerializable
      * creating the database record
      * @param array $attributes
      * @return static
+     * @throws \ReflectionException
      */
     public static function create(array $attributes)
     {
@@ -132,6 +163,11 @@ abstract class Model implements JsonSerializable
         ], $instance->attributes));
     }
 
+    /**
+     * update a current model instance
+     * @param array $attributes
+     * @return false
+     */
     public function update(array $attributes)
     {
         foreach ($attributes as $name => $value) {
@@ -143,6 +179,10 @@ abstract class Model implements JsonSerializable
         return $this->toUpdate();
     }
 
+    /**
+     * interface to either create or update a model
+     * @return bool
+     */
     public function save()
     {
         return $this->existed
@@ -150,6 +190,10 @@ abstract class Model implements JsonSerializable
             : $this->toSave();
     }
 
+    /**
+     * to run a update statement
+     * @return false
+     */
     private function toUpdate()
     {
         $newAttributes = $this->getDirty();
@@ -167,12 +211,20 @@ abstract class Model implements JsonSerializable
         return $res;
     }
 
+    /**
+     * get primary id query from builder
+     * @return mixed
+     */
     protected function toUpdateSql()
     {
         $key = $this->getPrimaryKey();
         return $this->getBuilder()->where($key, $this->attributes[$key]);
     }
 
+    /**
+     * to create a database record through the save interface
+     * @return bool
+     */
     private function toSave()
     {
         $this->setCreateTimestamp();
@@ -185,6 +237,10 @@ abstract class Model implements JsonSerializable
         return true;
     }
 
+    /**
+     * delete the current model instance
+     * @return false
+     */
     public function delete()
     {
         if ($this->existed === false) {
@@ -200,21 +256,41 @@ abstract class Model implements JsonSerializable
         return false;
     }
 
+    /**
+     * what should we json encode when json the object
+     * @return mixed
+     */
     public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
 
+    /**
+     * magic method to set attribute
+     * @param string $name
+     * @param $value
+     */
     public function __set(string $name, $value): void
     {
         $this->setAttribute($name, $value);
     }
 
+    /**
+     * magic method to get the attribute
+     * @param string $name
+     * @return mixed
+     */
     public function __get(string $name)
     {
         return $this->getAttribute($name);
     }
 
+    /**
+     * proxy that will mainly redirect call to query builder
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
     public static function __callStatic(string $name, array $arguments)
     {
         $model = self::modelInstance();

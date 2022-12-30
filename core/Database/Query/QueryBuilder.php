@@ -278,12 +278,36 @@ class QueryBuilder
         return new Paginator($records, $perPage, $total, $page, $pageName);
     }
 
-    public function get($columns = null)
+    /**
+     * set the columns
+     * @param $columns
+     * @return $this
+     */
+    public function setColumns($columns = null)
     {
-        $columns = is_array($columns) ? $columns : func_get_args();
         if (!empty($columns) && empty($this->columns)) {
             $this->columns = $columns;
         }
+        return $this;
+    }
+
+    /**
+     * get raw data without model hydration
+     * @param $columns
+     * @return array|false
+     */
+    public function getRaw($columns = null)
+    {
+        $columns = is_array($columns) ? $columns : func_get_args();
+        $this->setColumns($columns);
+        $query = $this->toSelectSql();
+        return $this->connection->runSelect($query, $this->bindings['where']);
+    }
+
+    public function get($columns = null)
+    {
+        $columns = is_array($columns) ? $columns : func_get_args();
+        $this->setColumns($columns);
 
         $query = $this->toSelectSql();
         $selectedResults = $this->connection->runSelect($query, $this->bindings['where']);
