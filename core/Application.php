@@ -13,6 +13,8 @@ use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Database\Connection\MysqlConnector;
 use Andileong\Framework\Core\Database\Connection\RedisConnection;
 use Andileong\Framework\Core\Database\Connection\RedisConnector;
+use Andileong\Framework\Core\Database\Query\Grammar;
+use Andileong\Framework\Core\Database\Query\QueryBuilder;
 use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Hashing\Hasher;
 use Andileong\Framework\Core\Hashing\HashManager;
@@ -35,6 +37,7 @@ class Application extends Container
         'router' => [Router::class],
         'config' => [Config::class],
         'db' => [Connection::class],
+        'builder' => [QueryBuilder::class],
         'redis' => [RedisConnection::class],
         'exception.handler' => [Handler::class],
         'logger' => [LoggerManager::class],
@@ -91,6 +94,12 @@ class Application extends Container
         $this->singleton($this->getAlias(HandlePreflightRequest::class), fn($app) => new HandlePreflightRequest($app));
 
         $this->bind($this->getAlias(Cors::class), fn($app) => new Cors($app['request'], $app['config']));
+
+        $this->bind($this->getAlias(QueryBuilder::class), fn($app, $args) => new QueryBuilder(
+            $app['db'],
+            new Grammar(),
+            empty($args) ? null : $args[0]
+        ));
     }
 
     protected function boot()

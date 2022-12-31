@@ -40,6 +40,11 @@ class QueryBuilder
         }
     }
 
+    /**
+     * select columns
+     * @param $columns
+     * @return $this
+     */
     public function select($columns = ['*'])
     {
         $columns = is_array($columns) ? $columns : func_get_args();
@@ -51,12 +56,23 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * query starts from which table
+     * @param $table
+     * @return $this
+     */
     public function from($table)
     {
         $this->from = $table;
         return $this;
     }
 
+    /**
+     * order by which column and direction
+     * @param $column
+     * @param $direction
+     * @return $this
+     */
     public function orderBy($column, $direction = 'asc')
     {
         if (!in_array($direction, ['asc', 'desc'], true)) {
@@ -67,11 +83,24 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * order by desc
+     * @param $column
+     * @return $this
+     */
     public function latest($column = 'id')
     {
         return $this->orderBy($column, 'desc');
     }
 
+    /**
+     * add a where constrain
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @param $boolean
+     * @return $this
+     */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
         if (is_array($column)) {
@@ -104,11 +133,26 @@ class QueryBuilder
 
     }
 
+    /**
+     * add a where not in
+     * @param $column
+     * @param $values
+     * @param $boolean
+     * @return $this
+     */
     public function whereNotIn($column, $values, $boolean = 'and')
     {
         return $this->whereIn($column, $values, $boolean, true);
     }
 
+    /**
+     * where in constraint
+     * @param $column
+     * @param $values
+     * @param $boolean
+     * @param $not
+     * @return $this
+     */
     public function whereIn($column, $values, $boolean = 'and', $not = false)
     {
         $type = $not ? 'not in' : 'in';
@@ -117,6 +161,14 @@ class QueryBuilder
             ->assignBindings($values);
     }
 
+    /**
+     * where between constraint
+     * @param $column
+     * @param iterable $values
+     * @param $boolean
+     * @param $not
+     * @return $this
+     */
     public function whereBetween($column, iterable $values, $boolean = 'and', $not = false)
     {
         $type = $not ? 'not between' : 'between';
@@ -126,16 +178,36 @@ class QueryBuilder
     }
 
 
+    /**
+     * where not between constraint
+     * @param $column
+     * @param iterable $values
+     * @param $boolean
+     * @return $this
+     */
     public function whereNotBetween($column, iterable $values, $boolean = 'and')
     {
         return $this->whereBetween($column, $values, $boolean, true);
     }
 
+    /**
+     * where not null constraint
+     * @param $columns
+     * @param $boolean
+     * @return $this
+     */
     public function whereNotNull($columns, $boolean = 'and')
     {
         return $this->whereNull($columns, $boolean, true);
     }
 
+    /**
+     * where null constraint
+     * @param $columns
+     * @param $boolean
+     * @param $not
+     * @return $this
+     */
     public function whereNull($columns, $boolean = 'and', $not = false)
     {
         $type = $not ? 'not null' : 'null';
@@ -151,6 +223,11 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * first record of the data
+     * @param $columns
+     * @return mixed|null
+     */
     public function first($columns = [])
     {
         $this->limit(1);
@@ -161,6 +238,11 @@ class QueryBuilder
         return $records[0];
     }
 
+    /**
+     * limit how many record we take
+     * @param $value
+     * @return $this
+     */
     public function limit($value)
     {
         if ($value <= 0) {
@@ -171,23 +253,43 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * query offset value
+     * @param $value
+     * @return $this
+     */
     public function offset($value)
     {
         $this->offset = $value;
         return $this;
     }
 
+    /**
+     * alias of limit
+     * @param $value
+     * @return $this
+     */
     public function take($value)
     {
         $this->limit($value);
         return $this;
     }
 
+    /**
+     * alias of get()
+     * @return ModelCollection
+     */
     public function all()
     {
         return $this->get();
     }
 
+    /**
+     * find record based on a primary id
+     * @param $id
+     * @param $columns
+     * @return ModelCollection|mixed|null
+     */
     public function find($id, $columns = [])
     {
         $key = $this->model->getPrimaryKey();
@@ -198,6 +300,12 @@ class QueryBuilder
         return $this->where($key, $id)->first($columns);
     }
 
+    /**
+     * run a insert query return a last change id
+     * @param array $values
+     * @param $sequence
+     * @return false|string
+     */
     public function insert(array $values, $sequence = null)
     {
         $this->inserts = $values;
@@ -211,6 +319,11 @@ class QueryBuilder
         return $id;
     }
 
+    /**
+     * run a update query
+     * @param array $values
+     * @return bool
+     */
     public function update(array $values)
     {
         $result = $this->connection->runUpdate(
@@ -220,6 +333,11 @@ class QueryBuilder
         return $result;
     }
 
+    /**
+     * delete record from database
+     * @param $id
+     * @return bool
+     */
     public function delete($id = null)
     {
         if ($id !== null) {
@@ -234,6 +352,10 @@ class QueryBuilder
         );
     }
 
+    /**
+     * count record from db
+     * @return mixed
+     */
     public function count()
     {
         $this->columns[] = 'count(*)';
@@ -243,6 +365,12 @@ class QueryBuilder
         );
     }
 
+    /**
+     * aggregate sun from db
+     * @param $column
+     * @param $as
+     * @return mixed
+     */
     public function sum($column, $as = null)
     {
         $this->columns = [];
@@ -258,6 +386,12 @@ class QueryBuilder
         );
     }
 
+    /**
+     * paginate the db results
+     * @param $perPage
+     * @param $pageName
+     * @return Paginator
+     */
     public function paginate($perPage = null, $pageName = 'page')
     {
         $requestedColumns = $this->columns;
@@ -296,7 +430,7 @@ class QueryBuilder
      * @param $columns
      * @return array|false
      */
-    public function getRaw($columns = null)
+    public function getRaw($columns = null) :array
     {
         $columns = is_array($columns) ? $columns : func_get_args();
         $this->setColumns($columns);
@@ -304,6 +438,12 @@ class QueryBuilder
         return $this->connection->runSelect($query, $this->bindings['where']);
     }
 
+    /**
+     * get a collection of db query
+     * @param $columns
+     * @return ModelCollection
+     * @throws \ReflectionException
+     */
     public function get($columns = null)
     {
         $columns = is_array($columns) ? $columns : func_get_args();
@@ -319,27 +459,63 @@ class QueryBuilder
         return ModelCollection::make($hydrated);
     }
 
+    /**
+     * translate to a property select sql grammar
+     * @return string
+     */
     public function toSelectSql()
     {
         return $this->grammar->toSelect($this);
     }
 
+    /**
+     * translate to a property insert sql grammar
+     * @return string
+     */
     public function toInsertSql()
     {
         return $this->grammar->toInsert($this);
     }
 
+    /**
+     * translate to a property update sql grammar
+     * @param $values
+     * @return string
+     */
     public function toUpdateSql($values)
     {
         return $this->grammar->toUpdate($this, $values);
     }
 
+    /**
+     * translate to a property delete sql grammar
+     * @return string
+     */
     public function toDeleteSql()
     {
         return $this->grammar->toDelete($this);
     }
 
     /**
+     * add a conditional calling
+     * @param bool $condition
+     * @param callable $trueToCall
+     * @param callable|null $falseToCall
+     * @return $this
+     */
+    public function when(bool $condition, callable $trueToCall, ?callable $falseToCall = null)
+    {
+        if ($condition) {
+            $trueToCall($this);
+        } else {
+            value($falseToCall, $this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * set the where cause
      * @param $column
      * @param $value
      * @param string $operator
@@ -354,6 +530,7 @@ class QueryBuilder
     }
 
     /**
+     * set the bindings
      * @param $value
      * @param string $bind
      * @return QueryBuilder
@@ -372,6 +549,7 @@ class QueryBuilder
     }
 
     /**
+     * dynamic where call
      * @param array $parameters
      * @param string $method
      * @return QueryBuilder
@@ -396,6 +574,12 @@ class QueryBuilder
     }
 
 
+    /**
+     * handling dynamic method calling
+     * @param $method
+     * @param $parameters
+     * @return QueryBuilder
+     */
     public function __call($method, $parameters)
     {
         if (str_starts_with($method, 'where')) {
