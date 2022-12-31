@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c22714b89884d38358ef848dfb9d4f54",
+    "content-hash": "b39ba8dd05ec88c419adb3229af80810",
     "packages": [
         {
             "name": "andileong/collection",
@@ -48,16 +48,16 @@
         },
         {
             "name": "andileong/validation",
-            "version": "0.0.1",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andiLeong/validation.git",
-                "reference": "749ed6e51d2302e63584925ae9df38a04cfb5d3e"
+                "reference": "9ebcdf8ce5cb73493a7bfb1b0e4c70af9aaee339"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andiLeong/validation/zipball/749ed6e51d2302e63584925ae9df38a04cfb5d3e",
-                "reference": "749ed6e51d2302e63584925ae9df38a04cfb5d3e",
+                "url": "https://api.github.com/repos/andiLeong/validation/zipball/9ebcdf8ce5cb73493a7bfb1b0e4c70af9aaee339",
+                "reference": "9ebcdf8ce5cb73493a7bfb1b0e4c70af9aaee339",
                 "shasum": ""
             },
             "require": {
@@ -78,9 +78,9 @@
             "description": "a pure php validation package",
             "support": {
                 "issues": "https://github.com/andiLeong/validation/issues",
-                "source": "https://github.com/andiLeong/validation/tree/0.0.1"
+                "source": "https://github.com/andiLeong/validation/tree/0.03"
             },
-            "time": "2022-11-12T10:21:54+00:00"
+            "time": "2022-12-31T12:12:43+00:00"
         },
         {
             "name": "graham-campbell/result-type",
