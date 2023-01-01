@@ -33,6 +33,13 @@ class UserTest extends ApplicationTestCase
     }
 
     /** @test */
+    public function it_gets_404_if_a_user_not_found()
+    {
+        $response = $this->get("/user/99999999");
+        $response->assertJson()->assertNotFound();
+    }
+
+    /** @test */
     public function it_can_create_a_user()
     {
         $user = User::first();

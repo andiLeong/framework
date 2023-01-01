@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        return User::select($this->columns)->find($id);
+        return User::findOrFail($id, $this->columns);
     }
 
     public function store()
@@ -35,10 +35,7 @@ class UserController extends Controller
 
     public function update($id)
     {
-        $user = User::find($id);
-        if (is_null($user)) {
-            return json(['message' => 'User not found'], 404);
-        }
+        $user = User::findOrFail($id);
 
         $attributes = $this->validate([
             'name' => 'required',
@@ -58,10 +55,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::find($id);
-        if (is_null($user)) {
-            return json(['message' => 'User not found'], 404);
-        }
+        $user = User::findOrFail($id);
         $user->delete();
     }
 }

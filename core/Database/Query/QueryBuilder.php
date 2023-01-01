@@ -3,6 +3,7 @@
 namespace Andileong\Framework\Core\Database\Query;
 
 use Andileong\Framework\Core\Database\Connection\Connection;
+use Andileong\Framework\Core\Database\Exception\ModelNotFoundException;
 use Andileong\Framework\Core\Database\Model\Model;
 use Andileong\Framework\Core\Database\Model\ModelCollection;
 use Andileong\Framework\Core\Database\Model\Paginator;
@@ -301,6 +302,24 @@ class QueryBuilder
     }
 
     /**
+     * try to find record if not found throw exception
+     * @param $id
+     * @param $columns
+     * @return ModelCollection|mixed|null
+     * @throws ModelNotFoundException
+     */
+    public function findOrFail($id, $columns = [])
+    {
+        $record = $this->find($id, $columns);
+
+        if (is_null($record)) {
+            throw new ModelNotFoundException('The resource is not found with id ' . $id, 404);
+        }
+
+        return $record;
+    }
+
+    /**
      * run a insert query return a last change id
      * @param array $values
      * @param $sequence
@@ -430,7 +449,7 @@ class QueryBuilder
      * @param $columns
      * @return array|false
      */
-    public function getRaw($columns = null) :array
+    public function getRaw($columns = null): array
     {
         $columns = is_array($columns) ? $columns : func_get_args();
         $this->setColumns($columns);

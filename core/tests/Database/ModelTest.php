@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\tests\Database;
 
+use Andileong\Framework\Core\Database\Exception\ModelNotFoundException;
 use Andileong\Framework\Core\Database\Model\ModelCollection;
 use Andileong\Framework\Core\Support\Str;
 use Andileong\Framework\Core\tests\CreateUser;
@@ -189,6 +190,13 @@ class ModelTest extends testcase
 
         $user = User::find('fake');
         $this->assertNull($user);
+    }
+
+    /** @test */
+    public function it_throw_exception_if_record_not_found()
+    {
+        $this->expectException(ModelNotFoundException::class);
+        User::findOrFail(999999);
     }
 
     /** @test */
