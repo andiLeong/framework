@@ -2,7 +2,7 @@
     "name": "andileong/framework",
     "description": "A MVC framework",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "symfony/http-foundation": "^6.1",
         "symfony/finder": "^6.1|^5.4",
         "vlucas/phpdotenv": "^5.5",
