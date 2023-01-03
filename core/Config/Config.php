@@ -18,22 +18,22 @@ class Config implements \ArrayAccess
         return Arr::get($this->configs, $key, $default);
     }
 
-    public function offsetExists(mixed $offset)
+    public function offsetExists(mixed $offset) :bool
     {
         return isset($this->configs[$offset]);
     }
 
-    public function offsetGet(mixed $offset)
+    public function offsetGet(mixed $offset) :mixed
     {
         return $this->get($offset);
     }
 
-    public function offsetSet(mixed $offset, mixed $value)
+    public function offsetSet(mixed $offset, mixed $value) :void
     {
         $this->configs[$offset] = $value;
     }
 
-    public function offsetUnset(mixed $offset)
+    public function offsetUnset(mixed $offset) :void
     {
         unset($this->configs[$offset]);
     }

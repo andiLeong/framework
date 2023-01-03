@@ -5,7 +5,6 @@ namespace Andileong\Framework\Core\Routing;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
-use Andileong\Framework\Core\Support\Cors;
 use Andileong\Framework\Core\View\View;
 use App\Middleware\Middleware;
 use Closure;
