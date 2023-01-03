@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use Andileong\Framework\Core\Auth\AuthManager;
-use Andileong\Validation\Validator;
+use Andileong\Framework\Core\Support\Controller;
 
-class LoginController
+class LoginController extends Controller
 {
 
-    public function __invoke(Validator $validator, AuthManager $auth)
+    public function __invoke(AuthManager $auth)
     {
-        $credential = $validator->validate([
+        $credential = $this->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);

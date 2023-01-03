@@ -76,6 +76,7 @@ class Renderer
                 'message' => $this->e->getMessage(),
                 'exception' => get_class($this->e),
                 'file' => $this->e->getFile(),
+                'line' => $this->e->getLine(),
                 'trace' => $this->e->getTrace(),
             ];
         }

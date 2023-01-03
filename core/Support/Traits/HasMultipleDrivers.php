@@ -18,7 +18,7 @@ trait HasMultipleDrivers
 
         $method = 'create' . ucfirst($driver) . 'Driver';
         if (!method_exists($this, $method)) {
-            throw new \Exception('driver ' . $driver . ' not found exception');
+            throw new \Exception('driver ' . $driver . ' not found');
         }
 
         return $this->instances[$driver] = $this->{$method}();
