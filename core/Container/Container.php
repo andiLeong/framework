@@ -16,6 +16,7 @@ class Container implements \ArrayAccess
 
     public function bind($key, $concrete, $share = false)
     {
+        $key = $this->getAlias($key);
         $this->bindings[$key] = [
             'concrete' => $concrete,
             'shared' => $share,

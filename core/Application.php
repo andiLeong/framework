@@ -72,35 +72,35 @@ class Application extends Container
         $this->bind('storage_path', $this->appPath . '/storage');
         $this->bind('stubs_path', $this->appPath . '/core/Stubs');
         $this->bind('public_path', $this->appPath . '/public');
-        $this->singleton($this->getAlias(Request::class), fn() => new Request());
-        $this->singleton($this->getAlias(Router::class), fn($app) => new Router($app));
-        $this->singleton($this->getAlias(Connection::class), fn($app) => new Connection($app));
-        $this->bind($this->getAlias(MysqlConnector::class), fn($app) => new MysqlConnector($app->get('config')));
-        $this->bind($this->getAlias(RedisConnector::class), fn($app) => new RedisConnector($app->get('config')));
-        $this->singleton($this->getAlias(RedisConnection::class), fn($app) => new RedisConnection($app));
-        $this->singleton($this->getAlias(LoggerManager::class), fn($app) => new LoggerManager($app));
-        $this->singleton($this->getAlias(Console::class), fn($app) => new Console($app));
-        $this->singleton($this->getAlias(HashManager::class), fn($app) => new HashManager($app));
-        $this->singleton($this->getAlias(Hasher::class), fn($app) => $app['hash']->driver());
-        $this->singleton($this->getAlias(CacheManager::class), fn($app) => new CacheManager($app));
+        $this->singleton(Request::class, fn() => new Request());
+        $this->singleton(Router::class, fn($app) => new Router($app));
+        $this->singleton(Connection::class, fn($app) => new Connection($app));
+        $this->bind(MysqlConnector::class, fn($app) => new MysqlConnector($app->get('config')));
+        $this->bind(RedisConnector::class, fn($app) => new RedisConnector($app->get('config')));
+        $this->singleton(RedisConnection::class, fn($app) => new RedisConnection($app));
+        $this->singleton(LoggerManager::class, fn($app) => new LoggerManager($app));
+        $this->singleton(Console::class, fn($app) => new Console($app));
+        $this->singleton(HashManager::class, fn($app) => new HashManager($app));
+        $this->singleton(Hasher::class, fn($app) => $app['hash']->driver());
+        $this->singleton(CacheManager::class, fn($app) => new CacheManager($app));
         $this->singleton(Cache::class, fn($app) => $app['cache']->driver());
         $this->singleton(CacheHandler::class, fn($app) => $app['cache']->driver());
-        $this->bind($this->getAlias(Handler::class), function ($app, $args) {
+        $this->bind(Handler::class, function ($app, $args) {
             $renderer = new Renderer($app, $args[0]);
             return new Handler($args[0], $renderer);
         });
-        $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
-        $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->guard()));
+        $this->bind(Pipeline::class, fn($app) => new Pipeline($app));
+        $this->bind(Auth::class, fn($app) => new Auth($app->get('auth')->guard()));
 
-        $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app));
-        $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()));
+        $this->singleton(AuthManager::class, fn($app) => new AuthManager($app));
+        $this->bind(Validator::class, fn($app) => new Validator($app['request']->all()));
 
 
-        $this->singleton($this->getAlias(HandlePreflightRequest::class), fn($app) => new HandlePreflightRequest($app));
+        $this->singleton(HandlePreflightRequest::class, fn($app) => new HandlePreflightRequest($app));
 
-        $this->bind($this->getAlias(Cors::class), fn($app) => new Cors($app['request'], $app['config']));
+        $this->bind(Cors::class, fn($app) => new Cors($app['request'], $app['config']));
 
-        $this->bind($this->getAlias(QueryBuilder::class), fn($app, $args) => new QueryBuilder(
+        $this->bind(QueryBuilder::class, fn($app, $args) => new QueryBuilder(
             $app['db'],
             new Grammar(),
             empty($args) ? null : $args[0]
@@ -108,8 +108,8 @@ class Application extends Container
 
 
         //jwt
-        $this->singleton($this->getAlias(Jwt::class), fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
-        $this->singleton($this->getAlias(JwtAuth::class), fn($app) => new JwtAuth($app['jwt'],$app['config']->get('jwt')));
+        $this->singleton(Jwt::class, fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
+        $this->singleton(JwtAuth::class, fn($app) => new JwtAuth($app['jwt'],$app['config']->get('jwt')));
     }
 
     protected function boot()

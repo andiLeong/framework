@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Jwt;
 
 use Andileong\Framework\Core\Jwt\Contracts\Hash;
 use Andileong\Framework\Core\Jwt\Contracts\Jwt as JwtContract;
+use Andileong\Framework\Core\Jwt\Exception\JwtTokenValidationException;
 
 class Jwt implements JwtContract
 {
@@ -53,11 +54,22 @@ class Jwt implements JwtContract
         );
     }
 
+    /**
+     * parse the payload
+     * @param array $payload
+     * @return String
+     */
     public function parsePayload(array $payload)
     {
         return $this->encode(json_encode(($payload)));
     }
 
+    /**
+     * validate a giving token
+     * @param string $token
+     * @return array
+     * @throws JwtTokenValidationException
+     */
     public function validate(string $token) :array
     {
         $validator = new ValidateJwtToken();

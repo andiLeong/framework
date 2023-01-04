@@ -5,7 +5,6 @@ namespace Andileong\Framework\Tests\Jwt;
 use Andileong\Framework\Core\Jwt\Algorithm;
 use Andileong\Framework\Core\Jwt\Header;
 use Andileong\Framework\Core\Jwt\Jwt;
-use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 
 class JwtTest extends TestCase
