@@ -65,6 +65,25 @@ class AuthManager
     }
 
     /**
+     * create a jwt base driver
+     * @param $guard
+     * @return JwtGuard
+     * @throws Exception
+     */
+    public function createJwtDriver($guard)
+    {
+        $providerConfig = $this->authConfig['guards'][$guard]['provider'];
+        return new JwtGuard(
+            $this->app['jwt.auth'],
+            $this->app->get('request'),
+            new UserProvider(
+                $providerConfig
+            ),
+            $this->app->get('hash')
+        );
+    }
+
+    /**
      * get a default guard
      * @return mixed
      */

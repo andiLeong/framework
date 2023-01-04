@@ -4,7 +4,7 @@ use Andileong\Framework\Core\tests\stubs\User as UserStub;
 use App\Models\User;
 
 return [
-    'default' => env('AUTH_DRIVER', 'token'),
+    'default' => env('AUTH_DRIVER', 'jwt'),
 
 
     'guards' => [
@@ -20,6 +20,13 @@ return [
             'provider' => [
                 'model' => UserStub::class,
                 'column' => 'remember_token'
+            ],
+        ],
+        'jwt' => [
+            'driver' => 'jwt',
+            'provider' => [
+                'model' => User::class,
+//                'column' => 'remember_token'
             ],
         ],
     ],

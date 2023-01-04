@@ -25,4 +25,9 @@ class UserProvider
 
         return $this->config['model']::where('email', $credential['email'])->first();
     }
+
+    public function retrievedById(mixed $userId)
+    {
+        return $this->config['model']::findOrFail($userId);
+    }
 }

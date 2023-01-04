@@ -67,7 +67,7 @@ class Request
         $json = json_decode(file_get_contents('php://input'), true);
 //        parse_str($input, $output);
 
-        if(is_null($json)){
+        if (is_null($json)) {
             return [];
         }
 
@@ -432,6 +432,11 @@ class Request
         return isset($this->headers[$key]);
     }
 
+    /**
+     * get a request bear token if persist
+     * @param $default
+     * @return mixed|string|null
+     */
     public function bearerToken($default = null)
     {
         $token = $this->header('Authorization');
@@ -444,6 +449,20 @@ class Request
         }
 
         return $token;
+    }
+
+    /**
+     * try to retrieve a bear token
+     * @param $key
+     * @return array|mixed|string|null
+     */
+    public function retrieveBearerToken($key = 'token')
+    {
+        if ($token = $this->bearerToken()) {
+            return $token;
+        }
+
+        return $this->get($key);
     }
 
     /**

@@ -18,6 +18,9 @@ use Andileong\Framework\Core\Database\Query\QueryBuilder;
 use Andileong\Framework\Core\Exception\Renderer;
 use Andileong\Framework\Core\Hashing\Hasher;
 use Andileong\Framework\Core\Hashing\HashManager;
+use Andileong\Framework\Core\Jwt\Header;
+use Andileong\Framework\Core\Jwt\Jwt;
+use Andileong\Framework\Core\Jwt\JwtAuth;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
 use Andileong\Framework\Core\Pipeline\Pipeline;
@@ -47,6 +50,8 @@ class Application extends Container
         'auth' => [AuthManager::class],
         'validator' => [Validator::class],
         'cors' => [Cors::class],
+        'jwt' => [Jwt::class],
+        'jwt.auth' => [JwtAuth::class],
     ];
 
     private $inProduction = false;
@@ -85,7 +90,7 @@ class Application extends Container
             return new Handler($args[0], $renderer);
         });
         $this->bind($this->getAlias(Pipeline::class), fn($app) => new Pipeline($app));
-        $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->driver()));
+        $this->bind($this->getAlias(Auth::class), fn($app) => new Auth($app->get('auth')->guard()));
 
         $this->singleton($this->getAlias(AuthManager::class), fn($app) => new AuthManager($app));
         $this->bind($this->getAlias(Validator::class), fn($app) => new Validator($app['request']->all()));
@@ -100,6 +105,11 @@ class Application extends Container
             new Grammar(),
             empty($args) ? null : $args[0]
         ));
+
+
+        //jwt
+        $this->singleton($this->getAlias(Jwt::class), fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
+        $this->singleton($this->getAlias(JwtAuth::class), fn($app) => new JwtAuth($app['jwt']));
     }
 
     protected function boot()

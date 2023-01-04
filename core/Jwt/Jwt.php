@@ -57,7 +57,7 @@ class Jwt implements JwtContract
         return $this->encode(json_encode(($payload)));
     }
 
-    public function validate(string $token) :bool
+    public function validate(string $token) :array
     {
         $validator = new ValidateJwtToken();
         return $validator->handle($this->secret,$token);

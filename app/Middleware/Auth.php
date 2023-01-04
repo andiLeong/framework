@@ -2,14 +2,14 @@
 
 namespace App\Middleware;
 
-use Andileong\Framework\Core\Auth\Auth as AuthContract;
+use Andileong\Framework\Core\Auth\Guard as GuardContract;
 use Andileong\Framework\Core\Pipeline\Chainable;
 use Andileong\Framework\Core\Request\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Auth extends Chainable
 {
-    public function __construct(protected AuthContract $auth)
+    public function __construct(protected GuardContract $auth)
     {
         //
     }

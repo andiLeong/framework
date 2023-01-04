@@ -8,15 +8,13 @@ class ValidateJwtToken
 {
     use Base64Encodable;
 
-    public function __construct(
-//        private $secret,
-//        private $token,
-    )
-    {
-        //
-    }
-
-    public function handle($secret, $token)
+    /**
+     * @param $secret
+     * @param $token
+     * @return array
+     * @throws JwtTokenValidationException
+     */
+    public function handle($secret, $token) :array
     {
         $token = explode('.', $token);
 
@@ -28,6 +26,10 @@ class ValidateJwtToken
 
         $decodedHeader = $this->decode($header);
         $decodedPayload = $this->decode($payload);
+
+        if (is_null($decodedHeader) ||  is_null($decodedPayload)) {
+            throw new JwtTokenValidationException('Invalid payload or header');
+        }
 
         $hash = $this->getHashInstance($decodedHeader['alg']);
         $sign = $this->encode(

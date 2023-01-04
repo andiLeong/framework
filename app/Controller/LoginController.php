@@ -16,7 +16,9 @@ class LoginController extends Controller
         ]);
 
         if ($auth->attempt($credential)) {
-            return $auth->user()->only('id', 'remember_token', 'username', 'email', 'name');
+            $user = $auth->user();
+            $user->jwt_token = $auth->createJwtToken($user);
+            return $user->only('id', 'jwt_token', 'username', 'email', 'name');
         }
 
         return json([
