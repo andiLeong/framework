@@ -3,6 +3,7 @@
 namespace Andileong\Framework\Core;
 
 use Andileong\Framework\Core\Auth\AuthManager;
+use Andileong\Framework\Core\Auth\JwtAuth;
 use Andileong\Framework\Core\Bootstrap\Bootstrap;
 use Andileong\Framework\Core\Cache\CacheHandler;
 use Andileong\Framework\Core\Cache\CacheManager;
@@ -20,7 +21,6 @@ use Andileong\Framework\Core\Hashing\Hasher;
 use Andileong\Framework\Core\Hashing\HashManager;
 use Andileong\Framework\Core\Jwt\Header;
 use Andileong\Framework\Core\Jwt\Jwt;
-use Andileong\Framework\Core\Jwt\JwtAuth;
 use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
 use Andileong\Framework\Core\Pipeline\Pipeline;
@@ -109,7 +109,7 @@ class Application extends Container
 
         //jwt
         $this->singleton($this->getAlias(Jwt::class), fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
-        $this->singleton($this->getAlias(JwtAuth::class), fn($app) => new JwtAuth($app['jwt']));
+        $this->singleton($this->getAlias(JwtAuth::class), fn($app) => new JwtAuth($app['jwt'],$app['config']->get('jwt')));
     }
 
     protected function boot()

@@ -2,6 +2,7 @@
 
 namespace Andileong\Framework\Core\Auth;
 
+use Andileong\Framework\Core\Auth\Contracts\Guard;
 use Andileong\Framework\Core\Hashing\HashManager;
 use Andileong\Framework\Core\Request\Request;
 

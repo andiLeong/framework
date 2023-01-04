@@ -2,7 +2,7 @@
 
 namespace App\Middleware;
 
-use Andileong\Framework\Core\Auth\Guard as GuardContract;
+use Andileong\Framework\Core\Auth\Contracts\Guard as GuardContract;
 use Andileong\Framework\Core\Pipeline\Chainable;
 use Andileong\Framework\Core\Request\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;

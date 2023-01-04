@@ -1,20 +1,30 @@
 <?php
 
-namespace Andileong\Framework\Core\Jwt;
+namespace Andileong\Framework\Core\Auth;
 
 use Andileong\Framework\Core\Auth\Exception\JwtTokenExpiredException;
+use Andileong\Framework\Core\Jwt\Jwt;
 
 class JwtAuth
 {
-    public function __construct(private Jwt $jwt)
+    public function __construct(private Jwt $jwt , private array $config)
     {
         //
     }
 
-    public function generate(string|int $user_id, int $expiredTime = null, array $payload = [])
+    /**
+     * generate a jwt token
+     * @param string|int $user_id
+     * @param int|null $expiredTime
+     * @param array $payload
+     * @param null $algorithms
+     * @return String
+     */
+    public function generate(string|int $user_id, int $expiredTime = null, array $payload = [] , $algorithms = null)
     {
         return $this->jwt->generate(
-            $this->payload($user_id, $expiredTime, $payload)
+            $this->payload($user_id, $expiredTime, $payload),
+            $algorithms ?? $this->getDefaultAlgorithms()
         );
     }
 
@@ -33,6 +43,13 @@ class JwtAuth
         return $payload['user_id'];
     }
 
+    /**
+     * merge the default payload
+     * @param string|int $user_id
+     * @param int|null $expiredTime
+     * @param array $payload
+     * @return array
+     */
     private function payload(string|int $user_id, ?int $expiredTime, array $payload): array
     {
         return array_merge([
@@ -41,6 +58,11 @@ class JwtAuth
         ], $payload);
     }
 
+    /**
+     * set when the token will expire
+     * @param int|null $seconds
+     * @return float|int
+     */
     private function expiredAt(?int $seconds = null): float|int
     {
         $seconds ??= $this->defaultExpiredTime();
@@ -53,6 +75,15 @@ class JwtAuth
      */
     private function defaultExpiredTime(): float|int
     {
-        return 60 * 60 * 3;
+        return $this->config['expire'];
+    }
+
+    /**
+     * get the default algo
+     * @return string
+     */
+    private function getDefaultAlgorithms()
+    {
+        return strtolower($this->config['algorithm']);
     }
 }
