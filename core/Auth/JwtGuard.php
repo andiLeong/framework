@@ -40,12 +40,15 @@ class JwtGuard implements Guard
 
     /**
      * generate a jwt token
-     * @param $user
+     * @param string|int $id
+     * @param int|null $expiredTime
+     * @param array $payload
+     * @param string|null $algorithms
      * @return String
      */
-    public function createJwtToken($user)
+    public function createJwtToken(string|int $id, int $expiredTime = null, array $payload = [], string $algorithms = null)
     {
-        return $this->jwt->generate($user->id);
+        return $this->jwt->generate($id, $expiredTime, $payload, $algorithms);
     }
 
 }

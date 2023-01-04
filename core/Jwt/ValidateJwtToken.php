@@ -32,8 +32,9 @@ class ValidateJwtToken
         }
 
         $hash = $this->getHashInstance($decodedHeader['alg']);
+        $toHash = $header . "." . $payload;
         $sign = $this->encode(
-            $hash->hash($secret, $header, $payload)
+            $hash->hash($secret, $toHash)
         );
 
         if ($sign !== $signature) {

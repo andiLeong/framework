@@ -47,8 +47,9 @@ class Jwt implements JwtContract
      */
     protected function hash(Hash $hash, $payload): string
     {
+        $toHash = $this->header->get() . "." . $payload;
         return $this->encode(
-            $hash->hash($this->secret, $this->header->get(), $payload)
+            $hash->hash($this->secret, $toHash)
         );
     }
 

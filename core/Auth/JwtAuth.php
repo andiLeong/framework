@@ -7,7 +7,7 @@ use Andileong\Framework\Core\Jwt\Jwt;
 
 class JwtAuth
 {
-    public function __construct(private Jwt $jwt , private array $config)
+    public function __construct(private Jwt $jwt, private array $config)
     {
         //
     }
@@ -17,10 +17,10 @@ class JwtAuth
      * @param string|int $user_id
      * @param int|null $expiredTime
      * @param array $payload
-     * @param null $algorithms
+     * @param string|null $algorithms
      * @return String
      */
-    public function generate(string|int $user_id, int $expiredTime = null, array $payload = [] , $algorithms = null)
+    public function generate(string|int $user_id, int $expiredTime = null, array $payload = [], string $algorithms = null)
     {
         return $this->jwt->generate(
             $this->payload($user_id, $expiredTime, $payload),
@@ -37,8 +37,8 @@ class JwtAuth
     public function validate($token)
     {
         $payload = $this->jwt->validate($token);
-        if(time() > $payload['expired_at']){
-           throw new JwtTokenExpiredException('Jwt token is expired');
+        if (time() > $payload['expired_at']) {
+            throw new JwtTokenExpiredException('Jwt token is expired');
         }
         return $payload['user_id'];
     }
