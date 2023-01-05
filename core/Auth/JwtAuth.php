@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Auth;
 
 use Andileong\Framework\Core\Auth\Exception\JwtTokenExpiredException;
 use Andileong\Framework\Core\Cache\CacheManager;
+use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Jwt\Exception\JwtTokenValidationException;
 use Andileong\Framework\Core\Jwt\Jwt;
 
@@ -11,9 +12,13 @@ class JwtAuth
 {
     use TokenCanBeCache;
 
-    public function __construct(private Jwt $jwt, private array $config, private CacheManager $cache)
+    protected $jwtConfig;
+    protected $defaultExpire;
+
+    public function __construct(private Jwt $jwt, private Config $config, private string $guard, private CacheManager $cache)
     {
-        //
+        $this->jwtConfig = $this->config->get('jwt');
+        $this->defaultExpire = $this->config->get("auth.guards.$this->guard.expire");
     }
 
     /**
@@ -78,17 +83,8 @@ class JwtAuth
      */
     private function expiredAt(?int $seconds = null): float|int
     {
-        $seconds ??= $this->defaultExpiredTime();
+        $seconds ??= $this->defaultExpire;
         return time() + $seconds;
-    }
-
-    /**
-     * get the default expired time stamp default is 3 hours
-     * @return float|int
-     */
-    private function defaultExpiredTime(): float|int
-    {
-        return $this->config['expire'];
     }
 
     /**
@@ -97,7 +93,7 @@ class JwtAuth
      */
     private function getDefaultAlgorithms()
     {
-        return strtolower($this->config['algorithm']);
+        return strtolower($this->jwtConfig['algorithm']);
     }
 
     /**

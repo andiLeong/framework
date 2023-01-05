@@ -74,7 +74,7 @@ class AuthManager
     {
         $providerConfig = $this->authConfig['guards'][$guard]['provider'];
         return new JwtGuard(
-            $this->app['jwt.auth'],
+            $this->app->get('jwt.auth',[$guard]),
             $this->app->get('request'),
             new UserProvider(
                 $providerConfig

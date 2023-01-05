@@ -24,9 +24,10 @@ return [
         ],
         'jwt' => [
             'driver' => 'jwt',
+            //default token expire time in seconds , default is 3 hours
+            'expire' => 60 * 60 * 3,
             'provider' => [
                 'model' => User::class,
-//                'column' => 'remember_token'
             ],
         ],
     ],

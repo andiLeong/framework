@@ -109,7 +109,7 @@ class Application extends Container
 
         //jwt
         $this->singleton(Jwt::class, fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
-        $this->singleton(JwtAuth::class, fn($app) => new JwtAuth($app['jwt'],$app['config']->get('jwt'),$app['cache']));
+        $this->singleton(JwtAuth::class, fn($app,$args) => new JwtAuth($app['jwt'],$app['config'],$args[0],$app['cache']));
     }
 
     protected function boot()
