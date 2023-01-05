@@ -3,57 +3,70 @@
 namespace Andileong\Framework\Core\Auth;
 
 use Andileong\Framework\Core\Auth\Exception\JwtTokenExpiredException;
+use Andileong\Framework\Core\Cache\CacheManager;
+use Andileong\Framework\Core\Jwt\Exception\JwtTokenValidationException;
 use Andileong\Framework\Core\Jwt\Jwt;
 
 class JwtAuth
 {
-    public function __construct(private Jwt $jwt, private array $config)
+    use TokenCanBeCache;
+
+    public function __construct(private Jwt $jwt, private array $config, private CacheManager $cache)
     {
         //
     }
 
     /**
      * generate a jwt token
-     * @param string|int $user_id
+     * @param string|int $userId
      * @param int|null $expiredTime
      * @param array $payload
      * @param string|null $algorithms
      * @return String
      */
-    public function generate(string|int $user_id, int $expiredTime = null, array $payload = [], string $algorithms = null)
+    public function generate(string|int $userId, int $expiredTime = null, array $payload = [], string $algorithms = null)
     {
-        return $this->jwt->generate(
-            $this->payload($user_id, $expiredTime, $payload),
+        $token = $this->jwt->generate(
+            $this->payload($userId, $expiredTime, $payload),
             $algorithms ?? $this->getDefaultAlgorithms()
         );
+
+        $this->cache->put($this->cacheKey($userId), $token);
+
+        return $token;
     }
 
     /**
      * validate the token
      * @param $token
      * @return mixed
-     * @throws JwtTokenExpiredException
+     * @throws JwtTokenExpiredException|JwtTokenValidationException
      */
     public function validate($token)
     {
         $payload = $this->jwt->validate($token);
-        if (time() > $payload['expired_at']) {
+        $userId = $payload['user_id'];
+        $tokenInCache = $this->handleTokenDiscarded($userId, $token);
+
+        if ($this->tokenExpired($payload['expired_at'])) {
+            $this->removeCacheToken($userId, $tokenInCache);
             throw new JwtTokenExpiredException('Jwt token is expired');
         }
-        return $payload['user_id'];
+
+        return $userId;
     }
 
     /**
      * merge the default payload
-     * @param string|int $user_id
+     * @param string|int $userId
      * @param int|null $expiredTime
      * @param array $payload
      * @return array
      */
-    private function payload(string|int $user_id, ?int $expiredTime, array $payload): array
+    private function payload(string|int $userId, ?int $expiredTime, array $payload): array
     {
         return array_merge([
-            'user_id' => $user_id,
+            'user_id' => $userId,
             'expired_at' => $this->expiredAt($expiredTime),
         ], $payload);
     }
@@ -86,4 +99,14 @@ class JwtAuth
     {
         return strtolower($this->config['algorithm']);
     }
+
+    /**
+     * @param $expired_at
+     * @return bool
+     */
+    protected function tokenExpired($expired_at): bool
+    {
+        return time() > $expired_at;
+    }
+
 }

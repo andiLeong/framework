@@ -22,7 +22,11 @@ class JwtTest extends TestCase
     /** @test */
     public function it_can_generate_a_jwt_token()
     {
-        $token = $this->jwt->generate($this->payload);
+        $token = $this->jwt->generate($this->payload + ['expire_at' => time() + 2000]);
+        $token2 = $this->jwt->generate($this->payload + ['expire_at' => time() + 2001]);
+        dump($token);
+        dump($token2);
+
         $this->assertPayloadSame($token);
     }
 

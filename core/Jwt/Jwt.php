@@ -35,9 +35,18 @@ class Jwt implements JwtContract
 
         $hash = Algorithm::from($algorithms)->getHash();
         $payload = $this->parsePayload($payload);
-        return $this->header->get() . "."
-            . $payload . "."
-            . $this->hash($hash, $payload);
+        return $this->formatToken($payload,$hash);
+    }
+
+    /**
+     * format a jwt token
+     * @param $payload
+     * @param $hash
+     * @return string
+     */
+    public function formatToken($payload, $hash)
+    {
+        return $this->header->get() . "." . $payload . "." . $this->hash($hash, $payload);
     }
 
     /**
