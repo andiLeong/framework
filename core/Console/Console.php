@@ -15,6 +15,7 @@ class Console
         Commands\MakeTest::class,
         Commands\Serve::class,
         Commands\MakeMiddleware::class,
+        Commands\MakeProvider::class,
     ];
 
     protected $appCommands = [];

@@ -1,0 +1,17 @@
+<?php
+
+namespace {NameSpace};
+
+class {ProviderName} extends AbstractProvider implements Contract\Provider
+{
+
+    public function register()
+    {
+        //
+    }
+
+    public function boot()
+    {
+        //
+    }
+}

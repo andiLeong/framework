@@ -124,6 +124,22 @@ class CommandTest extends TestCase
         $this->assertTrue(unlink($filePath));
     }
 
+    /** @test */
+    public function it_can_make_provider()
+    {
+        $input = $this->getInput('make:provider', 'fooServiceProvider');
+        $output = $this->runCommand($input);
+
+        [$fileContent, $filePath] = $this->parseFileFromResponse($output->fetch());
+        $newContent = str_replace(['{NameSpace}', '{ProviderName}'], [
+            "Andileong\\Framework\\Core\\Providers",
+            "FooServiceProvider",
+        ], $this->stubContent('Provider'));
+
+        $this->assertEquals($fileContent, $newContent);
+        $this->assertTrue(unlink($filePath));
+    }
+
     public function parseFileFromResponse($response)
     {
         $path = str_replace([' Created Successfully', "\r", "\n"], '', $response);

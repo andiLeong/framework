@@ -62,6 +62,7 @@ class Application extends Container
         $this->registerBinding();
         $this->boot();
         $this->setInProduction();
+        $this->loadServices();
     }
 
     public function registerBinding()
@@ -92,7 +93,7 @@ class Application extends Container
         $this->bind(Pipeline::class, fn($app) => new Pipeline($app));
         $this->bind(Auth::class, fn($app) => new Auth($app->get('auth')->guard()));
 
-        $this->singleton(AuthManager::class, fn($app) => new AuthManager($app));
+//        $this->singleton(AuthManager::class, fn($app) => new AuthManager($app));
         $this->bind(Validator::class, fn($app) => new Validator($app['request']->all()));
 
 
@@ -108,8 +109,8 @@ class Application extends Container
 
 
         //jwt
-        $this->singleton(Jwt::class, fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
-        $this->singleton(JwtAuth::class, fn($app,$args) => new JwtAuth($app['jwt'],$app['config'],$args[0],$app['cache']));
+//        $this->singleton(Jwt::class, fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
+//        $this->singleton(JwtAuth::class, fn($app, $args) => new JwtAuth($app['jwt'], $app['config'], $args[0], $app['cache']));
     }
 
     protected function boot()
@@ -140,5 +141,19 @@ class Application extends Container
     public function setInProduction(): void
     {
         $this->inProduction = env('APP_DEBUG') == 'false';
+    }
+
+    private function loadServices()
+    {
+        $providers = $this->get('config')->get('app.providers');
+
+        collection($providers)
+            ->map(function ($provider) {
+                return new $provider($this);
+            })->each(function ($provider) {
+                $provider->register();
+            })->each(function ($provider) {
+                $provider->boot();
+            });
     }
 }
