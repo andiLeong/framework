@@ -162,7 +162,6 @@ class CommandTest extends TestCase
 
     public function runCommand($input)
     {
-//        dd(app());
         $console = app()->get('console');
         $output = new BufferedOutput();
         $console->runInTest($input, $output);

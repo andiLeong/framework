@@ -4,7 +4,7 @@
 a very simple php mvc framework that contains some well-known laravel components :
 
 ##### facades
-##### cache ( include file and array driver )
+##### cache ( include file , redis and array driver )
 ##### model - mini eloquent ( things like local scope , query builder, basic aggregate , paginator , attribute mutator and accessor, familiar interface (create,update,delete) are included )
 ##### configuration and env variable supported
 ##### database but only support mysql driver
@@ -18,6 +18,8 @@ a very simple php mvc framework that contains some well-known laravel components
 ##### validation and collection ( through my own package)
 ##### some arr and str helpers
 ##### pipeline and middleware
+##### Authentication guard ( base token , jwt token)
+##### Jwt token generator
 
 of course, I rely on some third party package to get it done, like
 symfony console.
@@ -27,10 +29,8 @@ monolog
 
 compare to laravel there are many components are missing just to name few
 db migration
-authentication
 queue
 file system
-
 
 For a typical blog, simple features are all that you need.
 The Reasons why I build this is over the times I have built my own laravel component why not I decided to put together.

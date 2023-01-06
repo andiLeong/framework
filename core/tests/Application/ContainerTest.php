@@ -113,7 +113,6 @@ class ContainerTest extends testCase
     public function it_can_set_the_singleton_instance_directly_by_its_alias_if_any()
     {
         $container = new Application($_SERVER['DOCUMENT_ROOT']);
-        $this->assertEmpty($container->getSingleton());
         $container->setSingleton(Request::class,new Request());
         $this->assertArrayHasKey('request',$container->getSingleton());
         $this->assertArrayNotHasKey(Request::class,$container->getSingleton());

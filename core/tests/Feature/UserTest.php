@@ -49,7 +49,7 @@ class UserTest extends ApplicationTestCase
         ]);
         $this->assertEquals(0, User::whereEmail($email)->count());
 
-        $response = $this->post("/user", $attributes, ['Authorization' => $user->remember_token]);
+        $response = $this->post("/user", $attributes, ['Authorization' => $this->getLoginToken($user->email)]);
         $response->assertOk();
         $body = $response->getBodyAsArray();
         $this->assertEquals($email, $body['email']);
@@ -59,7 +59,9 @@ class UserTest extends ApplicationTestCase
     /** @test */
     public function it_can_update_a_user()
     {
-        $user = $this->createUser();
+        $user = $this->createUser([
+            'password' => 'password'
+        ]);
         $name = 'new name';
         $this->assertNotEquals($name, $user->name);
 
@@ -67,7 +69,7 @@ class UserTest extends ApplicationTestCase
             'name' => $name
         ]);
 
-        $response = $this->put("/user/$user->id", $attributes, ['Authorization' => $user->remember_token]);
+        $response = $this->put("/user/$user->id", $attributes, ['Authorization' => $this->getLoginToken($user->email)]);
         $response->assertOk();
         $body = $response->getBodyAsArray();
         $this->assertEquals($name, $body['name']);
@@ -77,11 +79,22 @@ class UserTest extends ApplicationTestCase
     /** @test */
     public function it_can_delete_a_user()
     {
-        $user = $this->createUser();
+        $user = $this->createUser([
+            'password' => 'password'
+        ]);
         $this->assertEquals(1, User::whereEmail($user->email)->count());
 
-        $response = $this->delete("/user/$user->id", [], ['Authorization' => $user->remember_token]);
+        $response = $this->delete("/user/$user->id", [], ['Authorization' => $this->getLoginToken($user->email)]);
         $response->assertOk();
         $this->assertEquals(0, User::whereEmail($user->email)->count());
+    }
+
+    public function getLoginToken($email)
+    {
+        $body = $this->post("/login", [
+            'email' => $email,
+            'password' => 'password'
+        ])->getBodyAsArray();
+        return $body['jwt_token'];
     }
 }

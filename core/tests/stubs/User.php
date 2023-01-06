@@ -20,7 +20,7 @@ class User extends Model
 
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = md5($value);
+        $this->attributes['password'] = bcrypt($value);
     }
 
     public function getPasswordAttribute($value)
