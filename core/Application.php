@@ -121,9 +121,8 @@ class Application extends Container
         $providers = $this->get('config')->get('app.providers');
 
         collection($providers)
-            ->map(function ($provider) {
-                return new $provider($this);
-            })->each(function ($provider) {
+            ->map(fn($provider) => new $provider($this))
+            ->each(function ($provider) {
                 $provider->register();
             })->each(function ($provider) {
                 $provider->boot();
