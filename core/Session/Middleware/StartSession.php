@@ -17,7 +17,8 @@ class StartSession extends Chainable
 
     public function handle(?Request $request)
     {
-        $id = 'vGBTEMbxXZKreDdu0fgVOh9SYnso1PapzyWtACF7';
+        $id = $request->cookie($this->config()['name']);
+
         $session = $this->manager->driver();
         $session->setId($id);
         $session->start();
@@ -29,6 +30,11 @@ class StartSession extends Chainable
 
     protected function clean(Session $session)
     {
-        $session->clean($this->manager->getConfig()['expire'] * 60);
+        $session->clean($this->config()['expire'] * 60);
+    }
+
+    protected function config()
+    {
+        return $this->manager->getConfig();
     }
 }

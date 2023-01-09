@@ -10,5 +10,5 @@ return [
 
     'path' => storagePath() . '/framework/sessions',
 
-
+    'name' => env('SESSION_NAME','awesome-session'),
 ];

@@ -479,6 +479,19 @@ class Request
         return $this->cookies;
     }
 
+
+    /**
+     * get a cookie value
+     * @return array|mixed
+     */
+    public function cookie($key, $default = null)
+    {
+        if(isset($this->cookies[$key])){
+           return $this->cookies[$key];
+        }
+        return $default;
+    }
+
     /**
      * set cookie
      * @param $name
@@ -497,7 +510,7 @@ class Request
         }
 
         $result = setcookie($name, $value, $ttl, $path, $domain, $secure, $httpOnly);
-        if($result){
+        if ($result) {
             $this->cookies[$name] = $value;
         }
 

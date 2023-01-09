@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Core\Support;
+namespace Andileong\Framework\Core\Cors;
 
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Pipeline\Chainable;

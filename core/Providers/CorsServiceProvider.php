@@ -2,8 +2,8 @@
 
 namespace Andileong\Framework\Core\Providers;
 
-use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
-use Andileong\Framework\Core\Support\Cors;
+use Andileong\Framework\Core\Cors\Cors;
+use Andileong\Framework\Core\Cors\Middleware\HandlePreflightRequest;
 
 class CorsServiceProvider extends AbstractProvider implements Contract\Provider
 {

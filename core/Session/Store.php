@@ -10,7 +10,7 @@ class Store implements Session
 {
 
     protected $attributes = [];
-    private mixed $rawSession;
+    private mixed $rawSession = [];
 
     public function __construct(
         protected SessionHandlerInterface $handler,

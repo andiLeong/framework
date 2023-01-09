@@ -1,10 +1,10 @@
 <?php
 
-namespace Andileong\Framework\Core\Middleware;
+namespace Andileong\Framework\Core\Cors\Middleware;
 
+use Andileong\Framework\Core\Cors\Cors;
 use Andileong\Framework\Core\Pipeline\Chainable;
 use Andileong\Framework\Core\Request\Request;
-use Andileong\Framework\Core\Support\Cors;
 
 class HandlePreflightRequest extends Chainable
 {
