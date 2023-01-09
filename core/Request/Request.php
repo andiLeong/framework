@@ -2,10 +2,13 @@
 
 namespace Andileong\Framework\Core\Request;
 
+use Carbon\Carbon;
+
 class Request
 {
 
     private array $headers;
+    private array $cookies;
     private array $query;
     private array $payload;
     private array $server;
@@ -13,19 +16,21 @@ class Request
     private array $addOn = [];
     public static $test = false;
 
-    public function __construct($query = [], $payload = [], $server = [], $headers = [])
+    public function __construct($query = [], $payload = [], $server = [], $headers = [], $cookies = [])
     {
         if (!self::$test) {
             $headers = getallheaders();
             $query = $_GET;
             $payload = $this->parsePayload();
             $server = $this->removeEnv($_SERVER);
+            $cookies = $_COOKIE;
         }
 
         $this->query = $query;
         $this->payload = $payload;
         $this->server = $server;
         $this->headers = $headers;
+        $this->cookies = $cookies;
 
         $this->all = array_merge($this->payload, $this->query);
     }
@@ -463,6 +468,40 @@ class Request
         }
 
         return $this->get($key);
+    }
+
+    /**
+     * get all cookies
+     * @return array|mixed
+     */
+    public function cookies()
+    {
+        return $this->cookies;
+    }
+
+    /**
+     * set cookie
+     * @param $name
+     * @param $value
+     * @param $ttl
+     * @param $path
+     * @param $domain
+     * @param $secure
+     * @param $httpOnly
+     * @return bool
+     */
+    public function setCookie($name, $value, $ttl, $path = '/', $domain = '', $secure = false, $httpOnly = false)
+    {
+        if ($ttl instanceof Carbon) {
+            $ttl = $ttl->getTimestamp();
+        }
+
+        $result = setcookie($name, $value, $ttl, $path, $domain, $secure, $httpOnly);
+        if($result){
+            $this->cookies[$name] = $value;
+        }
+
+        return $result;
     }
 
     /**
