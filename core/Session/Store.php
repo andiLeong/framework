@@ -20,6 +20,9 @@ class Store implements Session
         $this->setId($id);
     }
 
+    /**
+     * session start and get session data from handler
+     */
     public function start()
     {
         $this->attributes = $this->rawSession = $this->getSessionFromHandler();
@@ -62,11 +65,23 @@ class Store implements Session
         return Str::random(40);
     }
 
+    /**
+     * {@inheritdoc}
+     * @param $key
+     * @param $value
+     * @return void
+     */
     public function set($key, $value)
     {
         $this->attributes[$key] = $value;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param $key
+     * @param $default
+     * @return mixed|null
+     */
     public function get($key, $default = null)
     {
         if ($this->exists($key)) {
@@ -76,29 +91,64 @@ class Store implements Session
         return $default;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param $key
+     * @return false
+     */
     public function delete($key)
     {
-        // TODO: Implement delete() method.
+        if(!$this->exists($key)){
+            return false;
+        }
+
+        unset($this->attributes[$key]);
+        return true;
     }
 
+    /**
+     * {@inheritdoc}
+     * @return void
+     */
     public function remove()
     {
-        // TODO: Implement remove() method.
+        $this->attributes = [];
     }
 
+    /**
+     * {@inheritdoc}
+     * @return array|mixed
+     */
     public function all()
     {
         return $this->attributes;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param $key
+     * @return bool
+     */
     public function exists($key)
     {
         return isset($this->attributes[$key]);
     }
 
+    /**
+     * {@inheritdoc}
+     * @param $key
+     * @return bool
+     */
     public function has($key)
     {
-        // TODO: Implement has() method.
+        if ($this->exists($key)) {
+            if ($this->get($key)) {
+                return true;
+            }
+            return false;
+        }
+
+        return false;
     }
 
     /**
