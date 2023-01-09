@@ -3,10 +3,12 @@
 namespace App\Middleware;
 
 use Andileong\Framework\Core\Middleware\HandlePreflightRequest;
+use Andileong\Framework\Core\Session\Middleware\StartSession;
 
 class Middleware
 {
     public $golbalMiddlewares = [
+        StartSession::class,
         HandlePreflightRequest::class,
     ];
 

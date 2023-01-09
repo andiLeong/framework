@@ -18,6 +18,8 @@ use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Framework\Core\Session\SessionManager;
+use Andileong\Framework\Core\Session\Store;
 use Andileong\Framework\Core\Support\Cors;
 use Andileong\Validation\Validator;
 use App\Console\Console;
@@ -43,6 +45,8 @@ class Application extends Container
         'cors' => [Cors::class],
         'jwt' => [Jwt::class],
         'jwt.auth' => [JwtAuth::class],
+        'session.manager' => [SessionManager::class],
+        'session' => [Store::class],
     ];
 
     private $inProduction = false;

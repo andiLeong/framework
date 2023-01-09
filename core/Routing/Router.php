@@ -240,6 +240,11 @@ class Router
     public function response()
     {
         $response = $this->addCors($this->run());
+
+        //save session
+        $sessionDriver = $this->container->get('session');
+        $sessionDriver->save();
+
         return $response->send();
     }
 

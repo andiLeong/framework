@@ -80,12 +80,12 @@ class FileSessionHandler implements \SessionHandlerInterface
      *
      * @return int|false
      */
-    public function gc(int $timeToKeep): int|false
+    public function gc(int $second): int|false
     {
         $files = Finder::create()
             ->in($this->path)
             ->files()
-            ->date('< now - '.$timeToKeep.' seconds');
+            ->date('< now - '.$second.' seconds');
 
         $deletedCount = 0;
 

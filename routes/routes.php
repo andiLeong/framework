@@ -20,3 +20,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/user/{id}', [UserController::class, 'update']);
     Route::delete('/user/{id}', [UserController::class, 'destroy']);
 });
+
+
+Route::get('/get-session', function(){
+
+    $all = app('session')->all();
+    dump($all);
+});
+
+Route::get('/set-session', function(){
+    $driver = app('session');
+//    $driver->set('fff',30);
+    $driver->set('u','xxxxuu');
+});
