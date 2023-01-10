@@ -21,7 +21,7 @@ class CreateCookies extends Chainable
             $request->setCookie(
                 $this->getSessionName(),
                 Str::random(32),
-                Carbon::now()->addDay()
+                Carbon::now()->addMinutes($this->sessionConfig['expire'])
             );
 
         }

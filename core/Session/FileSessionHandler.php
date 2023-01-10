@@ -115,15 +115,8 @@ class FileSessionHandler implements \SessionHandlerInterface
      */
     protected function expired(string $file) :bool
     {
-        $now = Carbon::now()->getTimestamp();
-        $lastModified = filemtime($file);
-        $expectedExpireTime = Carbon::createFromTimestamp($lastModified)->addMinutes($this->expire)->getTimestamp();
-
-        if( $now > $expectedExpireTime ){
-            return true;
-        }
-
-        return false;
+        $expectedExpireTime = Carbon::createFromTimestamp(filemtime($file))->addMinutes($this->expire)->getTimestamp();
+        return Carbon::now()->getTimestamp() > $expectedExpireTime;
     }
 
 }

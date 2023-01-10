@@ -17,9 +17,9 @@ class StartSession extends Chainable
 
     public function handle(?Request $request)
     {
-        $id = $request->cookie($this->config()['name']);
-
         $session = $this->manager->driver();
+        $id = $request->cookie($this->config()['name'],$session->generateId());
+
         $session->setId($id);
         $session->start();
 

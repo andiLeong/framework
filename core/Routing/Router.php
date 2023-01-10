@@ -7,6 +7,7 @@ use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\View\View;
 use App\Middleware\Middleware;
+use Carbon\Carbon;
 use Closure;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -105,7 +106,7 @@ class Router
      */
     public function render()
     {
-        return $this->runGlobalMiddlewares(fn (Request $request) => $this->findRoute($request));
+        return $this->runGlobalMiddlewares(fn(Request $request) => $this->findRoute($request));
     }
 
 
@@ -120,7 +121,7 @@ class Router
         //here the request may be mutated since it was filtered by middleware
         //therefor we need to update the container request and local request property
         $this->request = $request;
-        $this->container->setSingleton('request',$request);
+        $this->container->setSingleton('request', $request);
 
         $method = $request->method();
         $path = $request->path();
@@ -139,7 +140,7 @@ class Router
 
         $route = $route[0];
 
-        return $this->runThroughMiddleware($route,$request);
+        return $this->runThroughMiddleware($route, $request);
     }
 
     /**
@@ -165,7 +166,7 @@ class Router
      * @return mixed
      * @throws Exception
      */
-    private function runThroughMiddleware(Route $route , $request = null)
+    private function runThroughMiddleware(Route $route, $request = null)
     {
         $request ??= $this->request;
         $pipeline = $this->container->get(Pipeline::class);
@@ -241,9 +242,21 @@ class Router
     {
         $response = $this->addCors($this->run());
 
+        //todo refactor to event/listener
+
         //save session
         $sessionDriver = $this->container->get('session');
         $sessionDriver->save();
+
+        //extend session cookie lifetime
+        $config = $this->container->get('config')['session'];
+        if ($cookie = $this->request->cookie($config['name'])) {
+            $this->request->setCookie(
+                $config['name'],
+                $cookie,
+                Carbon::now()->addMinutes($config['expire'])
+            );
+        }
 
         return $response->send();
     }

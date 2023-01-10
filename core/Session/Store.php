@@ -10,7 +10,6 @@ class Store implements Session
 {
 
     protected $attributes = [];
-    private mixed $rawSession = [];
 
     public function __construct(
         protected SessionHandlerInterface $handler,
@@ -25,7 +24,7 @@ class Store implements Session
      */
     public function start()
     {
-        $this->attributes = $this->rawSession = $this->getSessionFromHandler();
+        $this->attributes = $this->getSessionFromHandler();
     }
 
     /**
@@ -48,11 +47,8 @@ class Store implements Session
      */
     public function setId($id = null)
     {
-        if (is_null($id)) {
-            $this->id = $this->generateId();
-        } else {
-            $this->id = $id;
-        }
+        $id ??= $this->generateId();
+        $this->id = $id;
         return $this;
     }
 
@@ -62,7 +58,7 @@ class Store implements Session
      */
     public function generateId()
     {
-        return Str::random(40);
+        return Str::random(32);
     }
 
     /**
@@ -84,11 +80,9 @@ class Store implements Session
      */
     public function get($key, $default = null)
     {
-        if ($this->exists($key)) {
-            return $this->attributes[$key];
-        }
-
-        return $default;
+        return $this->exists($key)
+            ? $this->attributes[$key]
+            : $default;
     }
 
     /**
@@ -98,7 +92,7 @@ class Store implements Session
      */
     public function delete($key)
     {
-        if(!$this->exists($key)){
+        if (!$this->exists($key)) {
             return false;
         }
 
@@ -141,14 +135,7 @@ class Store implements Session
      */
     public function has($key)
     {
-        if ($this->exists($key)) {
-            if ($this->get($key)) {
-                return true;
-            }
-            return false;
-        }
-
-        return false;
+        return $this->exists($key) && $this->get($key) !== null;
     }
 
     /**
@@ -156,9 +143,6 @@ class Store implements Session
      */
     public function save(): void
     {
-        if (empty(array_diff_key($this->attributes, $this->rawSession))) {
-            return;
-        }
         $this->handler->write($this->id, serialize($this->attributes));
     }
 
