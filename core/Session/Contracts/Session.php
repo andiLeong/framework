@@ -55,4 +55,11 @@ interface Session
      * @return bool
      */
     public function has($key);
+
+    /**
+     * set session ID
+     *
+     * @return string
+     */
+    public function generateId() :string;
 }

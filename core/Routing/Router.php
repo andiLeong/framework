@@ -5,6 +5,7 @@ namespace Andileong\Framework\Core\Routing;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
+use Andileong\Framework\Core\Session\SessionCookie;
 use Andileong\Framework\Core\View\View;
 use App\Middleware\Middleware;
 use Carbon\Carbon;
@@ -249,14 +250,7 @@ class Router
         $sessionDriver->save();
 
         //extend session cookie lifetime
-        $config = $this->container->get('config')['session'];
-        if ($cookie = $this->request->cookie($config['name'])) {
-            $this->request->setCookie(
-                $config['name'],
-                $cookie,
-                Carbon::now()->addMinutes($config['expire'])
-            );
-        }
+        $this->container->get(SessionCookie::class)->extend();
 
         return $response->send();
     }

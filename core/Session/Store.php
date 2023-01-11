@@ -56,7 +56,7 @@ class Store implements Session
      * generate a random string
      * @return string
      */
-    public function generateId()
+    public function generateId() :string
     {
         return Str::random(32);
     }
