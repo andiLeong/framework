@@ -25,11 +25,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/get-session', function(){
 
     $all = app('session')->all();
-    dump($all);
+    return $all;
 });
 
 Route::get('/set-session', function(){
     $driver = app('session');
-//    $driver->set('fff',30);
+    $driver->set('age',20);
     $driver->set('u','xxxxuu');
 });

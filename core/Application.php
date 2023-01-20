@@ -8,6 +8,7 @@ use Andileong\Framework\Core\Bootstrap\Bootstrap;
 use Andileong\Framework\Core\Cache\CacheManager;
 use Andileong\Framework\Core\Config\Config;
 use Andileong\Framework\Core\Container\Container;
+use Andileong\Framework\Core\Cookie\CookieJar;
 use Andileong\Framework\Core\Cors\Cors;
 use Andileong\Framework\Core\Database\Connection\Connection;
 use Andileong\Framework\Core\Database\Connection\RedisConnection;
@@ -19,13 +20,11 @@ use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
-use Andileong\Framework\Core\Session\SessionCookie;
 use Andileong\Framework\Core\Session\SessionManager;
 use Andileong\Framework\Core\Session\Store;
 use Andileong\Validation\Validator;
 use App\Console\Console;
 use App\Exception\Handler;
-use App\Middleware\CreateCookies;
 
 class Application extends Container
 {
@@ -49,6 +48,7 @@ class Application extends Container
         'jwt.auth' => [JwtAuth::class],
         'session.manager' => [SessionManager::class],
         'session' => [Store::class],
+        'cookie' => [CookieJar::class],
     ];
 
     private $inProduction = false;
@@ -82,10 +82,6 @@ class Application extends Container
         $this->bind(Pipeline::class, fn($app) => new Pipeline($app));
 
 
-
-        $this->singleton(CreateCookies::class, fn($app) => new CreateCookies(
-           $app->get(SessionCookie::class)
-        ));
     }
 
     /**

@@ -8,7 +8,6 @@ use Andileong\Framework\Core\Session\Middleware\StartSession;
 class Middleware
 {
     public $golbalMiddlewares = [
-        CreateCookies::class,
         StartSession::class,
         HandlePreflightRequest::class,
     ];

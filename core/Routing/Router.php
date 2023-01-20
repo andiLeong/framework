@@ -245,12 +245,12 @@ class Router
 
         //todo refactor to event/listener
 
+        $cookieJar = $this->container->get('cookie');
+        $cookieJar->persist($response);
+
         //save session
         $sessionDriver = $this->container->get('session');
         $sessionDriver->save();
-
-        //extend session cookie lifetime
-        $this->container->get(SessionCookie::class)->extend();
 
         return $response->send();
     }
