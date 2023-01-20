@@ -18,7 +18,7 @@ class SessionManager
     public function createFileDriver()
     {
         $instance = new FileSessionHandler($this->config['path'],$this->config['expire']);
-        return new Store($instance);
+        return new Store($instance,$this->config);
     }
 
     public function getDefaultDriverName()

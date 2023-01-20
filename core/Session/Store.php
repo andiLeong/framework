@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\Session;
 
 use Andileong\Framework\Core\Session\Contracts\Session;
 use Andileong\Framework\Core\Support\Str;
+use Carbon\Carbon;
 use SessionHandlerInterface;
 
 class Store implements Session
@@ -13,6 +14,7 @@ class Store implements Session
 
     public function __construct(
         protected SessionHandlerInterface $handler,
+        protected array                   $config,
         protected                         $id = null,
     )
     {
@@ -56,7 +58,7 @@ class Store implements Session
      * generate a random string
      * @return string
      */
-    public function generateId() :string
+    public function generateId(): string
     {
         return Str::random(32);
     }
@@ -152,6 +154,28 @@ class Store implements Session
      */
     public function clean($second)
     {
-        $this->handler->gc($second);
+        if($this->shouldPerformCleanUp()){
+            $this->handler->gc($second);
+        }
+    }
+
+    /**
+     * determine if we need to perform clean up old session data
+     * @return bool
+     */
+    public function shouldPerformCleanUp()
+    {
+        $flushDay = $this->config['flush_day'];
+        if (empty($flushDay)){
+            return true;
+        }
+
+        foreach ($flushDay as $dayToFlush){
+            if(Carbon::now()->dayName === ucfirst($dayToFlush)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

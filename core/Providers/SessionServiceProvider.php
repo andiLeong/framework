@@ -39,7 +39,8 @@ class SessionServiceProvider extends AbstractProvider implements Contract\Provid
 
     private function registerStore()
     {
-        $this->app->singleton(Store::class, fn($app) => $app->get('session.manager')->driver()
+        $this->app->singleton(Store::class,
+            fn($app) => $app->get('session.manager')->driver()
         );
     }
 }
