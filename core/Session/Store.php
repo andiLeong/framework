@@ -166,12 +166,18 @@ class Store implements Session
     public function shouldPerformCleanUp()
     {
         $flushDay = $this->config['flush_day'];
-        if (empty($flushDay)){
+        if (empty($flushDay['day'])){
             return true;
         }
 
-        foreach ($flushDay as $dayToFlush){
-            if(Carbon::now()->dayName === ucfirst($dayToFlush)){
+        $times = $flushDay['time'];
+        foreach ($flushDay['day'] as $dayToFlush){
+
+            $now = Carbon::now();
+            $startTime = Carbon::parse("$dayToFlush $times[0]");
+            $endTime = Carbon::parse("$dayToFlush $times[1]");
+
+            if($now->dayName === ucfirst($dayToFlush) && $now->between($startTime, $endTime)){
                 return true;
             }
         }
