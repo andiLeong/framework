@@ -6,9 +6,9 @@ use Andileong\Framework\Core\Container\Container;
 
 class Pipeline
 {
-
     public array $pipes = [];
     public $object;
+    protected $method = 'handle';
 
     public function __construct(protected ?Container $container = null)
     {
@@ -39,6 +39,17 @@ class Pipeline
     }
 
     /**
+     * set the method
+     * @param $method
+     * @return $this
+     */
+    public function via($method)
+    {
+        $this->method = $method;
+        return $this;
+    }
+
+    /**
      * run the pipeline
      * @return $this
      */
@@ -54,7 +65,7 @@ class Pipeline
     private function start()
     {
         if(!empty($this->pipes)){
-            $this->pipes[0]->handle($this->object);
+            $this->pipes[0]->{$this->method}($this->object);
         }
         return $this;
     }

@@ -20,6 +20,7 @@ use Andileong\Framework\Core\Logs\LoggerManager;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
 use Andileong\Framework\Core\Routing\Router;
+use Andileong\Framework\Core\Session\Contracts\Session;
 use Andileong\Framework\Core\Session\SessionManager;
 use Andileong\Framework\Core\Session\Store;
 use Andileong\Validation\Validator;
@@ -47,7 +48,7 @@ class Application extends Container
         'jwt' => [Jwt::class],
         'jwt.auth' => [JwtAuth::class],
         'session.manager' => [SessionManager::class],
-        'session' => [Store::class],
+        'session' => [Store::class, Session::class],
         'cookie' => [CookieJar::class],
     ];
 

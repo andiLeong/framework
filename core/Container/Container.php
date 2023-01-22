@@ -136,8 +136,13 @@ class Container implements \ArrayAccess
             }
 
             $dependency = $param->getType()->getName();
+
+            if(interface_exists($dependency) && array_key_exists($dependency,$this->alias)){
+                return $this->get($dependency);
+            }
+
             if (!class_exists($dependency) || (new \ReflectionClass($dependency))->isAbstract()) {
-                throw new InstantiateException("wec couldn't instantiate for you either dependency is abstract or not instantiable");
+                throw new InstantiateException("We couldn't instantiate for you either dependency is abstract or not instantiable");
             }
 
             return $this->get($dependency);

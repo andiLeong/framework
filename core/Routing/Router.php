@@ -5,10 +5,11 @@ namespace Andileong\Framework\Core\Routing;
 use Andileong\Framework\Core\Container\Container;
 use Andileong\Framework\Core\Pipeline\Pipeline;
 use Andileong\Framework\Core\Request\Request;
-use Andileong\Framework\Core\Session\SessionCookie;
+use Andileong\Framework\Core\Response\Pipes\AddCors;
+use Andileong\Framework\Core\Response\Pipes\PersistCookie;
+use Andileong\Framework\Core\Response\Pipes\SaveSession;
 use Andileong\Framework\Core\View\View;
 use App\Middleware\Middleware;
-use Carbon\Carbon;
 use Closure;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -241,30 +242,17 @@ class Router
      */
     public function response()
     {
-        $response = $this->addCors($this->run());
-
-        //todo refactor to event/listener
-
-        $cookieJar = $this->container->get('cookie');
-        $cookieJar->persist($response);
-
-        //save session
-        $sessionDriver = $this->container->get('session');
-        $sessionDriver->save();
+        $response = $this->container->get(Pipeline::class)
+            ->send($this->run())
+            ->through([
+                AddCors::class,
+                SaveSession::class,
+                PersistCookie::class,
+            ])
+            ->run()
+            ->result();
 
         return $response->send();
-    }
-
-    /**
-     * add cors to response header if its header Sec-Fetch-Mode = 'cors'
-     * @param Response $response
-     * @return mixed
-     * @throws Exception
-     */
-    private function addCors(Response $response)
-    {
-        $cors = $this->container->get('cors');
-        return $cors->handleResponse($response);
     }
 
     /**

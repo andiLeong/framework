@@ -1,6 +1,6 @@
 <?php
 
-namespace Andileong\Framework\Tests;
+namespace Andileong\Framework\Core\tests\Application;
 
 use Andileong\Framework\Core\Application;
 use Andileong\Framework\Core\Container\Container;
@@ -66,9 +66,29 @@ class ContainerTest extends testCase
     }
 
     /** @test */
-    public function it_can_not_instantiate_class_dependency_has_not_type_hint()
+    public function it_can_not_instantiate_class_with_dependency_that_is_interface_that_not_exist_in_alias()
     {
         $this->expectException(InstantiateException::class);
+        $this->expectExceptionMessage("We couldn't instantiate for you either dependency is abstract or not instantiable");
+        $container = new Container();
+        $container->get(DependsOnInterface::class);
+    }
+
+    /** @test */
+    public function it_can_instantiate_class_with_dependency_that_is_interface_that_exist_in_alias()
+    {
+        $container = new FakeContainer();
+        $container->setAlias('interface', FakeInterface::class);
+        $container->bind('interface', new ImplementInterface);
+        $dependOnInterface = $container->get(DependsOnInterface::class);
+        $this->assertInstanceOf(DependsOnInterface::class, $dependOnInterface);
+    }
+
+    /** @test */
+    public function it_can_not_instantiate_class_dependency_has_no_type_hint()
+    {
+        $this->expectException(InstantiateException::class);
+        $this->expectExceptionMessage("We encounter one of the constructor type is not specify we couldn't instantiate for you");
         $container = new Container();
         $container->get(NoTypeHint::class);
     }
@@ -77,6 +97,7 @@ class ContainerTest extends testCase
     public function it_can_not_instantiate_class_dependency_contains_union_types()
     {
         $this->expectException(InstantiateException::class);
+        $this->expectExceptionMessage("Target class contains union type argument , we can't instantiate for you");
         $container = new Container();
         $container->get(UnionTypeDependency::class);
     }
@@ -85,6 +106,7 @@ class ContainerTest extends testCase
     public function it_can_not_instantiate_class_dependency_if_its_abstract_or_if_class_not_exist()
     {
         $this->expectException(InstantiateException::class);
+        $this->expectExceptionMessage("We couldn't instantiate for you either dependency is abstract or not instantiable");
         $container = new Container();
         $container->get(DependsOnAbstract::class);
     }
@@ -202,5 +224,30 @@ class DependsOnAbstract
 {
     public function __construct(AbstractDependency $a)
     {
+    }
+}
+
+interface FakeInterface
+{
+
+}
+
+class ImplementInterface implements FakeInterface
+{
+
+}
+
+class DependsOnInterface
+{
+    public function __construct(FakeInterface $a)
+    {
+    }
+}
+
+class FakeContainer extends Container
+{
+    public function setAlias($alias,$value)
+    {
+        $this->alias[$value] = $alias;
     }
 }
