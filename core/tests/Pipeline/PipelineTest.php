@@ -147,6 +147,17 @@ class PipelineTest extends TestCase
         $this->assertEquals($this->object, $result);
     }
 
+    /** @test */
+    public function if_the_pipe_is_not_instance_of_chainable_we_should_throw_exception()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('instance must be Chainable');
+        $this->pipeline($this->object, [
+            PipeOne::class,
+            new \stdClass(),
+        ])->run()->result();
+    }
+
     public function pipeline($object, $pipes = [])
     {
         return (new Pipeline(app()))

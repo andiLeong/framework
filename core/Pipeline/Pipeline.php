@@ -137,7 +137,7 @@ class Pipeline
             }
 
             if ($this->container) {
-                return $this->container->get($pipe);
+                return $this->buildPipe($pipe);
             }
 
             throw new \InvalidArgumentException('unrecognizable pipe ' . $pipe);
@@ -157,6 +157,19 @@ class Pipeline
             }
         }
         return $this;
+    }
+
+    /**
+     * @return Chainable
+     * @throws \Exception
+     */
+    protected function buildPipe($pipe)
+    {
+        $pipe = $this->container->get($pipe);
+        if (! $pipe instanceof Chainable) {
+            throw new \RuntimeException('instance must be Chainable');
+        }
+        return $pipe;
     }
 
 }
