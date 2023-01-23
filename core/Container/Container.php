@@ -57,7 +57,7 @@ class Container implements \ArrayAccess
 
         $key = $this->getAlias($key);
 
-        if (!$this->has($key) && !$this->existedInSingleton($key)) {
+        if (! $this->canBePulled($key)) {
 
             if (class_exists($key)) {
                 return $this->instantiate($key);
@@ -136,8 +136,9 @@ class Container implements \ArrayAccess
             }
 
             $dependency = $param->getType()->getName();
+//            dump($dependency);
 
-            if(interface_exists($dependency) && array_key_exists($dependency,$this->alias)){
+            if($this->canBePulled($dependency)){
                 return $this->get($dependency);
             }
 
@@ -169,6 +170,18 @@ class Container implements \ArrayAccess
         self::$instance = $instance;
         return $this;
     }
+
+    /**
+     * check the key is existed in binding or in singleton instance
+     * @param $key
+     * @return bool
+     */
+    protected function canBePulled($key)
+    {
+        $key = $this->getAlias($key);
+        return $this->has($key) || $this->existedInSingleton($key);
+    }
+
 
     public function offsetExists(mixed $offset): bool
     {

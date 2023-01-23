@@ -40,8 +40,9 @@ trait Http
 
         require './routes/routes.php';
 
-        $response = $this->app['router']->run();
-        return new Response($this, $response);
+        $router = $this->app['router'];
+        $router->setRequest($request);
+        return new Response($this, $router->run());
     }
 
     protected function getRequestParams(mixed $method, string $uri, mixed $data)

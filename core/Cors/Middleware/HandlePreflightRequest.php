@@ -15,7 +15,7 @@ class HandlePreflightRequest extends Chainable
 
     public function handle(Request|null $request)
     {
-        return $this->cors->handleMiddlewareRequest($this);
+        return $this->cors->handleMiddlewareRequest($this, $request);
     }
 
 }

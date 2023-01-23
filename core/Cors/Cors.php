@@ -36,12 +36,13 @@ class Cors
     /**
      * handle the preflight option request middleware browser send to us
      * @param Chainable $middleware
+     * @param Request $request
      * @return mixed
      */
-    public function handleMiddlewareRequest(Chainable $middleware)
+    public function handleMiddlewareRequest(Chainable $middleware,Request $request)
     {
-        if ($this->request->method() === 'OPTIONS'
-            && $this->request->hasHeader('Access-Control-Request-Method')
+        if ($request->method() === 'OPTIONS'
+            && $request->hasHeader('Access-Control-Request-Method')
         ) {
 
             $response = json('', 200, $this->getCorsOption());
@@ -49,7 +50,7 @@ class Cors
             return $middleware->break($response);
         }
 
-        return $middleware->next($this->request);
+        return $middleware->next($request);
     }
 
     /**

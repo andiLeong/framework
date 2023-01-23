@@ -153,6 +153,7 @@ class Router
      */
     private function runGlobalMiddlewares(callable $next)
     {
+        $this->container->setSingleton('request', $this->request);
         $pipeline = $this->container->get(Pipeline::class);
         return $pipeline
             ->send($this->request)
@@ -318,5 +319,15 @@ class Router
         }
     }
 
+    /**
+     * set request to current
+     * @param Request $request
+     * @return $this
+     */
+    public function setRequest(Request $request)
+    {
+       $this->request = $request;
+       return $this;
+    }
 
 }

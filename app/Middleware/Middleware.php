@@ -8,8 +8,8 @@ use Andileong\Framework\Core\Session\Middleware\StartSession;
 class Middleware
 {
     public $golbalMiddlewares = [
-        StartSession::class,
         HandlePreflightRequest::class,
+        StartSession::class,
     ];
 
     public $middlewares = [

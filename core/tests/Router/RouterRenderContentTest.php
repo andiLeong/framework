@@ -79,7 +79,7 @@ class RouterRenderContentTest extends ApplicationTestCase
 
         $router = $this->getRouter('/foo');
         $router->get('/foo', [Foo::class, 'index']);
-        $content = $router->render('/foo', 'GET');
+        $content = $router->render();
         $this->assertEquals('foo', $content);
     }
 
