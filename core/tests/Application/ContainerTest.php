@@ -151,19 +151,61 @@ class ContainerTest extends testCase
     /** @test */
     public function it_can_unset_container_key()
     {
-        $container = new Container();
+        $container = new FakeContainer();
         $container->bind('foo','bar');
-        $this->assertTrue($container->has('foo'));
         unset($container['foo']);
         $this->assertFalse($container->has('foo'));
+
+        $container->singleton('a','b');
+        $this->assertTrue(isset($container['a']));
+        unset($container['a']);
+        $this->assertFalse(isset($container['a']));
+
+        $container->setSingleton('x','y');
+        $this->assertTrue(isset($container['x']));
+        unset($container['x']);
+        $this->assertFalse(isset($container['x']));
+
+        $container->setAlias('session', 'session-class');
+        $container->setSingleton('session', 'session-instance');
+        unset($container['session-class']);
+        $this->assertFalse(isset($container['session']));
+
+        $container->setAlias('auth', 'auth-class');
+        $container->singleton('auth', 'auth-instance');
+        unset($container['auth-class']);
+        $this->assertFalse(isset($container['auth']));
     }
 
     /** @test */
     public function it_can_check_container_key_exist_like_array()
     {
-        $container = new Container();
+        $container = new FakeContainer();
         $res = isset($container['foo']);
+
+        $container->bind('foo', 'bar');
+        $container->singleton('a', 'b');
+
+        $container->setAlias('session', 'session-class');
+        $container->singleton('session', 'session-class-instance');
+
+        $container->setAlias('auth', 'auth-class');
+        $container->bind('auth', 'auth-class');
+
+        $res2 = isset($container['foo']);
+        $res3 = isset($container['foo']);
+        $res4 = isset($container['session']);
+        $res5 = isset($container['session-class']);
+        $res6 = isset($container['auth']);
+        $res7 = isset($container['auth-class']);
+
         $this->assertFalse($res);
+        $this->assertTrue($res2);
+        $this->assertTrue($res3);
+        $this->assertTrue($res4);
+        $this->assertTrue($res5);
+        $this->assertTrue($res6);
+        $this->assertTrue($res7);
     }
 
     /** @test */

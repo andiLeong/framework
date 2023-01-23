@@ -14,6 +14,12 @@ class Container implements \ArrayAccess
     protected $aliasMapping = [];
     static protected $instance;
 
+    /**
+     * put key as normal non-singleton binding
+     * @param $key
+     * @param $concrete
+     * @param $share
+     */
     public function bind($key, $concrete, $share = false)
     {
         $key = $this->getAlias($key);
@@ -23,32 +29,65 @@ class Container implements \ArrayAccess
         ];
     }
 
+    /**
+     * put a key as singleton
+     * @param $key
+     * @param $concrete
+     */
     public function singleton($key, $concrete)
     {
         $this->bind($key, $concrete, true);
     }
 
+    /**
+     * determine if the key is bound as singleton
+     * @param $key
+     * @return mixed
+     */
     public function isSingleton($key)
     {
         return $this->bindings[$key]['shared'];
     }
 
+    /**
+     * determine if the key is existed in the singletons
+     * @param $key
+     * @return bool
+     */
     public function existedInSingleton($key)
     {
         return isset($this->singletons[$key]);
     }
 
+    /**
+     * get all the singleton instances
+     * @return array|mixed
+     */
     public function getSingleton()
     {
         return $this->singletons;
     }
 
-    public function setSingleton($key,$concrete)
+    /**
+     * put key/value to singleton array
+     * @param $key
+     * @param $concrete
+     * @return mixed
+     */
+    public function setSingleton($key, $concrete)
     {
         $key = $this->getAlias($key);
         return $this->singletons[$key] = $concrete;
     }
 
+    /**
+     * try to get a key from the container
+     * @param $key
+     * @param $args
+     * @return mixed|object|string|null
+     * @throws InstantiateException
+     * @throws \ReflectionException
+     */
     public function get($key, $args = [])
     {
         if (is_object($key)) {
@@ -57,13 +96,8 @@ class Container implements \ArrayAccess
 
         $key = $this->getAlias($key);
 
-        if (! $this->canBePulled($key)) {
-
-            if (class_exists($key)) {
-                return $this->instantiate($key);
-            }
-
-            throw new \Exception("there is no key registered {$key}");
+        if (!$this->canBePulled($key)) {
+            return $this->build($key);
         }
 
         if ($this->existedInSingleton($key)) {
@@ -72,15 +106,11 @@ class Container implements \ArrayAccess
 
         $bind = $this->bindings[$key];
 
-
         $concrete = $bind['concrete'] instanceof Closure
             ? $bind['concrete']($this, $args)
             : $bind['concrete'];
 
-        return $this->savedToSingleton(
-            $key,
-            $concrete
-        );
+        return $this->savedToSingleton($key, $concrete);
     }
 
     /**
@@ -96,12 +126,18 @@ class Container implements \ArrayAccess
         return $concrete;
     }
 
+    /**
+     * check if we have key bindings
+     * @param $key
+     * @return bool
+     */
     public function has($key)
     {
         return isset($this->bindings[$key]);
     }
 
     /**
+     * try to instantiate a class
      * @param string $class
      * @return mixed|object|string|null
      * @throws InstantiateException
@@ -136,9 +172,7 @@ class Container implements \ArrayAccess
             }
 
             $dependency = $param->getType()->getName();
-//            dump($dependency);
-
-            if($this->canBePulled($dependency)){
+            if ($this->canBePulled($dependency)) {
                 return $this->get($dependency);
             }
 
@@ -155,16 +189,30 @@ class Container implements \ArrayAccess
 
     }
 
+    /**
+     * try to a key's alias if no the key will be return
+     * @param $key
+     * @return mixed
+     */
     public function getAlias($key)
     {
         return $this->alias[$key] ?? $key;
     }
 
+    /**
+     * get the application instance
+     * @return mixed
+     */
     public static function getInstance()
     {
         return self::$instance;
     }
 
+    /**
+     * set application instance
+     * @param Application $instance
+     * @return $this
+     */
     public function setInstance(Application $instance)
     {
         self::$instance = $instance;
@@ -182,10 +230,25 @@ class Container implements \ArrayAccess
         return $this->has($key) || $this->existedInSingleton($key);
     }
 
+    /**
+     * try to build a class
+     * @param  $class
+     * @return mixed|object|string|null
+     * @throws InstantiateException
+     * @throws \ReflectionException
+     */
+    protected function build($class)
+    {
+        if (class_exists($class)) {
+            return $this->instantiate($class);
+        }
+
+        throw new \Exception("there is no key registered {$class}");
+    }
 
     public function offsetExists(mixed $offset): bool
     {
-        return $this->has($offset);
+        return $this->canBePulled($offset);
     }
 
     public function offsetGet(mixed $offset): mixed
@@ -200,6 +263,8 @@ class Container implements \ArrayAccess
 
     public function offsetUnset(mixed $offset): void
     {
+        $offset = $this->getAlias($offset);
         unset($this->bindings[$offset]);
+        unset($this->singletons[$offset]);
     }
 }
