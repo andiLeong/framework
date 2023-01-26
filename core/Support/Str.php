@@ -5,19 +5,109 @@ namespace Andileong\Framework\Core\Support;
 class Str
 {
 
-    public static function random($length = 10)
+    /**
+     * generate a random string based on the length
+     * @param int $length
+     * @return string
+     * @throws \Exception
+     */
+    public static function random(int $length = 10)
     {
-        $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return substr(str_shuffle(str_repeat($x, ceil($length / strlen($x)))), 1, $length);
+        $bytes = random_bytes($length);
+        return substr(str_replace(['+', '/', '='], '', base64_encode($bytes)), 0, $length);
     }
 
-    public static function camel($value, $separator = '_')
+    /**
+     * convert a string to camel case
+     * @param string $value
+     * @param string $separator
+     * @return string
+     */
+    public static function camel(string $value, string $separator = '_')
     {
         $capitalizedArray = array_map(
             fn($value) => ucfirst($value),
             explode($separator, $value)
         );
         return implode('', $capitalizedArray);
+    }
+
+    /**
+     * convert string to kebab-case
+     * @param string $string
+     * @param string $separator
+     * @return string
+     */
+    public static function kebab(string $string, string $separator = '-')
+    {
+        $string = str_replace(' ', '', $string);
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', $separator . '$0', $string));
+    }
+
+    /**
+     * convert string to snake_case
+     * @param string $string
+     * @return string
+     */
+    public static function snake(string $string)
+    {
+        return self::kebab($string, '_');
+    }
+
+    /**
+     * find a portion of string before a certain string
+     * @param string $string
+     * @param string $search
+     * @param bool $before
+     * @return string
+     */
+    public static function before(string $string, string $search, bool $before = true)
+    {
+        if (trim($search) === '') {
+            return $string;
+        }
+
+        $value = strstr($string, trim($search), $before);
+        return $value === false ? $string : $value;
+    }
+
+    /**
+     * try to get a portion of string after a search
+     * @param string $string
+     * @param string $search
+     * @return string
+     */
+    public static function after(string $string, string $search)
+    {
+        if (trim($search) === '') {
+            return $string;
+        }
+
+        $result = strstr($string, trim($search));
+        return $result === false
+            ? $string
+            : ltrim($result, $search);
+    }
+
+    /**
+     * search part of the string between 2 strings
+     * @param string $string
+     * @param string $first
+     * @param string $second
+     * @return string
+     */
+    public static function between(string $string, string $first, string $second)
+    {
+        $trimSuffice = self::before($string, $second);
+        if ($trimSuffice === $string) {
+            return $string;
+        }
+
+        $value = self::after($trimSuffice, $first);
+        if ($value === $trimSuffice) {
+            return $string;
+        }
+        return $value;
     }
 
     /**
@@ -33,12 +123,12 @@ class Str
 
     /**
      * separate a string by a separator
-     * @param $string
-     * @param $separator
-     * @param $portions
+     * @param string $string
+     * @param string $separator
+     * @param array $portions
      * @return string
      */
-    public static function separate($string, $separator = '-', $portions = [])
+    public static function separate(string $string, string $separator = '-', array $portions = [])
     {
         $array = str_split($string);
         $result = '';
@@ -47,7 +137,7 @@ class Str
 
             //if $portion array is empty
             //we assume developer wants to separate every value in the string
-            if(empty($portions) && $index != count($array)){
+            if (empty($portions) && $index != count($array)) {
                 $result .= $value . $separator;
                 continue;
             }
@@ -83,10 +173,10 @@ class Str
 
     /**
      * decide the given string is uuid
-     * @param $uuid
+     * @param string $uuid
      * @return bool
      */
-    public static function isUuid($uuid)
+    public static function isUuid(string $uuid)
     {
         return preg_match('/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/', $uuid) > 0;
     }

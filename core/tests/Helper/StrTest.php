@@ -9,6 +9,101 @@ class StrTest extends testcase
 {
 
     /** @test */
+    public function it_can_generate_random_string()
+    {
+        $str = Str::random();
+        $str2 = Str::random(16);
+        $str3 = Str::random(3000);
+        $str4 = Str::random(3000000);
+        $this->assertEquals(10, strlen($str));
+        $this->assertEquals(16, strlen($str2));
+        $this->assertEquals(3000, strlen($str3));
+        $this->assertEquals(3000000, strlen($str4));
+    }
+
+    /** @test */
+    public function it_can_convert_to_camel_case()
+    {
+        $str = Str::camel('process_payment');
+        $str2 = Str::camel('Process_Payment');
+        $str3 = Str::camel('Process@Payment', '@');
+        $this->assertEquals('ProcessPayment', $str);
+        $this->assertEquals('ProcessPayment', $str2);
+        $this->assertEquals('ProcessPayment', $str3);
+    }
+
+    /** @test */
+    public function it_can_convert_to_Kebab_case()
+    {
+        $str = Str::kebab('processPayment');
+        $str2 = Str::kebab('ProcessPayment');
+        $str3 = Str::kebab('Process@Payment');
+        $str4 = Str::kebab('ProcessPayMent');
+        $str5 = Str::kebab('P rocessPayMent');
+        $this->assertEquals('process-payment', $str);
+        $this->assertEquals('process-payment', $str2);
+        $this->assertEquals('process@-payment', $str3);
+        $this->assertEquals('process-pay-ment', $str4);
+        $this->assertEquals('process-pay-ment', $str5);
+    }
+
+    /** @test */
+    public function it_can_convert_to_snake_case()
+    {
+        $str = Str::snake('processPayment');
+        $str2 = Str::snake('ProcessPayment');
+        $str3 = Str::snake('Process@Payment');
+        $str4 = Str::snake('ProcessPayMent');
+        $str5 = Str::snake('P rocessPayMent');
+        $this->assertEquals('process_payment', $str);
+        $this->assertEquals('process_payment', $str2);
+        $this->assertEquals('process@_payment', $str3);
+        $this->assertEquals('process_pay_ment', $str4);
+        $this->assertEquals('process_pay_ment', $str5);
+    }
+
+    /** @test */
+    public function it_can_get_a_portion_of_string_before_a_string()
+    {
+        $str = Str::before('User@create', '@');
+        $str2 = Str::before('User@create', '|');
+        $str3 = Str::before('User@create', '');
+        $str4 = Str::before('User@create', '   ');
+        $this->assertEquals('User', $str);
+        $this->assertEquals('User@create', $str2);
+        $this->assertEquals('User@create', $str3);
+        $this->assertEquals('User@create', $str4);
+    }
+
+    /** @test */
+    public function it_can_get_a_portion_of_string_after_a_string()
+    {
+        $str = Str::after('User@create', '@');
+        $str2 = Str::after('User@create', '|');
+        $str3 = Str::after('User@create', '');
+        $str4 = Str::after('User@create', '   ');
+        $str5 = Str::after('User@create', 'User@');
+        $this->assertEquals('create', $str);
+        $this->assertEquals('User@create', $str2);
+        $this->assertEquals('User@create', $str3);
+        $this->assertEquals('User@create', $str4);
+        $this->assertEquals('create', $str5);
+    }
+
+    /** @test */
+    public function it_can_get_a_portion_of_string_between_a_string()
+    {
+        $str = Str::between('User@create', 'User', 'create');
+        $str2 = Str::between('this is password, please remember', 'this is ', ', please remember');
+        $str3 = Str::between('User@create', 'xx', 'create');
+        $str4 = Str::between('User@create', 'User', 'yyy');
+        $this->assertEquals('@', $str);
+        $this->assertEquals('password', $str2);
+        $this->assertEquals('User@create', $str3);
+        $this->assertEquals('User@create', $str4);
+    }
+
+    /** @test */
     public function it_can_separate_a_string()
     {
         $separator = '-';
@@ -19,11 +114,11 @@ class StrTest extends testcase
         $res4 = Str::separate($uuid, '@', [8, 4, 4, 4, 13]);
         $res5 = Str::separate('abcdefg', '|');
 
-        $this->assertEquals('123e4567-e89b-12d3-a456-426614174000',$res1);
-        $this->assertEquals('123e4567-e89b-12d3-a456-4266141740-00',$res2);
-        $this->assertEquals('123e4567-e89b-12d3-a456-426614174000',$res3);
-        $this->assertEquals('123e4567@e89b@12d3@a456@426614174000',$res4);
-        $this->assertEquals('a|b|c|d|e|f|g',$res5);
+        $this->assertEquals('123e4567-e89b-12d3-a456-426614174000', $res1);
+        $this->assertEquals('123e4567-e89b-12d3-a456-4266141740-00', $res2);
+        $this->assertEquals('123e4567-e89b-12d3-a456-426614174000', $res3);
+        $this->assertEquals('123e4567@e89b@12d3@a456@426614174000', $res4);
+        $this->assertEquals('a|b|c|d|e|f|g', $res5);
     }
 
     /** @test */
