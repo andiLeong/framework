@@ -127,4 +127,27 @@ class StrTest extends testcase
         $uuid = Str::uuid4();
         $this->assertTrue(Str::isUuid($uuid));
     }
+
+    /** @test */
+    public function it_can_generate_a_ulid()
+    {
+        $uuid = Str::ulid();
+        $this->assertTrue(strlen($uuid) === 26);
+    }
+
+    /** @test */
+    public function it_can_validate_ulid()
+    {
+        $this->assertTrue(Str::isUlid(Str::ulid()));
+        $this->assertTrue(Str::isUlid(Str::ulid(false)));
+        $this->assertTrue(Str::isUlid('ABCDEFGHJKMNPQRSTVWXYZ0123'));
+
+        // not exactly 26 long
+        $this->assertFalse(Str::isUlid('abcdefghjkmnpqrstvwxyz01235'));
+
+        // contains invalid letter
+        $this->assertFalse(Str::isUlid('i'));
+        $this->assertFalse(Str::isUlid('i0123abcdefghjkmnpqrstvwxyz'));
+        $this->assertFalse(Str::isUlid('+@|'));
+    }
 }

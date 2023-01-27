@@ -180,4 +180,24 @@ class Str
     {
         return preg_match('/[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/', $uuid) > 0;
     }
+
+    /**
+     * generate a ulid string
+     * @return Ulid
+     * @throws \Exception
+     */
+    public static function ulid($uppercase = true)
+    {
+       return Ulid::generate($uppercase);
+    }
+
+    /**
+     * determine a given id is a valid ulid
+     * @param string $ulid
+     * @return bool
+     */
+    public static function isUlid(string $ulid)
+    {
+        return Ulid::isValid($ulid);
+    }
 }
