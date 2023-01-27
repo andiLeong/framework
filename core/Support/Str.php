@@ -58,16 +58,15 @@ class Str
      * find a portion of string before a certain string
      * @param string $string
      * @param string $search
-     * @param bool $before
      * @return string
      */
-    public static function before(string $string, string $search, bool $before = true)
+    public static function before(string $string, string $search)
     {
-        if (trim($search) === '') {
+        if ($search === '') {
             return $string;
         }
 
-        $value = strstr($string, trim($search), $before);
+        $value = strstr($string, $search, true);
         return $value === false ? $string : $value;
     }
 
@@ -79,11 +78,11 @@ class Str
      */
     public static function after(string $string, string $search)
     {
-        if (trim($search) === '') {
+        if ($search === '') {
             return $string;
         }
 
-        $result = strstr($string, trim($search));
+        $result = strstr($string, $search);
         return $result === false
             ? $string
             : ltrim($result, $search);
@@ -108,6 +107,61 @@ class Str
             return $string;
         }
         return $value;
+    }
+
+    /**
+     * remove part of the string
+     * @param string $string
+     * @param string $search
+     * @return array|string|string[]
+     */
+    public static function remove(string $string, string $search)
+    {
+        return self::replace($string, $search);
+    }
+
+    /**
+     * remove first occurrence of a string
+     * @param string $string
+     * @param string $search
+     * @return array|string|string[]
+     */
+    public static function removeFirst(string $string, string $search)
+    {
+        return self::replaceFirst($string, $search);
+    }
+
+    /**
+     * replace any occurrence
+     * @param string $string
+     * @param string $search
+     * @param string $replacement
+     * @return array|string|string[]
+     */
+    public static function replace(string $string, string $search, string $replacement = '')
+    {
+        return str_replace($search, $replacement, $string);
+    }
+
+    /**
+     * replace first occurrence of a string
+     * @param string $string
+     * @param string $search
+     * @param string $replacement
+     * @return array|string|string[]
+     */
+    public static function replaceFirst(string $string, string $search, string $replacement = '')
+    {
+        if ($search === '') {
+            return $string;
+        }
+
+        $pos = strpos($string, $search);
+        if ($pos === false) {
+            return $string;
+        }
+
+        return substr_replace($string, $replacement, $pos, strlen($search));
     }
 
     /**
@@ -188,7 +242,7 @@ class Str
      */
     public static function ulid($uppercase = true)
     {
-       return Ulid::generate($uppercase);
+        return Ulid::generate($uppercase);
     }
 
     /**

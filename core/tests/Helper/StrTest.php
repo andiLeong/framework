@@ -68,11 +68,13 @@ class StrTest extends testcase
         $str = Str::before('User@create', '@');
         $str2 = Str::before('User@create', '|');
         $str3 = Str::before('User@create', '');
-        $str4 = Str::before('User@create', '   ');
+        $str4 = Str::before('User @create', ' ');
+        $str5 = Str::before(' User @create', ' ');
         $this->assertEquals('User', $str);
         $this->assertEquals('User@create', $str2);
         $this->assertEquals('User@create', $str3);
-        $this->assertEquals('User@create', $str4);
+        $this->assertEquals('User', $str4);
+        $this->assertEquals('', $str5);
     }
 
     /** @test */
@@ -81,13 +83,15 @@ class StrTest extends testcase
         $str = Str::after('User@create', '@');
         $str2 = Str::after('User@create', '|');
         $str3 = Str::after('User@create', '');
-        $str4 = Str::after('User@create', '   ');
         $str5 = Str::after('User@create', 'User@');
+        $str6 = Str::after(' User @create', ' ');
+        $str7 = Str::after('User @create', ' ');
         $this->assertEquals('create', $str);
         $this->assertEquals('User@create', $str2);
         $this->assertEquals('User@create', $str3);
-        $this->assertEquals('User@create', $str4);
         $this->assertEquals('create', $str5);
+        $this->assertEquals('User @create', $str6);
+        $this->assertEquals('@create', $str7);
     }
 
     /** @test */
@@ -97,10 +101,73 @@ class StrTest extends testcase
         $str2 = Str::between('this is password, please remember', 'this is ', ', please remember');
         $str3 = Str::between('User@create', 'xx', 'create');
         $str4 = Str::between('User@create', 'User', 'yyy');
+        $str5 = Str::between('User @ create', 'User ', ' create');
         $this->assertEquals('@', $str);
         $this->assertEquals('password', $str2);
         $this->assertEquals('User@create', $str3);
         $this->assertEquals('User@create', $str4);
+        $this->assertEquals('@', $str5);
+    }
+
+    /** @test */
+    public function it_can_remove_all_occurrence_of_the_string()
+    {
+        $string = 'User@create';
+        $str = Str::remove($string, 'User');
+        $str2 = Str::remove($string, 'e');
+        $str3 = Str::remove($string, '|');
+        $this->assertEquals('@create', $str);
+        $this->assertEquals('Usr@crat', $str2);
+        $this->assertEquals('User@create', $str3);
+    }
+
+    /** @test */
+    public function it_can_remove_first_occurrence_of_the_search_of_the_string()
+    {
+        $string = 'User@create';
+        $str = Str::removeFirst($string, 'User');
+        $str2 = Str::removeFirst($string, 'e');
+        $str3 = Str::removeFirst($string, '|');
+        $str4 = Str::removeFirst($string, ' ');
+        $this->assertEquals('@create', $str);
+        $this->assertEquals('Usr@create', $str2);
+        $this->assertEquals('User@create', $str3);
+        $this->assertEquals('User@create', $str4);
+    }
+
+    /** @test */
+    public function it_can_replace_all_occurrence_of_the_string()
+    {
+        $string = 'User@create';
+        $str = Str::replace($string, 'User', 'John');
+        $str2 = Str::replace($string, 'e', 'z');
+        $str3 = Str::replace($string, '|');
+        $this->assertEquals('John@create', $str);
+        $this->assertEquals('Uszr@crzatz', $str2);
+        $this->assertEquals('User@create', $str3);
+    }
+
+    /** @test */
+    public function it_can_replace_first_occurrence_of_the_search_of_the_string()
+    {
+        $string = 'User@create';
+        $str = Str::replaceFirst($string, '@', '|');
+        $str2 = Str::replaceFirst($string, 'e', 'z');
+        $str3 = Str::replaceFirst($string, '|', '@');
+        $str4 = Str::replaceFirst($string, ' ', 'space');
+        $str5 = Str::replaceFirst($string, 'u', 'A');
+        $str6 = Str::replaceFirst($string, 'U', 'A');
+        $str7 = Str::replaceFirst($string, '', 'A');
+        $str8 = Str::replaceFirst('User@ create', ' ', 'A');
+
+        $this->assertEquals('User|create', $str);
+        $this->assertEquals('Uszr@create', $str2);
+        $this->assertEquals('User@create', $str3);
+        $this->assertEquals('User@create', $str4);
+        $this->assertEquals('User@create', $str5);
+        $this->assertEquals('Aser@create', $str6);
+        $this->assertEquals('User@create', $str7);
+        $this->assertEquals('User@Acreate', $str8);
     }
 
     /** @test */
