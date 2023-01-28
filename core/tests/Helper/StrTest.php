@@ -70,11 +70,13 @@ class StrTest extends testcase
         $str3 = Str::before('User@create', '');
         $str4 = Str::before('User @create', ' ');
         $str5 = Str::before(' User @create', ' ');
+        $str6 = Str::before('你好吗', '好');
         $this->assertEquals('User', $str);
         $this->assertEquals('User@create', $str2);
         $this->assertEquals('User@create', $str3);
         $this->assertEquals('User', $str4);
         $this->assertEquals('', $str5);
+        $this->assertEquals('你', $str6);
     }
 
     /** @test */
@@ -186,6 +188,60 @@ class StrTest extends testcase
         $this->assertEquals('123e4567-e89b-12d3-a456-426614174000', $res3);
         $this->assertEquals('123e4567@e89b@12d3@a456@426614174000', $res4);
         $this->assertEquals('a|b|c|d|e|f|g', $res5);
+    }
+
+    /** @test */
+    public function it_can_limit_a_string()
+    {
+        $string = 'Johnny Johnny, yes papa, eating sugar? no papa. telling lies no papa';
+        $str = Str::limit($string, 23);
+        $str2 = Str::limit($string, 2000);
+        $str3 = Str::limit($string, 13, '.');
+        $str4 = Str::limit('您好，我很帅', 2);
+        $this->assertEquals('Johnny Johnny, yes papa...', $str);
+        $this->assertEquals($string . '...', $str2);
+        $this->assertEquals('Johnny Johnny.', $str3);
+        $this->assertEquals('您好...', $str4);
+    }
+
+    /** @test */
+    public function it_can_mask_a_string_from_positive_index()
+    {
+        $string = 'helloword@gmail.com';
+        $normalSuccessCase = Str::mask($string, '*', 5);
+        $indexIsTooLarge = Str::mask($string, '*', 500);
+        $indexEqualsTotalLength = Str::mask('abcd', '|', 4);
+        $indexEqualsTotalLengthWithLength = Str::mask('abcd', '*', 4, 1);
+        $indexIsZero = Str::mask('abcd', '|', 0);
+        $replacementIsEmpty = Str::mask($string, '', 4);
+        $successWithSpecifyLength = Str::mask($string, '*', 5, 4);
+        $lengthIsTooLarge = Str::mask($string, '*', 5, 100);
+
+        $this->assertEquals('hello**************', $normalSuccessCase);
+        $this->assertEquals($string, $indexIsTooLarge);
+        $this->assertEquals('abcd', $indexEqualsTotalLength);
+        $this->assertEquals('abcd', $indexIsZero);
+        $this->assertEquals($string, $replacementIsEmpty);
+        $this->assertEquals('hello****@gmail.com', $successWithSpecifyLength);
+        $this->assertEquals('hello**************', $lengthIsTooLarge);
+        $this->assertEquals('abcd', $indexEqualsTotalLengthWithLength);
+    }
+
+    /** @test */
+    public function it_can_mask_a_string_from_negative_index()
+    {
+        $string = 'helloword@gmail.com';
+        $normalSuccessCase = Str::mask($string, '*', -14, 4);
+        $lengthIsOmitted = Str::mask($string, '*', -14);
+        $lengthIsTooLarge = Str::mask($string, '*', -14, 100);
+        $indexIsTooLarge = Str::mask($string, '*', -14000, 4);
+        $indexLengthSameAsStringLength = Str::mask($string, '*', -19, 4);
+
+        $this->assertEquals('hello****@gmail.com', $normalSuccessCase);
+        $this->assertEquals('hello**************', $lengthIsOmitted);
+        $this->assertEquals('hello**************', $lengthIsTooLarge);
+        $this->assertEquals($string, $indexIsTooLarge);
+        $this->assertEquals('****oword@gmail.com', $indexLengthSameAsStringLength);
     }
 
     /** @test */

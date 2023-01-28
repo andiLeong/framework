@@ -66,7 +66,7 @@ class Str
             return $string;
         }
 
-        $value = strstr($string, $search, true);
+        $value = mb_strstr($string, $search, true);
         return $value === false ? $string : $value;
     }
 
@@ -162,6 +162,47 @@ class Str
         }
 
         return substr_replace($string, $replacement, $pos, strlen($search));
+    }
+
+    /**
+     * limit the length of the given string
+     * @param string $string
+     * @param int $length
+     * @param string $end
+     * @return string
+     */
+    public static function limit(string $string, int $length, string $end = '...')
+    {
+        $string = mb_substr($string, 0, $length);
+        return $string . $end;
+    }
+
+    /**
+     * mask a string with given characters
+     * @param string $string
+     * @param string $replacement
+     * @param int $index
+     * @param int|null $length
+     * @return array|string|string[]
+     */
+    public static function mask(string $string, string $replacement, int $index, int $length = null)
+    {
+        $indexInPositive = abs($index);
+        $stringLength = strlen($string);
+
+        if ($index === 0 || $replacement === '' || $indexInPositive > $stringLength) {
+            return $string;
+        }
+
+        $bounce = $index > 0
+            ? $stringLength - $index
+            : $indexInPositive;
+
+        if (is_null($length) || $length > $bounce) {
+            $length = $bounce;
+        }
+
+        return substr_replace($string, str_repeat($replacement, $length), $index, $length);
     }
 
     /**
