@@ -251,49 +251,17 @@ class Str
      * @param string $string
      * @param string $separator
      * @param array $portions
-     * @return string
+     * @param string $driver
+     * @return ArrayStringSeparator|SubStrSeparator
+     * @throws \Exception
      */
-    public static function separate(string $string, string $separator = '-', array $portions = [])
+    public static function separate(string $string, string $separator = '-', array $portions = [], string $driver = 'substr')
     {
-        $array = str_split($string);
-        $result = '';
-        foreach ($array as $index => $value) {
-            $index = $index + 1;
-
-            //if $portion array is empty
-            //we assume developer wants to separate every value in the string
-            if (empty($portions) && $index != count($array)) {
-                $result .= $value . $separator;
-                continue;
-            }
-
-            //if we are on the last loop
-            //we just append the value without any separator
-            if ($index === count($array)) {
-                $result .= $value;
-                continue;
-            }
-
-            // here we check if the index equals to the potion fist value
-            // if yes we append the separator, we also calculate the next 2 index and push the portion first value
-            // so whenever $portions first value is always updated index in the array
-            if ($index == $portions[0]) {
-
-                $value = $value . $separator;
-
-                if (count($portions) >= 2) {
-                    $nextIndex = $portions[0] + $portions[1];
-                    unset($portions[0]);
-                    unset($portions[1]);
-                    array_unshift($portions, $nextIndex);
-//                    dump($portions);
-                }
-            }
-
-            $result .= $value;
-        }
-
-        return $result;
+        return match ($driver){
+            'substr' => new SubStrSeparator($string, $separator, $portions),
+            'array' =>  new ArrayStringSeparator($string, $separator, $portions),
+            default => throw new \Exception('Unsupported string separation driver'),
+        };
     }
 
     /**
