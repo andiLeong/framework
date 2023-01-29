@@ -33,7 +33,7 @@ class StrTest extends testcase
     }
 
     /** @test */
-    public function it_can_convert_to_Kebab_case()
+    public function it_can_convert_to_kebab_case()
     {
         $str = Str::kebab('processPayment');
         $str2 = Str::kebab('ProcessPayment');
@@ -242,6 +242,38 @@ class StrTest extends testcase
         $this->assertEquals('hello**************', $lengthIsTooLarge);
         $this->assertEquals($string, $indexIsTooLarge);
         $this->assertEquals('****oword@gmail.com', $indexLengthSameAsStringLength);
+    }
+
+    /** @test */
+    public function it_can_revert_a_string()
+    {
+        $string = 'hello';
+        $str = Str::reverse($string);
+        $str2 = Str::reverse('hello/n');
+        $str3 = Str::reverse('');
+        $str4 = Str::reverse('你好');
+        $this->assertEquals('olleh', $str);
+        $this->assertEquals('n/olleh', $str2);
+        $this->assertEquals('', $str3);
+        $this->assertEquals('好你', $str4);
+    }
+
+    /** @test */
+    public function it_can_make_string_title()
+    {
+        $string = 'hello world, I am handsome';
+        $str = Str::title($string);
+        $str2 = Str::title('Xcvx awsdsd@sd sdfdf');
+        $this->assertEquals('Hello World, I Am Handsome', $str);
+        $this->assertEquals('Xcvx Awsdsd@Sd Sdfdf', $str2);
+    }
+
+    /** @test */
+    public function it_can_calculate_words_of_a_string()
+    {
+        $string = 'hello world, I am handsome';
+        $str = Str::wordCount($string);
+        $this->assertEquals(5, $str);
     }
 
     /** @test */

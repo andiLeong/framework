@@ -206,6 +206,36 @@ class Str
     }
 
     /**
+     * reverse the string
+     * @param string $string
+     * @return string
+     */
+    public static function reverse(string $string)
+    {
+        return implode(array_reverse(mb_str_split($string)));
+    }
+
+    /**
+     * make a string title case
+     * @param string $string
+     * @return array|false|string|string[]|null
+     */
+    public static function title(string $string)
+    {
+        return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
+     * calculate the words of a string
+     * @param string $string
+     * @return int
+     */
+    public static function wordCount(string $string)
+    {
+        return str_word_count($string);
+    }
+
+    /**
      * generate a fake uuid version 4
      * @return string
      * @throws \Exception
