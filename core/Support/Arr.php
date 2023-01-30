@@ -8,6 +8,57 @@ class Arr
 {
     //hasAny
 
+    /**
+     * remove array of keys that inside the original array
+     * @param array $array
+     * @param array $keys
+     * @return void
+     */
+    public static function forget(array &$array, array $keys)
+    {
+        $original = &$array;
+
+        foreach ($keys as $key) {
+            if (isset($array[$key])) {
+                unset($array[$key]);
+                continue;
+            }
+
+            $parts = explode('.', $key);
+            $array = &$original;
+
+            while (count($parts) > 1) {
+                $part = array_shift($parts);
+
+                if (isset($array[$part]) ) {
+                    $array = &$array[$part];
+                } else {
+                    continue 2;
+                }
+            }
+            unset($array[array_shift($parts)]);
+        }
+
+    }
+
+    /**
+     * set array key value with dot notation
+     * @param array $array
+     * @param string $key
+     * @param $value
+     */
+    public static function set(array &$array, string $key, $value)
+    {
+        $original = &$array;
+
+        foreach(explode('.', $key) as $step)
+        {
+            $original = &$original[$step];
+        }
+
+        $original = $value;
+    }
+
     public static function has($arr, $key)
     {
         if (!str_contains($key, '.')) {
@@ -32,7 +83,6 @@ class Arr
 
         return true;
     }
-
 
 
     /**
@@ -90,7 +140,7 @@ class Arr
      */
     public static function wrap($thing = null)
     {
-        if($thing === null){
+        if ($thing === null) {
             return [];
         }
 
@@ -135,7 +185,7 @@ class Arr
      * @param int $take
      * @return Collection|mixed
      */
-    public static function random($arr,$take = 1)
+    public static function random($arr, $take = 1)
     {
         return collection($arr)->random($take);
     }

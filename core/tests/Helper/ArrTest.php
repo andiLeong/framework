@@ -4,6 +4,7 @@ namespace Andileong\Framework\Core\tests\Helper;
 
 use Andileong\Framework\Core\Support\Arr;
 use PHPUnit\Framework\TestCase;
+use function PHPUnit\Framework\assertArrayNotHasKey;
 
 class ArrTest extends testcase
 {
@@ -71,5 +72,35 @@ class ArrTest extends testcase
         $this->assertTrue(Arr::has($this->arr, 'address.detail.country.name'));
         $this->assertTrue(Arr::has($this->arr, 'address.detail.country'));
         $this->assertFalse(Arr::has($this->arr, 'address.city2'));
+    }
+
+    /** @test */
+    public function it_can_except_some_array_keys()
+    {
+        $array = $this->arr;
+        Arr::forget($array,['name','age']);
+        Arr::forget($array,['address.city']);
+
+        $this->assertArrayNotHasKey('name', $array);
+        $this->assertArrayNotHasKey('age', $array);
+        $this->assertArrayNotHasKey('city', $array);
+    }
+
+    /** @test */
+    public function it_can_set_array_using_dot_notation()
+    {
+        $arr = [
+            'foo' => 'bar',
+        ];
+
+        Arr::set($arr,'user.name','anthony');
+        Arr::set($arr,'address.city.street','xx');
+        Arr::set($arr,'x','y');
+        Arr::set($arr,'foo','new');
+
+        $this->assertEquals('new', $arr['foo']);
+        $this->assertEquals('y', $arr['x']);
+        $this->assertEquals('anthony', $arr['user']['name']);
+        $this->assertEquals('xx', $arr['address']['city']['street']);
     }
 }
