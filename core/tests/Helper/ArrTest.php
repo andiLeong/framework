@@ -10,6 +10,7 @@ class ArrTest extends testcase
 {
     public $arr = [
         'name' => 'ronald',
+        'z' => null,
         'age' => 30,
         'address' => [
             'city' => 'guangzhou',
@@ -64,18 +65,28 @@ class ArrTest extends testcase
     }
 
     /** @test */
-    public function it_can_check_if_item_exists()
+    public function it_can_if_array_has_keys()
     {
         $this->assertTrue(Arr::has($this->arr, 'name'));
-        $this->assertFalse(Arr::has($this->arr, 'no'));
         $this->assertTrue(Arr::has($this->arr, 'address.city'));
         $this->assertTrue(Arr::has($this->arr, 'address.detail.country.name'));
         $this->assertTrue(Arr::has($this->arr, 'address.detail.country'));
+        $this->assertTrue(Arr::has($this->arr, 'z'));
+
         $this->assertFalse(Arr::has($this->arr, 'address.city2'));
+        $this->assertFalse(Arr::has($this->arr, 'no'));
     }
 
     /** @test */
-    public function it_can_except_some_array_keys()
+    public function it_can_check_if_item_exists()
+    {
+        $this->assertTrue(Arr::exists($this->arr, 'name'));
+        $this->assertTrue(Arr::exists($this->arr, 'z'));
+        $this->assertFalse(Arr::exists($this->arr, 'no'));
+    }
+
+    /** @test */
+    public function it_can_forget_some_array_keys()
     {
         $array = $this->arr;
         Arr::forget($array,['name','age']);
@@ -84,6 +95,32 @@ class ArrTest extends testcase
         $this->assertArrayNotHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
         $this->assertArrayNotHasKey('city', $array);
+    }
+
+    /** @test */
+    public function it_can_except_some_array_keys()
+    {
+        $arr = Arr::except($this->arr,['name','age']);
+        $arr2 = Arr::except($this->arr,['address.city']);
+
+        $this->assertArrayNotHasKey('name', $arr);
+        $this->assertArrayNotHasKey('age', $arr);
+        $this->assertArrayNotHasKey('city', $arr2['address']);
+    }
+
+    /** @test */
+    public function it_can_remove_a_key_from_array_and_return_the_value_of_the_key()
+    {
+        $array = $this->arr;
+        $this->assertArrayHasKey('name', $array);
+        $this->assertArrayHasKey('city', $array['address']);
+        $name = Arr::pull($array, 'name', 'default');
+        $city = Arr::pull($array,'address.city');
+
+        $this->assertEquals('ronald', $name);
+        $this->assertEquals('guangzhou', $city);
+        $this->assertArrayNotHasKey('name', $array);
+        $this->assertArrayNotHasKey('city', $array['address']);
     }
 
     /** @test */

@@ -9,13 +9,40 @@ class Arr
     //hasAny
 
     /**
-     * remove array of keys that inside the original array
+     * alias of forget but except return the array
      * @param array $array
      * @param array $keys
+     * @return array
+     */
+    public static function except(array $array, array $keys)
+    {
+        self::forget($array, $keys);
+        return $array;
+    }
+
+    /**
+     * remove the key inside the array and return the value
+     * @param array $array
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed|null
+     */
+    public static function pull(array &$array, string $key, mixed $default = null)
+    {
+        $value = self::get($array, $key, $default);
+        self::forget($array, $key);
+        return $value;
+    }
+
+    /**
+     * remove array of keys that inside the original array
+     * @param array $array
+     * @param array|string $keys
      * @return void
      */
-    public static function forget(array &$array, array $keys)
+    public static function forget(array &$array, array|string $keys)
     {
+        $keys = (array) $keys;
         $original = &$array;
 
         foreach ($keys as $key) {
@@ -30,7 +57,7 @@ class Arr
             while (count($parts) > 1) {
                 $part = array_shift($parts);
 
-                if (isset($array[$part]) ) {
+                if (isset($array[$part])) {
                     $array = &$array[$part];
                 } else {
                     continue 2;
@@ -51,34 +78,53 @@ class Arr
     {
         $original = &$array;
 
-        foreach(explode('.', $key) as $step)
-        {
+        foreach (explode('.', $key) as $step) {
             $original = &$original[$step];
         }
 
         $original = $value;
     }
 
-    public static function has($arr, $key)
+    /**
+     * check if a key exists
+     * @param array $arr
+     * @param string $key
+     * @return bool
+     */
+    public static function exists(array $arr, string $key)
     {
-        if (!str_contains($key, '.')) {
-            return isset($arr[$key]);
-        }
+        return array_key_exists($key, $arr);
+    }
 
-        $keys = explode('.', $key);
-        $first = array_shift($keys);
+    /**
+     * check if array of keys actually exists in an array
+     * @param array $arr
+     * @param string|array $keys
+     * @return bool
+     */
+    public static function has(array $arr, string|array $keys)
+    {
+        $keys = (array) $keys;
 
-        if (!isset($arr[$first])) {
-            return false;
-        }
+        foreach ($keys as $value) {
 
-        $tem = $arr[$first];
+            $subKeys = explode('.', $value);
 
-        foreach ($keys as $k) {
-            if (!isset($tem[$k])) {
+            $first = array_shift($subKeys);
+            if (!static::exists($arr, $first)) {
                 return false;
             }
-            $tem = $tem[$k];
+
+            $tem = $arr[$first];
+
+            foreach ($subKeys as $k) {
+                if (!static::exists($tem, $k)) {
+                    return false;
+                }
+
+                $tem = $tem[$k];
+            }
+
         }
 
         return true;
