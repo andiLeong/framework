@@ -34,6 +34,9 @@ jobs:
 
     - name: Create env
       run: cp .env.example .env
+      
+    - name: Directory Permissions
+      run: chmod -R 777 storage
 
     - name: Run test suite
       run: vendor/bin/phpunit
