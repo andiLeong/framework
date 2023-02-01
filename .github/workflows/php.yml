@@ -14,21 +14,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: laravel
+            MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_DATABASE: laravel
         ports:
-            - '8888:3306'
+            - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
       
-      
     steps:
     - uses: actions/checkout@v3
+    
+
 
     - name: Cache Composer packages
       id: composer-cache
@@ -46,9 +46,6 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
     # mysql -u root
     
-    
-    - name: Set up MySQL
-    - run: mysql -h 127.0.0.1 --port 8888 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS laravel;'
     
     - name: Create env
       run: cp .env.example .env
