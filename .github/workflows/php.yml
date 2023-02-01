@@ -33,7 +33,7 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Create env
-      run: cp .example.env .env
+      run: cp .env.example .env
 
     - name: Run test suite
       run: vendor/bin/phpunit
