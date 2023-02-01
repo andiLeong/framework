@@ -14,6 +14,19 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: laravel
+        ports:
+            - '8888:3306'
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      
+      
     steps:
     - uses: actions/checkout@v3
 
@@ -35,32 +48,8 @@ jobs:
     
     
     - name: Set up MySQL
-      run: |
-        sudo /etc/init.d/mysql start
-        #mysql -e 'CREATE DATABASE laravel' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
-        #mysql -e '-u root'
-        #mysql -e 'CREATE DATABASE laravel'
-        
-        mysql -uroot -h127.0.0.1 -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
-        
-        mysql -e 'CREATE TABLE `users` (
-          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-          `name` varchar(255) NOT NULL,
-          `email` varchar(255) NOT NULL,
-          `username` varchar(255) NOT NULL,
-          `email_verified_at` timestamp NULL DEFAULT NULL,
-          `password` varchar(255) NOT NULL,
-          `link` varchar(255) DEFAULT NULL,
-          `location` varchar(255) DEFAULT NULL,
-          `avatar` varchar(255) DEFAULT NULL,
-          `remember_token` varchar(100) DEFAULT NULL,
-          `created_at` timestamp NULL DEFAULT NULL,
-          `updated_at` timestamp NULL DEFAULT NULL,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY `users_email_unique` (`email`),
-          UNIQUE KEY `users_username_unique` (`username`)
-        ) ENGINE=InnoDB AUTO_INCREMENT=8636 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
-        
+    - run: mysql -h 127.0.0.1 --port 8888 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS laravel;'
+    
     - name: Create env
       run: cp .env.example .env
       
