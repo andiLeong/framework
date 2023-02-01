@@ -38,8 +38,11 @@ jobs:
       run: |
         sudo /etc/init.d/mysql start
         #mysql -e 'CREATE DATABASE laravel' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
-        mysql -e '-u root'
-        mysql -e 'CREATE DATABASE laravel'
+        #mysql -e '-u root'
+        #mysql -e 'CREATE DATABASE laravel'
+        
+        mysql -uroot -h127.0.0.1 -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
+        
         mysql -e 'CREATE TABLE `users` (
           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
           `name` varchar(255) NOT NULL,
