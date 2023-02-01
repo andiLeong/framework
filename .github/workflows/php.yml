@@ -22,18 +22,18 @@ jobs:
             MYSQL_DATABASE: laravel
             DB_USER: root
         ports:
-            - 3306
+            - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
       
     steps:
     - uses: actions/checkout@v3
     
-    - name: Set up MySQL1
-      run: |
-        sudo /etc/init.d/mysql start
-        mysql -u root -h 127.0.0.1
-        mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};'
+  
+    - name: Create Database
+      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE DATABASE IF NOT EXISTS laravel;"
+    
+
 
 
     - name: Cache Composer packages
