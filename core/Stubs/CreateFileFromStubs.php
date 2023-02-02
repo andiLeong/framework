@@ -29,7 +29,7 @@ class CreateFileFromStubs
     public function handle(callable $fn)
     {
         $possibleDirectories = implode('/', $this->newDirectoriesArray);
-        ensureDirectoryExisted($this->location . $possibleDirectories);
+        ensureDirectoryExisted($this->location . $possibleDirectories, 0777);
 
         $content = $fn(
             $this->fileName,
