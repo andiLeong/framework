@@ -4,7 +4,6 @@ namespace Andileong\Framework\Core\tests\Helper;
 
 use Andileong\Framework\Core\Support\Arr;
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertArrayNotHasKey;
 
 class ArrTest extends testcase
 {
@@ -89,8 +88,8 @@ class ArrTest extends testcase
     public function it_can_forget_some_array_keys()
     {
         $array = $this->arr;
-        Arr::forget($array,['name','age']);
-        Arr::forget($array,['address.city']);
+        Arr::forget($array, ['name', 'age']);
+        Arr::forget($array, ['address.city']);
 
         $this->assertArrayNotHasKey('name', $array);
         $this->assertArrayNotHasKey('age', $array);
@@ -100,8 +99,8 @@ class ArrTest extends testcase
     /** @test */
     public function it_can_except_some_array_keys()
     {
-        $arr = Arr::except($this->arr,['name','age']);
-        $arr2 = Arr::except($this->arr,['address.city']);
+        $arr = Arr::except($this->arr, ['name', 'age']);
+        $arr2 = Arr::except($this->arr, ['address.city']);
 
         $this->assertArrayNotHasKey('name', $arr);
         $this->assertArrayNotHasKey('age', $arr);
@@ -115,12 +114,34 @@ class ArrTest extends testcase
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayHasKey('city', $array['address']);
         $name = Arr::pull($array, 'name', 'default');
-        $city = Arr::pull($array,'address.city');
+        $city = Arr::pull($array, 'address.city');
 
         $this->assertEquals('ronald', $name);
         $this->assertEquals('guangzhou', $city);
         $this->assertArrayNotHasKey('name', $array);
         $this->assertArrayNotHasKey('city', $array['address']);
+    }
+
+    /** @test */
+    public function it_can_flatten_array()
+    {
+        $array = [
+            'name' => 'liang',
+            'languages' => ['PHP', 'Java']
+        ];
+
+        $collection = [
+            'Apple' => [['name' => 'iPhone 6S',],],
+            'Samsung' => [['name' => 'Galaxy S7',],],
+        ];
+
+        $res = Arr::flatten($array);
+        $res2 = Arr::flatten($collection, 1);
+        $this->assertSame(['liang', 'PHP', 'Java'], $res);
+        $this->assertSame([
+            ['name' => 'iPhone 6S',],
+            ['name' => 'Galaxy S7',],
+        ], $res2);
     }
 
     /** @test */
@@ -130,10 +151,10 @@ class ArrTest extends testcase
             'foo' => 'bar',
         ];
 
-        Arr::set($arr,'user.name','anthony');
-        Arr::set($arr,'address.city.street','xx');
-        Arr::set($arr,'x','y');
-        Arr::set($arr,'foo','new');
+        Arr::set($arr, 'user.name', 'anthony');
+        Arr::set($arr, 'address.city.street', 'xx');
+        Arr::set($arr, 'x', 'y');
+        Arr::set($arr, 'foo', 'new');
 
         $this->assertEquals('new', $arr['foo']);
         $this->assertEquals('y', $arr['x']);

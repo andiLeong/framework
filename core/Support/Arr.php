@@ -9,6 +9,35 @@ class Arr
     //hasAny
 
     /**
+     * flatten array
+     * @param $array
+     * @param $depth
+     * @return array
+     */
+    public static function flatten($array, $depth = INF)
+    {
+        $result = [];
+
+        foreach ($array as $value){
+
+            if(! is_array($value)){
+                $result[] = $value;
+            }else{
+
+                $values = $depth === 1
+                    ? array_values($value)
+                    : static::flatten($value, $depth - 1);
+
+                foreach ($values as $depValue) {
+                    $result[] = $depValue;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * alias of forget but except return the array
      * @param array $array
      * @param array $keys
