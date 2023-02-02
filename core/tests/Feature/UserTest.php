@@ -42,7 +42,7 @@ class UserTest extends ApplicationTestCase
     /** @test */
     public function it_can_create_a_user()
     {
-        $user = $this->createUser();
+        $user = $this->createUser(['password' => 'password']);
         $email = 'uniqueemail@gmail.com';
         $attributes = $this->baseAttribute([
             'email' => $email
