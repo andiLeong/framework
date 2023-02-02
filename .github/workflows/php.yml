@@ -11,9 +11,7 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:5.7
@@ -25,18 +23,14 @@ jobs:
             - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      
     steps:
     - uses: actions/checkout@v3
     
-  
     - name: Create Database
-      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE DATABASE IF NOT EXISTS laravel;"
-    
-
+      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE DATABASE IF NOT EXISTS awesome;"
 
     - name: Create Table
-      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "USE laravel;CREATE TABLE users (
+      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "USE awesome;CREATE TABLE users (
         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         email varchar(255) NOT NULL,
@@ -53,9 +47,6 @@ jobs:
         UNIQUE KEY users_email_unique (email),
         UNIQUE KEY users_username_unique (username)
         ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-
-
-
 
     - name: Cache Composer packages
       id: composer-cache
