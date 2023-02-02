@@ -36,13 +36,13 @@ jobs:
 
 
     - name: Create Table
-      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE TABLE Persons (
+      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "USE laravel;CREATE TABLE Persons (
         PersonID int,
         LastName varchar(255),
         FirstName varchar(255),
         Address varchar(255),
         City varchar(255)
-        );"
+        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
 
 
 
