@@ -35,6 +35,27 @@ jobs:
     
 
 
+    - name: Create Table
+      run: mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE TABLE `users` (
+        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        `name` varchar(255) NOT NULL,
+        `email` varchar(255) NOT NULL,
+        `username` varchar(255) NOT NULL,
+        `email_verified_at` timestamp NULL DEFAULT NULL,
+        `password` varchar(255) NOT NULL,
+        `link` varchar(255) DEFAULT NULL,
+        `location` varchar(255) DEFAULT NULL,
+        `avatar` varchar(255) DEFAULT NULL,
+        `remember_token` varchar(100) DEFAULT NULL,
+        `created_at` timestamp NULL DEFAULT NULL,
+        `updated_at` timestamp NULL DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `users_email_unique` (`email`),
+        UNIQUE KEY `users_username_unique` (`username`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=8636 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+
+
+
 
     - name: Cache Composer packages
       id: composer-cache
