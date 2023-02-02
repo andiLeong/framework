@@ -1,3 +1,4 @@
+![example workflow](https://github.com/andiLeong/framework/actions/workflows/php.yml/badge.svg)
 
 # a simple mvc framework
 
