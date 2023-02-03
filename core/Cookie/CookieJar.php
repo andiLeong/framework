@@ -56,7 +56,7 @@ class CookieJar
      */
     public function persist(Response $response)
     {
-        foreach ($this->cookies as $cookie){
+        foreach ($this->cookies as $cookie) {
             $response->headers->setCookie($cookie);
         }
     }

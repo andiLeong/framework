@@ -24,7 +24,7 @@ class UserController extends Controller
         $attributes = $this->validate([
             'name' => 'required',
             'location' => 'required',
-            'email' => ['required', 'email', fn($email) => User::query()->whereEmail($email)->count() === 0
+            'email' => ['required', 'email', fn ($email) => User::query()->whereEmail($email)->count() === 0
             ],
             'password' => 'required',
             'username' => 'required',

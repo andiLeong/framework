@@ -9,7 +9,6 @@ class AddCors extends Chainable
 {
     public function __construct(protected Cors $cors)
     {
-
     }
 
     public function handle($response)

@@ -18,5 +18,4 @@ class BuildSingleLogDriver extends BuildLogDriver
         $handler->setFormatter($this->getLineFormatter());
         return new Logger($this->getChannelName(), [$handler]);
     }
-
 }

@@ -13,7 +13,6 @@ use InvalidArgumentException;
  */
 class AuthManager
 {
-
     public $instances = [];
     private mixed $authConfig;
 
@@ -74,7 +73,7 @@ class AuthManager
     {
         $providerConfig = $this->authConfig['guards'][$guard]['provider'];
         return new JwtGuard(
-            $this->app->get('jwt.auth',[$guard]),
+            $this->app->get('jwt.auth', [$guard]),
             $this->app->get('request'),
             new UserProvider(
                 $providerConfig
@@ -104,7 +103,7 @@ class AuthManager
         }
 
         $guards = Collection::make($this->authConfig['guards'])->filter(
-            fn($value, $key) => $key === $guard
+            fn ($value, $key) => $key === $guard
         );
 
         if ($guards->isEmpty()) {
@@ -128,5 +127,4 @@ class AuthManager
     {
         return [$this->guard(), $name](...$arguments);
     }
-
 }

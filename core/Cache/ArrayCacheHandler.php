@@ -10,7 +10,7 @@ class ArrayCacheHandler extends CacheHandler implements Cache
 
     public function put($key, $value, $second = 0): bool
     {
-        $time = $this->getTimestamp($key,$second);
+        $time = $this->getTimestamp($key, $second);
 
         $this->items[$key] = [
             'expire' => $time,
@@ -26,7 +26,7 @@ class ArrayCacheHandler extends CacheHandler implements Cache
         }
 
         $item = $this->items[$key];
-        if($this->isExpired($item['expire'])){
+        if ($this->isExpired($item['expire'])) {
             $this->delete($key);
             return $default;
         }

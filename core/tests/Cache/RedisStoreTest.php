@@ -106,6 +106,6 @@ class RedisStoreTest extends TestCase
 //        $app->setSingleton('redis', $mock);
 //        $this->redis = $app->get('redis')->getRedis();
         $prefix = $app->get('config')['cache.drivers.redis.prefix'];
-        return new RedisCacheHandler($mock->getRedis(),$prefix);
+        return new RedisCacheHandler($mock->getRedis(), $prefix);
     }
 }

@@ -27,5 +27,4 @@ class RedisConnection extends AbstractConnection
     {
         return $this->getRedis()->{$name}(...$arguments);
     }
-
 }

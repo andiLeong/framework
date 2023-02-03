@@ -7,9 +7,7 @@ use App\Console\Commands\Play;
 
 class Console extends CoreConsole
 {
-
     protected $appCommands = [
         Play::class
     ];
-
 }

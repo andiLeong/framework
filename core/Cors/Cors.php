@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Cors
 {
-
     public function __construct(protected Request $request, protected Config $config)
     {
         //
@@ -22,12 +21,12 @@ class Cors
      */
     public function handleResponse(Response $response)
     {
-        if($this->request->header('Sec-Fetch-Mode') !== 'cors'){
+        if ($this->request->header('Sec-Fetch-Mode') !== 'cors') {
             return $response;
         }
 
-        foreach ($this->getCorsOption() as $key => $value){
-            $response->headers->set($key,$value);
+        foreach ($this->getCorsOption() as $key => $value) {
+            $response->headers->set($key, $value);
         }
 
         return $response;
@@ -39,12 +38,11 @@ class Cors
      * @param Request $request
      * @return mixed
      */
-    public function handleMiddlewareRequest(Chainable $middleware,Request $request)
+    public function handleMiddlewareRequest(Chainable $middleware, Request $request)
     {
         if ($request->method() === 'OPTIONS'
             && $request->hasHeader('Access-Control-Request-Method')
         ) {
-
             $response = json('', 200, $this->getCorsOption());
 
             return $middleware->break($response);

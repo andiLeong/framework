@@ -21,11 +21,11 @@ class QueryBuilderTest extends TestCase
         $user = $this->createUser([
             'name' => 'iamfalse'
         ]);
-        $users = DB::from('users')->when(true, fn($builder) => $builder->whereName('when'))->getRaw();
+        $users = DB::from('users')->when(true, fn ($builder) => $builder->whereName('when'))->getRaw();
         $users2 = DB::from('users')->when(
             false,
-            fn($builder) => $builder->whereName('when'),
-            fn($builder) => $builder->whereName('iamfalse')
+            fn ($builder) => $builder->whereName('when'),
+            fn ($builder) => $builder->whereName('iamfalse')
         )->getRaw();
 
         $this->assertEquals('when', $users[0]->name);

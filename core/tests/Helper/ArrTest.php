@@ -50,8 +50,8 @@ class ArrTest extends testcase
         $this->assertEquals(3, Arr::first($arr));
         $this->assertEquals('ronald', Arr::first($this->arr));
         $this->assertnull(Arr::first([]));
-        $this->assertEquals(10, Arr::first($arr, fn($ar) => $ar === 10));
-        $this->assertEquals(999, Arr::first($arr, fn($ar) => $ar === 999, 999));
+        $this->assertEquals(10, Arr::first($arr, fn ($ar) => $ar === 10));
+        $this->assertEquals(999, Arr::first($arr, fn ($ar) => $ar === 999, 999));
     }
 
     /** @test */
@@ -59,8 +59,8 @@ class ArrTest extends testcase
     {
         $arr = [3, 5, 10, 70, 32];
         $this->assertEquals(32, Arr::last($arr));
-        $this->assertEquals(32, Arr::last($arr, fn($ar) => $ar >= 10));
-        $this->assertEquals(999, Arr::last($arr, fn($ar) => $ar === 999, 999));
+        $this->assertEquals(32, Arr::last($arr, fn ($ar) => $ar >= 10));
+        $this->assertEquals(999, Arr::last($arr, fn ($ar) => $ar === 999, 999));
     }
 
     /** @test */

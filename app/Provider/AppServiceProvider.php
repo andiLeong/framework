@@ -8,10 +8,9 @@ use Andileong\Validation\Validator;
 
 class AppServiceProvider extends AbstractProvider implements Provider
 {
-
     public function register()
     {
-        $this->app->bind(Validator::class, fn($app) => new Validator($app['request']->all()));
+        $this->app->bind(Validator::class, fn ($app) => new Validator($app['request']->all()));
     }
 
     public function boot()

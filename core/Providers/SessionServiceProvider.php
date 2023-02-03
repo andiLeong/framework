@@ -7,7 +7,6 @@ use Andileong\Framework\Core\Session\Store;
 
 class SessionServiceProvider extends AbstractProvider implements Contract\Provider
 {
-
     public function register()
     {
         $this->registerManager();
@@ -21,15 +20,18 @@ class SessionServiceProvider extends AbstractProvider implements Contract\Provid
 
     private function registerManager()
     {
-        $this->app->singleton(SessionManager::class, fn() =>
+        $this->app->singleton(
+            SessionManager::class,
+            fn () =>
             new SessionManager($this->app->get('config')['session'])
         );
     }
 
     private function registerStore()
     {
-        $this->app->singleton(Store::class,
-            fn($app) => $app->get('session.manager')->driver()
+        $this->app->singleton(
+            Store::class,
+            fn ($app) => $app->get('session.manager')->driver()
         );
     }
 }

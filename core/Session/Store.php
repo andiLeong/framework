@@ -9,15 +9,13 @@ use SessionHandlerInterface;
 
 class Store implements Session
 {
-
     protected $attributes = [];
 
     public function __construct(
         protected SessionHandlerInterface $handler,
         protected array                   $config,
         protected                         $id = null,
-    )
-    {
+    ) {
         $this->setId($id);
     }
 
@@ -154,7 +152,7 @@ class Store implements Session
      */
     public function clean($second)
     {
-        if($this->shouldPerformCleanUp()){
+        if ($this->shouldPerformCleanUp()) {
             $this->handler->gc($second);
         }
     }
@@ -166,18 +164,17 @@ class Store implements Session
     public function shouldPerformCleanUp()
     {
         $flushDay = $this->config['flush_day'];
-        if (empty($flushDay['day'])){
+        if (empty($flushDay['day'])) {
             return true;
         }
 
         $times = $flushDay['time'];
-        foreach ($flushDay['day'] as $dayToFlush){
-
+        foreach ($flushDay['day'] as $dayToFlush) {
             $now = Carbon::now();
             $startTime = Carbon::parse("$dayToFlush $times[0]");
             $endTime = Carbon::parse("$dayToFlush $times[1]");
 
-            if($now->dayName === ucfirst($dayToFlush) && $now->between($startTime, $endTime)){
+            if ($now->dayName === ucfirst($dayToFlush) && $now->between($startTime, $endTime)) {
                 return true;
             }
         }

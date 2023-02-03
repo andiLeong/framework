@@ -6,7 +6,6 @@ use Carbon\Carbon;
 
 class Request
 {
-
     private array $headers;
     private array $cookies;
     private array $query;
@@ -194,7 +193,7 @@ class Request
         }
 
         $keys = is_array($keys) ? $keys : func_get_args();
-        $query = $this->filter(fn($q, $key) => !in_array($key, $keys), $this->query);
+        $query = $this->filter(fn ($q, $key) => !in_array($key, $keys), $this->query);
         $additional = http_build_query($query);
         return $this->url() . '?' . $additional;
     }
@@ -355,7 +354,7 @@ class Request
     {
         $keys = is_array($keys) ? $keys : func_get_args();
         return $this->filter(
-            fn($all, $key) => in_array($key, $keys),
+            fn ($all, $key) => in_array($key, $keys),
         );
     }
 
@@ -368,15 +367,16 @@ class Request
     {
         $keys = is_array($keys) ? $keys : func_get_args();
         return $this->filter(
-            fn($all, $key) => !in_array($key, $keys),
+            fn ($all, $key) => !in_array($key, $keys),
         );
     }
 
     protected function filter($fn, $items = null)
     {
         $items ??= $this->all;
-        return array_filter($items,
-            fn($all, $key) => $fn($all, $key),
+        return array_filter(
+            $items,
+            fn ($all, $key) => $fn($all, $key),
             ARRAY_FILTER_USE_BOTH
         );
     }
@@ -486,8 +486,8 @@ class Request
      */
     public function cookie($key, $default = null)
     {
-        if(isset($this->cookies[$key])){
-           return $this->cookies[$key];
+        if (isset($this->cookies[$key])) {
+            return $this->cookies[$key];
         }
         return $default;
     }
@@ -533,5 +533,4 @@ class Request
     {
         return $this->mergeIfNotExist([$name => $value]);
     }
-
 }

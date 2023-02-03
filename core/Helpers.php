@@ -24,7 +24,6 @@ if (!function_exists('resolveParam')) {
         $typeName = $param->getType()->getName();
         return $app->get($typeName);
     }
-
 }
 
 if (!function_exists('view')) {
@@ -40,7 +39,6 @@ if (!function_exists('view')) {
         $view = new View();
         return $view->render($path, $data);
     }
-
 }
 
 if (!function_exists('env')) {
@@ -55,7 +53,6 @@ if (!function_exists('env')) {
     {
         return Arr::get($_ENV, $key, $default);
     }
-
 }
 
 if (!function_exists('app')) {
@@ -74,7 +71,6 @@ if (!function_exists('app')) {
 
         return $app->get($key, $args);
     }
-
 }
 
 
@@ -92,7 +88,6 @@ if (!function_exists('config')) {
         }
         return app('config')->get($key, $default);
     }
-
 }
 
 if (!function_exists('request')) {
@@ -111,7 +106,6 @@ if (!function_exists('request')) {
 
         return $request->get($key, $default);
     }
-
 }
 
 if (!function_exists('resolve')) {
@@ -262,21 +256,18 @@ if (!function_exists('bcrypt')) {
      * @param array $options
      * @return object
      */
-    function bcrypt($value,$options = [])
+    function bcrypt($value, $options = [])
     {
-        return app('hash')->create($value,$options);
+        return app('hash')->create($value, $options);
     }
 }
 
-if (!function_exists('getallheaders'))
-{
+if (!function_exists('getallheaders')) {
     function getallheaders()
     {
         $headers = [];
-        foreach ($_SERVER as $name => $value)
-        {
-            if (str_starts_with($name, 'HTTP_'))
-            {
+        foreach ($_SERVER as $name => $value) {
+            if (str_starts_with($name, 'HTTP_')) {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }

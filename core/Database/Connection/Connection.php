@@ -64,7 +64,7 @@ class Connection extends AbstractConnection
 
     public function builder($model = null)
     {
-        $this->builder = $this->app->get('builder',[$model]);
+        $this->builder = $this->app->get('builder', [$model]);
         return $this->builder;
     }
 

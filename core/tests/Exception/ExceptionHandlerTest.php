@@ -46,8 +46,8 @@ class ExceptionHandlerTest extends TestCase
 
     public function handler($exception)
     {
-        $renderer = new Renderer(app(),$exception);
-        return new FakeAppExceptionHandler($exception,$renderer);
+        $renderer = new Renderer(app(), $exception);
+        return new FakeAppExceptionHandler($exception, $renderer);
     }
 }
 
@@ -56,12 +56,10 @@ class FakeAppExceptionHandler extends Handler
 {
     public function register()
     {
-        $this->customExceptions[ExceptionStub::class] = fn($e) => new JsonResponse(['message' => $e->getMessage()]);
+        $this->customExceptions[ExceptionStub::class] = fn ($e) => new JsonResponse(['message' => $e->getMessage()]);
     }
-
 }
 
 class ExceptionStub extends \Exception
 {
-
 }

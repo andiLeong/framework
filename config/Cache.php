@@ -4,7 +4,7 @@ return [
     'default' => env('CACHE_DRIVER', 'file'),
     'drivers' => [
         'redis' => [
-            'prefix' => env('CACHE_REDIS_PREFIX','cache_')
+            'prefix' => env('CACHE_REDIS_PREFIX', 'cache_')
         ]
     ]
 ];

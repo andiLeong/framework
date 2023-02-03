@@ -3,12 +3,10 @@
 
 namespace Andileong\Framework\Core\Database\Model;
 
-
 use JsonSerializable;
 
 class Paginator implements JsonSerializable
 {
-
     private $results;
     private $perPage;
     private $total;
@@ -53,7 +51,7 @@ class Paginator implements JsonSerializable
      */
     public function toJson($options = 0)
     {
-        return json_encode($this->toArray(),$options);
+        return json_encode($this->toArray(), $options);
     }
 
     /**
@@ -222,5 +220,4 @@ class Paginator implements JsonSerializable
     {
         return ($this->currentPage - 1) * $this->perPage;
     }
-
 }

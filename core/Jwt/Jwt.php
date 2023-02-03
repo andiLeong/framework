@@ -18,8 +18,7 @@ class Jwt implements JwtContract
     public function __construct(
         private                 $secret,
         private Header $header,
-    )
-    {
+    ) {
         //
     }
 
@@ -35,7 +34,7 @@ class Jwt implements JwtContract
 
         $hash = Algorithm::from($algorithms)->getHash();
         $payload = $this->parsePayload($payload);
-        return $this->formatToken($payload,$hash);
+        return $this->formatToken($payload, $hash);
     }
 
     /**
@@ -82,6 +81,6 @@ class Jwt implements JwtContract
     public function validate(string $token) :array
     {
         $validator = new ValidateJwtToken();
-        return $validator->handle($this->secret,$token);
+        return $validator->handle($this->secret, $token);
     }
 }

@@ -23,8 +23,8 @@ class User extends Model
             'avatar' => 'https://i.pravatar.cc/150?img=' . Arr::random(range(1, 70))
         ];
 
-       foreach ($attributes as $key => $value) {
-          $this->{$key} = $value;
-       }
+        foreach ($attributes as $key => $value) {
+            $this->{$key} = $value;
+        }
     }
 }

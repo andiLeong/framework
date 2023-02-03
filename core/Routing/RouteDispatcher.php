@@ -11,13 +11,12 @@ abstract class RouteDispatcher
      */
     private function getFromRouteParams($name): mixed
     {
-        return array_filter($this->route->getDynamicParams(), fn($param) => isset($param[$name]));
+        return array_filter($this->route->getDynamicParams(), fn ($param) => isset($param[$name]));
     }
 
     public function getParameterLists($parameters)
     {
         return array_map(function ($param) {
-
             $name = $param->name;
             $filteredParams = array_values($this->getFromRouteParams($name));
 
@@ -31,7 +30,6 @@ abstract class RouteDispatcher
             }
 
             $this->phaseParamException($param);
-
         }, $parameters);
     }
 

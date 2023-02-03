@@ -8,10 +8,9 @@ use Andileong\Framework\Core\Providers\Contract\Provider;
 
 class JwtServiceProvider extends AbstractProvider implements Provider
 {
-
     public function register()
     {
-        $this->app->singleton(Jwt::class, fn($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
+        $this->app->singleton(Jwt::class, fn ($app) => new Jwt($app['config']->get('jwt.secret'), new Header()));
     }
 
     public function boot()

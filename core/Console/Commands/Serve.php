@@ -9,10 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'serve',description: 'make a local php server')]
+#[AsCommand(name: 'serve', description: 'make a local php server')]
 class Serve extends Command
 {
-    
     public function __construct(public Application $app)
     {
         parent::__construct(null);

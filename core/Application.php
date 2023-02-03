@@ -74,15 +74,13 @@ class Application extends Container
         $this->bind('storage_path', $this->appPath . '/storage');
         $this->bind('stubs_path', $this->appPath . '/core/Stubs');
         $this->bind('public_path', $this->appPath . '/public');
-        $this->singleton(Request::class, fn() => new Request());
-        $this->singleton(Router::class, fn($app) => new Router($app));
+        $this->singleton(Request::class, fn () => new Request());
+        $this->singleton(Router::class, fn ($app) => new Router($app));
         $this->bind(Handler::class, function ($app, $args) {
             $renderer = new Renderer($app, $args[0]);
             return new Handler($args[0], $renderer);
         });
-        $this->bind(Pipeline::class, fn($app) => new Pipeline($app));
-
-
+        $this->bind(Pipeline::class, fn ($app) => new Pipeline($app));
     }
 
     /**
@@ -130,7 +128,7 @@ class Application extends Container
         $providers = $this->get('config')->get('app.providers');
 
         collection($providers)
-            ->map(fn($provider) => new $provider($this))
+            ->map(fn ($provider) => new $provider($this))
             ->each(function ($provider) {
                 $provider->register();
             })->each(function ($provider) {

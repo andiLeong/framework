@@ -7,12 +7,10 @@ use Symfony\Component\Finder\Finder;
 
 class FileSessionHandler implements \SessionHandlerInterface
 {
-
     public function __construct(
         protected string $path,
         protected        $expire
-    )
-    {
+    ) {
         //
     }
 
@@ -95,7 +93,6 @@ class FileSessionHandler implements \SessionHandlerInterface
         }
 
         return $deletedCount;
-
     }
 
     /**
@@ -118,5 +115,4 @@ class FileSessionHandler implements \SessionHandlerInterface
         $expectedExpireTime = Carbon::createFromTimestamp(filemtime($file))->addMinutes($this->expire)->getTimestamp();
         return Carbon::now()->getTimestamp() > $expectedExpireTime;
     }
-
 }

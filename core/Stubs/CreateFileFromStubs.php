@@ -13,8 +13,7 @@ class CreateFileFromStubs
         protected $location = null,
         protected $extension = 'php',
         protected $stubName = null
-    )
-    {
+    ) {
         $this->phraseNameAndDirectory();
 
         $this->setLocation($this->location);
@@ -56,7 +55,7 @@ class CreateFileFromStubs
      */
     public function getWriteableDestination()
     {
-        $newDirectory = implode('/',$this->newDirectoriesArray) . '/';
+        $newDirectory = implode('/', $this->newDirectoriesArray) . '/';
 //        dump($newDirectory);
 //        dd($this->fileName);
         return $this->location . $newDirectory . $this->fileName . '.' . $this->extension;

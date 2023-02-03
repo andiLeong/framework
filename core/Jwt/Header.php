@@ -27,5 +27,4 @@ class Header
         $this->alg = strtoupper(Algorithm::from($algorithms)->value);
         return $this;
     }
-
 }

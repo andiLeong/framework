@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'play',description: 'play game')]
+#[AsCommand(name: 'play', description: 'play game')]
 class Play extends Command
 {
     public function __construct(public Application $app)
@@ -46,5 +46,4 @@ class Play extends Command
 
         return Command::SUCCESS;
     }
-
 }

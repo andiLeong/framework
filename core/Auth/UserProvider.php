@@ -19,7 +19,7 @@ class UserProvider
     public function retrievedByCredentials(array $credential)
     {
         $credential = Arr::only($credential, ['email']);
-        if(empty($credential)){
+        if (empty($credential)) {
             return;
         }
 

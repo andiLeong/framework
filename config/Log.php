@@ -2,7 +2,7 @@
 
 return [
 
-    'default' => env('LOG_DRIVER','single'),
+    'default' => env('LOG_DRIVER', 'single'),
 
     'driver' => [
         'single' => [

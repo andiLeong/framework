@@ -23,7 +23,7 @@ class BcryptHasher implements Hasher
         return password_hash($value, PASSWORD_BCRYPT, $this->getOptions($options));
     }
 
-    public function needsRehash($hash,$options = [])
+    public function needsRehash($hash, $options = [])
     {
         return password_needs_rehash($hash, PASSWORD_BCRYPT, $this->getOptions($options));
     }

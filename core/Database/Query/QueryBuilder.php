@@ -13,7 +13,6 @@ use InvalidArgumentException;
 
 class QueryBuilder
 {
-
     public $columns = [];
     public $wheres = [];
     public $orders = [];
@@ -131,7 +130,6 @@ class QueryBuilder
             ->assignBindings($value);
 
         return $this;
-
     }
 
     /**
@@ -472,8 +470,7 @@ class QueryBuilder
         $selectedResults = $this->connection->runSelect($query, $this->bindings['where']);
 //        dump($selectedResults);
 
-        $hydrated = array_map(fn($result) => $this->model->newInstance((array) $result)
-            , $selectedResults);
+        $hydrated = array_map(fn ($result) => $this->model->newInstance((array) $result), $selectedResults);
 
         return ModelCollection::make($hydrated);
     }
@@ -578,7 +575,7 @@ class QueryBuilder
         if (count($parameters) === 1) {
             $value = $parameters[0];
             $operator = '=';
-        } else if (count($parameters) === 2) {
+        } elseif (count($parameters) === 2) {
             $operator = $parameters[0];
             $value = $parameters[1];
         } else {

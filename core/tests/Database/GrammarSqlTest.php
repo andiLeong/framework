@@ -208,11 +208,11 @@ class GrammarSqlTest extends testcase
         ];
 
         $expected = "UPDATE `users` SET name = ?, username = ? where `id` = ?";
-        $statement = User::where('id',3)->toUpdateSql($data);
+        $statement = User::where('id', 3)->toUpdateSql($data);
         $this->assertEquals($expected, $statement);
 
         $expected = "UPDATE `users` SET name = ?, username = ? where `id` in (?,?,?) and `name` = ?";
-        $statement = User::whereIn('id',[1,2,3])->whereName('an')->toUpdateSql($data);
+        $statement = User::whereIn('id', [1,2,3])->whereName('an')->toUpdateSql($data);
         $this->assertEquals($expected, $statement);
     }
 
@@ -220,11 +220,11 @@ class GrammarSqlTest extends testcase
     public function it_can_convert_delete_statement()
     {
         $expected = "DELETE FROM `users` where `id` = ?";
-        $statement = User::where('id',3)->toDeleteSql();
+        $statement = User::where('id', 3)->toDeleteSql();
         $this->assertEquals($expected, $statement);
 
         $expected = "DELETE FROM `users` where `id` < ? and `email` = ?";
-        $statement = User::where('id','<',3)->whereEmail('hi')->toDeleteSql();
+        $statement = User::where('id', '<', 3)->whereEmail('hi')->toDeleteSql();
         $this->assertEquals($expected, $statement);
     }
 }

@@ -7,7 +7,6 @@ use Predis\Client;
 
 class RedisConnector
 {
-
     private $host;
     private $port;
     private $scheme;

@@ -82,7 +82,6 @@ class ModelTest extends testcase
         $this->assertTrue($user->isExisted());
         $count = User::where(['id' => $user->id])->count();
         $this->assertEquals(1, $count);
-
     }
 
     /** @test */
@@ -135,7 +134,7 @@ class ModelTest extends testcase
         $user = $this->createUser();
         $users = User::orderBy('id', 'desc')->get();
 
-        $this->assertInstanceOf(ModelCollection::class,$users);
+        $this->assertInstanceOf(ModelCollection::class, $users);
         $this->assertEquals($user->id, $users[0]->id);
     }
 
@@ -172,7 +171,6 @@ class ModelTest extends testcase
         $attributes = $user->getAttributes();
         $this->assertArrayNotHasKey('email', $attributes);
         $this->assertArrayHasKey('name', $attributes);
-
     }
 
     /** @test */
@@ -228,17 +226,16 @@ class ModelTest extends testcase
         $this->createUser(['location' => 'uk']);
 
         $users = User::country('usa')->get();
-        $usa = array_filter($users->all(), fn($user) => $user->location === 'usa');
-        $uk = array_filter($users->all(), fn($user) => $user->location === 'uk');
+        $usa = array_filter($users->all(), fn ($user) => $user->location === 'usa');
+        $uk = array_filter($users->all(), fn ($user) => $user->location === 'uk');
         $this->assertCount(1, $usa);
         $this->assertCount(0, $uk);
 
         $users = User::country('uk')->get();
-        $usa = array_filter($users->all(), fn($user) => $user->location === 'usa');
-        $uk = array_filter($users->all(), fn($user) => $user->location === 'uk');
+        $usa = array_filter($users->all(), fn ($user) => $user->location === 'usa');
+        $uk = array_filter($users->all(), fn ($user) => $user->location === 'uk');
         $this->assertCount(0, $usa);
         $this->assertCount(1, $uk);
-
     }
 
     /** @test */
@@ -270,7 +267,7 @@ class ModelTest extends testcase
         $user->update(['location' => 'hiii']);
         $newUpdate = $user->updated_at;
 
-        $this->assertNotSame($oldUpdate,$newUpdate);
+        $this->assertNotSame($oldUpdate, $newUpdate);
 
 
         $user2 = User::create($this->baseAttribute());
@@ -279,6 +276,6 @@ class ModelTest extends testcase
         $user2->save();
 
         $newUpdate = $user2->updated_at;
-        $this->assertNotSame($oldUpdate,$newUpdate);
+        $this->assertNotSame($oldUpdate, $newUpdate);
     }
 }

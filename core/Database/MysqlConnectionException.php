@@ -6,5 +6,4 @@ use Andileong\Framework\Core\Exception\CoreExceptions;
 
 class MysqlConnectionException extends CoreExceptions
 {
-
 }

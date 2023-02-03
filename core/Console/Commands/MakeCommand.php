@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'make:command',description: 'make a command')]
+#[AsCommand(name: 'make:command', description: 'make a command')]
 class MakeCommand extends Command
 {
     use CreateFromStub;

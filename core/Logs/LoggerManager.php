@@ -26,11 +26,11 @@ class LoggerManager implements LoggerInterface
      */
     public function getDriverInstance($driver = null) :logger
     {
-        if(is_null($driver)){
+        if (is_null($driver)) {
             $driver = $this->configs['default'];
         }
 
-        if(!in_array($driver,$this->supportedDrivers)){
+        if (!in_array($driver, $this->supportedDrivers)) {
             throw new Exception('log '. $driver .' driver not existed');
         }
 
@@ -44,8 +44,8 @@ class LoggerManager implements LoggerInterface
      */
     public function build($driver) : logger
     {
-        if(array_key_exists($driver,$this->drivers)){
-           return $this->drivers[$driver];
+        if (array_key_exists($driver, $this->drivers)) {
+            return $this->drivers[$driver];
         }
 
         $drivers = [
@@ -54,7 +54,7 @@ class LoggerManager implements LoggerInterface
         ];
         $inProduction = $this->app->isInProduction();
 
-        return $this->drivers[$driver] = (new $drivers[$driver]($inProduction,$this->configs['driver'][$driver]))->build();
+        return $this->drivers[$driver] = (new $drivers[$driver]($inProduction, $this->configs['driver'][$driver]))->build();
     }
 
     /**
@@ -70,46 +70,46 @@ class LoggerManager implements LoggerInterface
 
     public function emergency(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->emergency($message,$context);
+        $this->getDriverInstance()->emergency($message, $context);
     }
 
     public function alert(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->alert($message,$context);
+        $this->getDriverInstance()->alert($message, $context);
     }
 
     public function critical(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->critical($message,$context);
+        $this->getDriverInstance()->critical($message, $context);
     }
 
     public function error(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->error($message,$context);
+        $this->getDriverInstance()->error($message, $context);
     }
 
     public function warning(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->warning($message,$context);
+        $this->getDriverInstance()->warning($message, $context);
     }
 
     public function notice(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->notice($message,$context);
+        $this->getDriverInstance()->notice($message, $context);
     }
 
     public function info(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->info($message,$context);
+        $this->getDriverInstance()->info($message, $context);
     }
 
     public function debug(\Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->debug($message,$context);
+        $this->getDriverInstance()->debug($message, $context);
     }
 
     public function log($level, \Stringable|string $message, array $context = []): void
     {
-        $this->getDriverInstance()->log($level,$message,$context);
+        $this->getDriverInstance()->log($level, $message, $context);
     }
 }

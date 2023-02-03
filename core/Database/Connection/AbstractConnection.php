@@ -6,7 +6,6 @@ use Exception;
 
 abstract class AbstractConnection
 {
-
     public function getDriver($driver = null)
     {
         $driver = ucfirst($driver ?? config('database.default')) . 'Connector';
@@ -20,6 +19,6 @@ abstract class AbstractConnection
 
     public function connect($through = null)
     {
-       return $this->getDriver($through)->connect();
+        return $this->getDriver($through)->connect();
     }
 }

@@ -46,8 +46,8 @@ class RouteTest extends testcase
         $route2 = new Route('/user/{id}', 'GET', '');
         $route3 = new Route('/user/{id}/post/{postId}', 'GET', '');
 
-        $this->assertEquals(['user'],$route2->getStaticSegments());
-        $this->assertEquals(['user','post'],$route3->getStaticSegments());
+        $this->assertEquals(['user'], $route2->getStaticSegments());
+        $this->assertEquals(['user','post'], $route3->getStaticSegments());
     }
 
     /** @test */
@@ -56,11 +56,11 @@ class RouteTest extends testcase
         $route2 = new Route('foo', 'GET', new container());
         $this->assertEmpty($route2->getMiddleware());
         $route2->middleware(['foo']);
-        $this->assertEquals(['foo'],$route2->getRegisteredMiddleware());
+        $this->assertEquals(['foo'], $route2->getRegisteredMiddleware());
 
         $route3 = new Route('foo', 'GET', new Container);
         $route3->middleware(['foo']);
         $route3->middleware(['bar']);
-        $this->assertEquals(['foo','bar'],$route3->getRegisteredMiddleware());
+        $this->assertEquals(['foo','bar'], $route3->getRegisteredMiddleware());
     }
 }

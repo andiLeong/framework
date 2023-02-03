@@ -11,7 +11,6 @@ use Carbon\Carbon;
 
 class StartSession extends Chainable
 {
-
     public function __construct(protected SessionManager $manager, protected CookieJar $cookieJar)
     {
         //

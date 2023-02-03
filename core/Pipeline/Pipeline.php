@@ -64,7 +64,7 @@ class Pipeline
      */
     private function start()
     {
-        if(!empty($this->pipes)){
+        if (!empty($this->pipes)) {
             $this->pipes[0]->{$this->method}($this->object);
         }
         return $this;
@@ -76,7 +76,7 @@ class Pipeline
      */
     public function result()
     {
-        if(empty($this->pipes)){
+        if (empty($this->pipes)) {
             return $this->object;
         }
 
@@ -93,7 +93,7 @@ class Pipeline
      */
     protected function getBrokenPipe()
     {
-        $broken = array_values(array_filter($this->pipes, fn(Chainable $pipe) => $pipe->getMessage() !== null));
+        $broken = array_values(array_filter($this->pipes, fn (Chainable $pipe) => $pipe->getMessage() !== null));
         if (!empty($broken)) {
             return $broken[0];
         }
@@ -106,7 +106,7 @@ class Pipeline
      */
     public function then($fn)
     {
-        if(empty($this->pipes)){
+        if (empty($this->pipes)) {
             return $fn($this->object);
         }
 
@@ -127,7 +127,6 @@ class Pipeline
     private function normalizePipes(array $pipes)
     {
         return array_map(function ($pipe) {
-
             if ($pipe instanceof Chainable) {
                 return $pipe;
             }
@@ -171,5 +170,4 @@ class Pipeline
         }
         return $pipe;
     }
-
 }

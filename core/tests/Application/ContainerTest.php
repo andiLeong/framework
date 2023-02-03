@@ -48,7 +48,7 @@ class ContainerTest extends testCase
         $object = new NoDependency();
         $container = new Container();
         $result = $container->get($object);
-        $this->assertSame($object,$result);
+        $this->assertSame($object, $result);
     }
 
     /** @test */
@@ -116,9 +116,9 @@ class ContainerTest extends testCase
     {
         $container = new Container();
         $this->assertEmpty($container->getSingleton());
-        $container->setSingleton(NoDependency::class,new NoDependency());
+        $container->setSingleton(NoDependency::class, new NoDependency());
         $this->assertNotEmpty($container->getSingleton());
-        $this->assertArrayHasKey(NoDependency::class,$container->getSingleton());
+        $this->assertArrayHasKey(NoDependency::class, $container->getSingleton());
     }
 
     /** @test */
@@ -126,42 +126,42 @@ class ContainerTest extends testCase
     {
         $container = new Container();
         $instance = new NoDependency();
-        $container->setSingleton(NoDependency::class,$instance);
+        $container->setSingleton(NoDependency::class, $instance);
 
-        $this->assertSame($instance,$container->get(NoDependency::class));
+        $this->assertSame($instance, $container->get(NoDependency::class));
     }
 
     /** @test */
     public function it_can_set_the_singleton_instance_directly_by_its_alias_if_any()
     {
         $container = new Application($_SERVER['DOCUMENT_ROOT']);
-        $container->setSingleton(Request::class,new Request());
-        $this->assertArrayHasKey('request',$container->getSingleton());
-        $this->assertArrayNotHasKey(Request::class,$container->getSingleton());
+        $container->setSingleton(Request::class, new Request());
+        $this->assertArrayHasKey('request', $container->getSingleton());
+        $this->assertArrayNotHasKey(Request::class, $container->getSingleton());
     }
 
     /** @test */
     public function it_can_access_container_as_array()
     {
         $container = new Container();
-        $container->bind('foo','bar');
-        $this->assertEquals('bar',$container['foo']);
+        $container->bind('foo', 'bar');
+        $this->assertEquals('bar', $container['foo']);
     }
 
     /** @test */
     public function it_can_unset_container_key()
     {
         $container = new FakeContainer();
-        $container->bind('foo','bar');
+        $container->bind('foo', 'bar');
         unset($container['foo']);
         $this->assertFalse($container->has('foo'));
 
-        $container->singleton('a','b');
+        $container->singleton('a', 'b');
         $this->assertTrue(isset($container['a']));
         unset($container['a']);
         $this->assertFalse(isset($container['a']));
 
-        $container->setSingleton('x','y');
+        $container->setSingleton('x', 'y');
         $this->assertTrue(isset($container['x']));
         unset($container['x']);
         $this->assertFalse(isset($container['x']));
@@ -213,7 +213,7 @@ class ContainerTest extends testCase
     {
         $container = new Container();
         $container['foo'] = 'bar';
-        $this->assertEquals('bar',$container['foo']);
+        $this->assertEquals('bar', $container['foo']);
     }
 }
 
@@ -258,7 +258,7 @@ class UnionTypeDependency
     }
 }
 
-Abstract class AbstractDependency
+abstract class AbstractDependency
 {
 }
 
@@ -271,12 +271,10 @@ class DependsOnAbstract
 
 interface FakeInterface
 {
-
 }
 
 class ImplementInterface implements FakeInterface
 {
-
 }
 
 class DependsOnInterface
@@ -288,7 +286,7 @@ class DependsOnInterface
 
 class FakeContainer extends Container
 {
-    public function setAlias($alias,$value)
+    public function setAlias($alias, $value)
     {
         $this->alias[$value] = $alias;
     }

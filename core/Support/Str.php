@@ -26,7 +26,7 @@ class Str
     public static function camel(string $value, string $separator = '_')
     {
         $capitalizedArray = array_map(
-            fn($value) => ucfirst($value),
+            fn ($value) => ucfirst($value),
             explode($separator, $value)
         );
         return implode('', $capitalizedArray);
@@ -257,7 +257,7 @@ class Str
      */
     public static function separate(string $string, string $separator = '-', array $portions = [], string $driver = 'substr')
     {
-        return match ($driver){
+        return match ($driver) {
             'substr' => new SubStrSeparator($string, $separator, $portions),
             'array' =>  new ArrayStringSeparator($string, $separator, $portions),
             default => throw new \Exception('Unsupported string separation driver'),
