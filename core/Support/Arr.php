@@ -18,12 +18,10 @@ class Arr
     {
         $result = [];
 
-        foreach ($array as $value){
-
-            if(! is_array($value)){
+        foreach ($array as $value) {
+            if (! is_array($value)) {
                 $result[] = $value;
-            }else{
-
+            } else {
                 $values = $depth === 1
                     ? array_values($value)
                     : static::flatten($value, $depth - 1);
@@ -94,7 +92,6 @@ class Arr
             }
             unset($array[array_shift($parts)]);
         }
-
     }
 
     /**
@@ -136,7 +133,6 @@ class Arr
         $keys = (array) $keys;
 
         foreach ($keys as $value) {
-
             $subKeys = explode('.', $value);
 
             $first = array_shift($subKeys);
@@ -153,7 +149,6 @@ class Arr
 
                 $tem = $tem[$k];
             }
-
         }
 
         return true;
@@ -186,7 +181,7 @@ class Arr
         }
 
         if ($fn !== null) {
-            $filtered = array_values(array_filter($arr, fn($value) => $fn($value)));
+            $filtered = array_values(array_filter($arr, fn ($value) => $fn($value)));
             if (count($filtered) === 0) {
                 return $default;
             }

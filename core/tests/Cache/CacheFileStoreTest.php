@@ -96,8 +96,8 @@ class CacheFileStoreTest extends TestCase
     public function it_can_check_an_item_exist()
     {
         $res = $this->cache->has('foo');
-        $this->cache->put('key','value');
-        $this->cache->put('abc','value33');
+        $this->cache->put('key', 'value');
+        $this->cache->put('abc', 'value33');
 
         $res3 = $this->cache->has('abc');
         $this->assertTrue($res3);

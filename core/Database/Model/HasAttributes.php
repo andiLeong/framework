@@ -112,7 +112,7 @@ trait HasAttributes
     public function only($keys)
     {
         $keys = is_array($keys) ? $keys : func_get_args();
-        return Arr::only($this->toArray(),$keys);
+        return Arr::only($this->toArray(), $keys);
     }
 
     protected function getAppends()

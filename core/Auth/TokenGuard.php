@@ -24,12 +24,11 @@ class TokenGuard implements Guard
 
     public function user()
     {
-        if($this->user !== null){
+        if ($this->user !== null) {
             return $this->user;
         }
 
         $token = $this->request->retrieveBearerToken();
         return $this->user = $this->provider->retrievedByToken($token);
     }
-
 }

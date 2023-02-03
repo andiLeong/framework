@@ -17,8 +17,7 @@ class JwtGuard implements Guard
         protected Request      $request,
         protected UserProvider $provider,
         protected HashManager  $hash,
-    )
-    {
+    ) {
         //
     }
 
@@ -50,5 +49,4 @@ class JwtGuard implements Guard
     {
         return $this->jwt->generate($id, $expiredTime, $payload, $algorithms);
     }
-
 }

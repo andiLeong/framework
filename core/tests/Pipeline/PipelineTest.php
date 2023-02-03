@@ -137,7 +137,7 @@ class PipelineTest extends TestCase
             new PipeTwo(),
         ]);
 
-        $pipeline->run()->then(fn() => $this->assertTrue(true));
+        $pipeline->run()->then(fn () => $this->assertTrue(true));
     }
 
     /** @test */

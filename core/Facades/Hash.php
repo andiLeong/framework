@@ -8,7 +8,6 @@ namespace Andileong\Framework\Core\Facades;
  */
 class Hash extends Facades
 {
-
     public function instance()
     {
         return app('hash');

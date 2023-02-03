@@ -47,6 +47,6 @@ class Response
 
     public function getBodyAsArray()
     {
-        return json_decode($this->body,true);
+        return json_decode($this->body, true);
     }
 }

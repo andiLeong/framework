@@ -7,7 +7,6 @@ use Andileong\Framework\Core\Support\Controller;
 
 class LoginController extends Controller
 {
-
     public function __invoke(AuthManager $auth)
     {
         $credential = $this->validate([

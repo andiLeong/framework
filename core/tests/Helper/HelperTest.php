@@ -26,7 +26,7 @@ class HelperTest extends TestCase
     public function value_function_can_return_value_or_trigger_callback()
     {
         $this->assertEquals('value2', value('value2'));
-        $fn = fn($value) => $value;
+        $fn = fn ($value) => $value;
         $this->assertEquals('callback', value($fn, 'callback'));
     }
 
@@ -34,6 +34,6 @@ class HelperTest extends TestCase
     public function it_can_bcrypt_hash_value()
     {
         $value = bcrypt('password');
-        $this->assertTrue(app('hash')->verify('password',$value));
+        $this->assertTrue(app('hash')->verify('password', $value));
     }
 }

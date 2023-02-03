@@ -12,7 +12,7 @@ class Container implements \ArrayAccess
     protected $singletons = [];
     protected $alias = [];
     protected $aliasMapping = [];
-    static protected $instance;
+    protected static $instance;
 
     /**
      * put key as normal non-singleton binding
@@ -155,7 +155,6 @@ class Container implements \ArrayAccess
         $parameters = $constructor->getParameters();
 
         $dependencies = array_map(function ($param) {
-
             if ($param->isDefaultValueAvailable()) {
                 return $param->getDefaultValue();
             }
@@ -182,11 +181,9 @@ class Container implements \ArrayAccess
 
             return $this->get($dependency);
 //            return $this->instantiate($dependency);
-
         }, $parameters);
 
         return $reflector->newInstanceArgs($dependencies);
-
     }
 
     /**

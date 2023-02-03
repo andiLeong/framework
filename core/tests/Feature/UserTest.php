@@ -19,7 +19,7 @@ class UserTest extends ApplicationTestCase
         $response = $this->get("/user", ['foo' => 'va']);
         $response->assertJson()->assertOk();
         $body = $response->getBodyAsArray();
-        $this->assertCount(1, array_filter($body['data'], fn($u) => $u['id'] == $user->id));
+        $this->assertCount(1, array_filter($body['data'], fn ($u) => $u['id'] == $user->id));
     }
 
     /** @test */

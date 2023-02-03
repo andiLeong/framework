@@ -21,5 +21,4 @@ class ApplicationTest extends testCase
         $mock->shouldReceive('loadServices')->once();
         $mock->__construct($_SERVER['DOCUMENT_ROOT']);
     }
-
 }

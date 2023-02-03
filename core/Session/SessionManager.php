@@ -10,15 +10,14 @@ class SessionManager
 
     public function __construct(
         protected array $config
-    )
-    {
+    ) {
         //
     }
 
     public function createFileDriver()
     {
-        $instance = new FileSessionHandler($this->config['path'],$this->config['expire']);
-        return new Store($instance,$this->config);
+        $instance = new FileSessionHandler($this->config['path'], $this->config['expire']);
+        return new Store($instance, $this->config);
     }
 
     public function getDefaultDriverName()
@@ -28,6 +27,6 @@ class SessionManager
 
     public function getConfig()
     {
-       return $this->config;
+        return $this->config;
     }
 }

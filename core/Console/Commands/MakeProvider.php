@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'make:provider',description: 'make a service Provider')]
+#[AsCommand(name: 'make:provider', description: 'make a service Provider')]
 class MakeProvider extends Command
 {
     use CreateFromStub;
@@ -38,7 +38,7 @@ class MakeProvider extends Command
     {
         $name = $input->getArgument('name');
 
-        $fileName = $this->createFile($name, 'provider',appPath() . '/core/Providers/');
+        $fileName = $this->createFile($name, 'provider', appPath() . '/core/Providers/');
         $output->writeln("<info>$fileName Created Successfully</info>");
 
         return Command::SUCCESS;

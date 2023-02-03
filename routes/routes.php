@@ -6,7 +6,7 @@ use App\Controller\LoginController;
 use App\Controller\MeController;
 use App\Controller\UserController;
 
-Route::get('', fn() => 'welcome home')->middleware(['one']);
+Route::get('', fn () => 'welcome home')->middleware(['one']);
 Route::get('user/{id}', [UserController::class, 'show']);
 Route::get('/user', [UserController::class, 'index']);
 Route::get('/user/{id}/post/{postId}', [ContactController::class, 'index']);
@@ -22,14 +22,13 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/get-session', function(){
-
+Route::get('/get-session', function () {
     $all = app('session')->all();
     return $all;
 });
 
-Route::get('/set-session', function(){
+Route::get('/set-session', function () {
     $driver = app('session');
-    $driver->set('age',20);
-    $driver->set('u','xxxxuu');
+    $driver->set('age', 20);
+    $driver->set('u', 'xxxxuu');
 });

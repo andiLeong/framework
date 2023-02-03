@@ -21,10 +21,12 @@ class HandleError
             throw new ErrorException($msg, 0, $errno, $file, $line);
         });
 
-        set_exception_handler(fn(Throwable $e) => $this->handleException($e, $app)
+        set_exception_handler(
+            fn (Throwable $e) => $this->handleException($e, $app)
         );
 
-        register_shutdown_function(fn() => $this->handleShutDown($app)
+        register_shutdown_function(
+            fn () => $this->handleShutDown($app)
         );
 
         ini_set('display_errors', 'Off');

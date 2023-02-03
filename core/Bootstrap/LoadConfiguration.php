@@ -16,7 +16,6 @@ class LoadConfiguration
 
         $config = new Config();
         foreach ($this->fetchConfigFiles() as $file) {
-
             $path = $file->getRealPath();
             $content = require $path;
 

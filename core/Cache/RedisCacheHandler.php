@@ -6,7 +6,6 @@ use Andileong\Framework\Core\Cache\Contract\Cache;
 
 class RedisCacheHandler extends CacheHandler implements Cache
 {
-
     public function __construct(protected $redis, protected $prefix)
     {
         //

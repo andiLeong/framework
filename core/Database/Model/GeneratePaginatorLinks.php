@@ -4,7 +4,6 @@ namespace Andileong\Framework\Core\Database\Model;
 
 class GeneratePaginatorLinks
 {
-
     protected $totalPage;
     protected $currentPage;
     private array $groups;
@@ -76,7 +75,9 @@ class GeneratePaginatorLinks
      */
     protected function setLinksFromCurrentGroup()
     {
-        $this->links = array_map(fn($page) => $this->link($page), array_values($this->currentGroup)[0]
+        $this->links = array_map(
+            fn ($page) => $this->link($page),
+            array_values($this->currentGroup)[0]
         );
         return $this;
     }
@@ -163,7 +164,7 @@ class GeneratePaginatorLinks
     {
         $this->currentGroup = array_filter(
             $this->groups,
-            fn($group) => in_array($this->currentPage, $group)
+            fn ($group) => in_array($this->currentPage, $group)
         );
     }
 
@@ -192,6 +193,4 @@ class GeneratePaginatorLinks
     {
         $this->groups = array_chunk(range(1, $this->totalPage), $by);
     }
-
-
 }

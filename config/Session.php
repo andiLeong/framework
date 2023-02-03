@@ -3,10 +3,10 @@
 
 return [
 
-    'default' => env('SESSION_DRIVER','file'),
+    'default' => env('SESSION_DRIVER', 'file'),
 
     //session expire time default is 60 minute
-    'expire' => env('SESSION_EXPIRE',60),
+    'expire' => env('SESSION_EXPIRE', 60),
 
     'path' => storagePath() . '/framework/sessions',
 
@@ -19,5 +19,5 @@ return [
         'time' => ['08:00', '11:00'],
     ],
 
-    'name' => env('SESSION_NAME','awesome-session'),
+    'name' => env('SESSION_NAME', 'awesome-session'),
 ];

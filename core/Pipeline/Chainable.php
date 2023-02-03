@@ -87,5 +87,4 @@ abstract class Chainable
     {
         return $this->message;
     }
-
 }

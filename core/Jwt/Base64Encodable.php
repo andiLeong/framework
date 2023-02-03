@@ -12,7 +12,7 @@ trait Base64Encodable
      */
     protected function encode(string $value) :String
     {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'),'=');
+        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
 //        return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($value));
     }
 

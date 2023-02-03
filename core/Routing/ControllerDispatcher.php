@@ -4,14 +4,12 @@ namespace Andileong\Framework\Core\Routing;
 
 class ControllerDispatcher extends RouteDispatcher
 {
-
     private $instance;
     private $method;
 
     public function __construct(
         protected Route $route,
-    )
-    {
+    ) {
         $this->parseController();
     }
 

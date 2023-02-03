@@ -10,5 +10,4 @@ class MiddlewareTwo extends Chainable
     {
         return $this->next($request);
     }
-
 }

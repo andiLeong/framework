@@ -3,7 +3,7 @@
 
 <?php
 
-foreach ($data as $da){
+foreach ($data as $da) {
     echo $da;
 }
 

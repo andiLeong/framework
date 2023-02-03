@@ -18,7 +18,7 @@ class ConnectionTest extends TestCase
     /** @test */
     public function it_can_start_query_by_select()
     {
-        $users = DB::select('id','name')->from('users')->getRaw();
+        $users = DB::select('id', 'name')->from('users')->getRaw();
         $this->assertIsArray($users);
     }
 }

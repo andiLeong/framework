@@ -12,8 +12,7 @@ class Handler
     public function __construct(
         protected Throwable $e,
         protected Renderer  $renderer,
-    )
-    {
+    ) {
         $this->register();
     }
 
@@ -39,7 +38,6 @@ class Handler
         }
 
         return $this->renderer->render();
-
     }
 
     /**

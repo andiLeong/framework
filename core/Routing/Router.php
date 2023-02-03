@@ -108,7 +108,7 @@ class Router
      */
     public function render()
     {
-        return $this->runGlobalMiddlewares(fn(Request $request) => $this->findRoute($request));
+        return $this->runGlobalMiddlewares(fn (Request $request) => $this->findRoute($request));
     }
 
 
@@ -133,7 +133,9 @@ class Router
         }
 
         $routes = $this->routes[$method];
-        $route = array_values(array_filter($routes, fn(Route $route) => $route->matches($path)
+        $route = array_values(array_filter(
+            $routes,
+            fn (Route $route) => $route->matches($path)
         ));
 
         if (!count($route)) {
@@ -177,7 +179,7 @@ class Router
             ->send($request)
             ->through($route->getMiddleware())
             ->run()
-            ->then(fn($request) => $route->render());
+            ->then(fn ($request) => $route->render());
     }
 
     /**
@@ -326,8 +328,7 @@ class Router
      */
     public function setRequest(Request $request)
     {
-       $this->request = $request;
-       return $this;
+        $this->request = $request;
+        return $this;
     }
-
 }

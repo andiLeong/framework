@@ -5,7 +5,6 @@ namespace Andileong\Framework\Core\Console;
 use Andileong\Framework\Core\Application;
 use Symfony\Component\Console\Application as ConsoleApplication;
 
-
 class Console
 {
     protected $systemCommands = [
@@ -32,7 +31,7 @@ class Console
 
     public function resolveCommands()
     {
-        return array_map(fn($command) => new $command($this->app), $this->getAllCommands());
+        return array_map(fn ($command) => new $command($this->app), $this->getAllCommands());
     }
 
     public function run()
@@ -42,7 +41,7 @@ class Console
         $application->run();
     }
 
-    public function runInTest($input,$output)
+    public function runInTest($input, $output)
     {
         $application = new ConsoleApplication();
         $application->setAutoExit(false);

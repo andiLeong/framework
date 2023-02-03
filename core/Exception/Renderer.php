@@ -12,8 +12,7 @@ class Renderer
     public function __construct(
         protected Application              $app,
         protected Throwable|CoreExceptions $e,
-    )
-    {
+    ) {
         //
     }
 
@@ -24,8 +23,8 @@ class Renderer
     public function source()
     {
         return [
-            'default' => fn() => $this->default(),
-            'core' => fn() => $this->core(),
+            'default' => fn () => $this->default(),
+            'core' => fn () => $this->core(),
         ];
     }
 
@@ -64,14 +63,12 @@ class Renderer
      */
     private function default()
     {
-
         if ($this->inProduction()) {
             $exception = [
                 'message' => 'internal server error',
                 'code' => 500
             ];
         } else {
-
             $exception = [
                 'message' => $this->e->getMessage(),
                 'exception' => get_class($this->e),

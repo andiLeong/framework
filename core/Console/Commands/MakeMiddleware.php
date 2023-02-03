@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'make:middleware',description: 'make a middleware')]
+#[AsCommand(name: 'make:middleware', description: 'make a middleware')]
 class MakeMiddleware extends Command
 {
     use CreateFromStub;
@@ -38,7 +38,7 @@ class MakeMiddleware extends Command
     {
         $name = $input->getArgument('name');
 
-        $fileName = $this->createFile($name,'middleware');
+        $fileName = $this->createFile($name, 'middleware');
         $output->writeln("<info>$fileName Created Successfully</info>");
 
         return Command::SUCCESS;

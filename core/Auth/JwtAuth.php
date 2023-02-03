@@ -104,5 +104,4 @@ class JwtAuth
     {
         return time() > $expired_at;
     }
-
 }

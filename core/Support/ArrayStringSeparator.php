@@ -11,8 +11,7 @@ class ArrayStringSeparator
         protected string $subject,
         protected string $separator,
         protected array  $portions = []
-    )
-    {
+    ) {
         $this->array = str_split($this->subject);
     }
 
@@ -32,7 +31,7 @@ class ArrayStringSeparator
             // here we check if the index equals to the potion fist value
             // if yes we append the separator, we also calculate the next 2 index and push the portion first value
             // so whenever $portions first value is always updated index in the array
-            if($this->needsToAppendSeparator($index)){
+            if ($this->needsToAppendSeparator($index)) {
                 $value = $value . $this->separator;
                 $this->calculatePortionIndex();
             }

@@ -45,7 +45,7 @@ class RouterRenderContentTest extends ApplicationTestCase
     public function it_can_render_a_closure()
     {
         $router = $this->getRouter('/about');
-        $router->get('/about', fn() => 'closure');
+        $router->get('/about', fn () => 'closure');
         $content = $router->render();
         $this->assertEquals('closure', $content);
     }
@@ -87,17 +87,17 @@ class RouterRenderContentTest extends ApplicationTestCase
     public function it_can_render_a_dynamic_route_and_pass_correct_argument_to_closure()
     {
         $router = $this->getRouter('/user/1/post/23_56');
-        $router->get('/user/{id}/post/{post_id}', fn($id, $post_id, Foo $foo) => [$id, $post_id]);
+        $router->get('/user/{id}/post/{post_id}', fn ($id, $post_id, Foo $foo) => [$id, $post_id]);
         $content = $router->render();
         $this->assertEquals(['1', '23_56'], $content);
 
         $router = $this->getRouter('/user/1');
-        $router->get('/user/{id}', fn($id, Request $request) => $id);
+        $router->get('/user/{id}', fn ($id, Request $request) => $id);
         $content = $router->render();
         $this->assertEquals('1', $content);
 
         $router = $this->getRouter('/user');
-        $router->get('/user', fn(Request $request) => 1);
+        $router->get('/user', fn (Request $request) => 1);
         $content = $router->render();
         $this->assertEquals('1', $content);
     }
@@ -140,7 +140,7 @@ class RouterRenderContentTest extends ApplicationTestCase
         ];
 
         $this->fake(Middleware::class, $mock);
-        $router->middleware('foo', 'bar')->get('/bar', fn() => 'bar');
+        $router->middleware('foo', 'bar')->get('/bar', fn () => 'bar');
         $router->render();
     }
 
@@ -155,7 +155,7 @@ class RouterRenderContentTest extends ApplicationTestCase
 
         $this->fake(Pipeline::class, $mock);
         $router = $this->getRouter('/foo');
-        $router->middleware('foo')->get('/foo', fn() => 'foo');
+        $router->middleware('foo')->get('/foo', fn () => 'foo');
         $router->render();
     }
 
@@ -173,7 +173,6 @@ class RouterRenderContentTest extends ApplicationTestCase
         $this->app->setSingleton('router', $router);
         return $this->app->get('router');
     }
-
 }
 
 
@@ -197,7 +196,6 @@ class AboutController
 
 class Foo
 {
-
     public function index()
     {
         return 'foo';

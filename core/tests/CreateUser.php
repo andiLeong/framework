@@ -7,7 +7,6 @@ use Andileong\Framework\Core\Support\Str;
 
 trait CreateUser
 {
-
     public function saveUser($username = null, $password = null, $email = null, $name = null)
     {
         $user = new User();

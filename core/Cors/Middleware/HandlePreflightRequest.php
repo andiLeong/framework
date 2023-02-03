@@ -17,5 +17,4 @@ class HandlePreflightRequest extends Chainable
     {
         return $this->cors->handleMiddlewareRequest($this, $request);
     }
-
 }

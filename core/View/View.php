@@ -6,10 +6,10 @@ class View
 {
     private $content;
 
-    public function render($path,$data = [])
+    public function render($path, $data = [])
     {
         extract($data);
-        $path = str_replace('.','/',$path);
+        $path = str_replace('.', '/', $path);
         require $_SERVER['DOCUMENT_ROOT'] .  "/assets/views/{$path}.php";
 //        $this->content = file_get_contents($_SERVER['DOCUMENT_ROOT'] .  "/assets/views/{$path}.php");
         return $this;
@@ -17,7 +17,6 @@ class View
 
     public function getContent()
     {
-       return $this->content;
+        return $this->content;
     }
-
 }

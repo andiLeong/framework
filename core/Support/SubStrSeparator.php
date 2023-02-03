@@ -11,8 +11,7 @@ class SubStrSeparator
         protected string $subject,
         protected string $separator,
         protected array  $portions = []
-    )
-    {
+    ) {
         $this->count = strlen($this->subject);
 
         if (empty($this->portions)) {
@@ -75,6 +74,4 @@ class SubStrSeparator
     {
         return $this->separate();
     }
-
-
 }

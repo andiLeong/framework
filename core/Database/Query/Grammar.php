@@ -37,7 +37,7 @@ class Grammar
             'offset' => $this->compileOffset($builder->offset),
         ];
 
-        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
+        $sql = implode(' ', array_filter($sqlArray, fn ($value) => $value != ''));
 //        dump($sqlArray);
 //        dump($sql);
 //        dd($builder);
@@ -68,10 +68,10 @@ class Grammar
 
     protected function isAggregateColumn($column) :bool
     {
-        foreach ($this->aggregate as $ag){
-             if(str_contains($column,$ag)){
-                 return true;
-             }
+        foreach ($this->aggregate as $ag) {
+            if (str_contains($column, $ag)) {
+                return true;
+            }
         }
 
         return false;
@@ -103,8 +103,7 @@ class Grammar
             return;
         }
 
-        $wheresArray = array_map(fn($where) => $this->compileWhere($where)
-            , $wheres);
+        $wheresArray = array_map(fn ($where) => $this->compileWhere($where), $wheres);
 
         return 'where' . ltrim(implode(' ', $wheresArray), 'and');
     }
@@ -230,7 +229,7 @@ class Grammar
             'wheres' => $this->compileWheres($builder->wheres),
         ];
 
-        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
+        $sql = implode(' ', array_filter($sqlArray, fn ($value) => $value != ''));
         return $sql;
     }
 
@@ -247,8 +246,7 @@ class Grammar
             'wheres' => $this->compileWheres($builder->wheres),
         ];
 
-        $sql = implode(' ', array_filter($sqlArray, fn($value) => $value != ''));
+        $sql = implode(' ', array_filter($sqlArray, fn ($value) => $value != ''));
         return $sql;
     }
-
 }
