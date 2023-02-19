@@ -4,7 +4,6 @@ namespace Andileong\Framework\Core\Support;
 
 class Benchmark
 {
-
     public static function start(array $functions)
     {
         $res = [];
